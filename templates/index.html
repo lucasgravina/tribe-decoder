@@ -158,10 +158,16 @@
     .roi-net{font-size:9px;letter-spacing:.1em;color:var(--text-dim);text-align:right;padding-left:8px}
 
     /* ── Brain map ── */
-    .brain-map-wrap{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap}
-    .brain-view-label{font-size:9px;letter-spacing:.18em;color:var(--cyan-dim);text-align:center;margin-bottom:8px;font-weight:500}
-    .brain-svg-wrap{flex:1;min-width:220px;max-width:48%}
-    .brain-legend{flex-shrink:0;display:flex;flex-direction:column;gap:8px;padding-top:28px}
+    .brain-map-wrap{display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap}
+    .brain-view-label{font-size:9px;letter-spacing:.18em;color:var(--cyan-dim);text-align:center;margin-top:8px;font-weight:500}
+    .brain3d-wrap{flex:1;min-width:300px}
+    .brain3d-container{width:100%;height:320px;border-radius:3px;overflow:hidden;cursor:grab;background:#09090f}
+    .brain3d-container:active{cursor:grabbing}
+    .brain-view-btns{display:flex;gap:6px;margin-bottom:8px}
+    .brain-view-btn{padding:4px 14px;font-family:var(--mono);font-size:9px;letter-spacing:.15em;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;border-radius:2px;transition:all .15s}
+    .brain-view-btn:hover{color:var(--text);border-color:var(--border-hi)}
+    .brain-view-btn.active{background:var(--cyan-glow);color:var(--cyan);border-color:var(--cyan-dim)}
+    .brain-legend{flex-shrink:0;display:flex;flex-direction:column;gap:8px;padding-top:44px}
     .brain-legend-item{display:flex;align-items:center;gap:8px;font-size:10px;color:var(--text-dim)}
     .legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
     .legend-pct{margin-left:auto;font-size:10px;min-width:28px;text-align:right}
@@ -757,134 +763,17 @@
         </div>
       </div>
       <div class="panel">
-        <div class="panel-header"><span class="panel-label">Cortical Network Map</span><span style="font-size:10px;color:var(--text-dim)">Yeo 7-network schematic · circle size = relative activation · hover for details</span></div>
+        <div class="panel-header"><span class="panel-label">Cortical Network Map</span><span style="font-size:10px;color:var(--text-dim)">Yeo 7 networks · 3D surface · drag to rotate</span></div>
         <div class="panel-body">
           <div class="brain-map-wrap">
-
-            <!-- ── Lateral view ── -->
-            <div class="brain-svg-wrap">
-              <div class="brain-view-label">LATERAL — LEFT HEMISPHERE</div>
-              <svg id="brainLateral" viewBox="0 0 340 215" xmlns="http://www.w3.org/2000/svg" style="width:100%">
-                <defs>
-                  <radialGradient id="latGrad" cx="44%" cy="46%" r="54%">
-                    <stop offset="0%" stop-color="#181e38"/>
-                    <stop offset="60%" stop-color="#0f1224"/>
-                    <stop offset="100%" stop-color="#090c18"/>
-                  </radialGradient>
-                  <filter id="nodeGlow" x="-60%" y="-60%" width="220%" height="220%">
-                    <feGaussianBlur stdDeviation="4" result="blur"/>
-                    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-                  </filter>
-                  <filter id="brainShadow" x="-5%" y="-5%" width="110%" height="110%">
-                    <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.5"/>
-                  </filter>
-                </defs>
-                <!-- Brain outline -->
-                <path d="M 44,108 C 42,82 54,54 74,35 C 94,16 120,7 150,5 C 180,3 208,11 230,24 C 252,37 270,56 280,78 C 290,100 290,126 282,148 C 274,170 256,184 232,192 C 208,200 180,202 155,196 C 130,190 108,178 90,162 C 72,146 58,128 50,112 C 46,109 44,108 44,108 Z"
-                  fill="url(#latGrad)" stroke="#2e3668" stroke-width="1.8" filter="url(#brainShadow)"/>
-                <!-- Sylvian fissure (major — frontal/parietal from temporal) -->
-                <path d="M 76,150 C 105,140 142,135 182,132 C 214,130 248,133 270,138" fill="none" stroke="#253060" stroke-width="1.8" stroke-linecap="round"/>
-                <!-- Central sulcus (major — frontal from parietal) -->
-                <path d="M 188,8 C 194,32 200,62 203,96" fill="none" stroke="#253060" stroke-width="1.6" stroke-linecap="round"/>
-                <!-- Superior frontal sulcus -->
-                <path d="M 82,32 C 96,52 104,76 106,100" fill="none" stroke="#1c2550" stroke-width="1.1" stroke-linecap="round"/>
-                <!-- Intraparietal sulcus -->
-                <path d="M 204,12 C 222,36 236,62 238,90" fill="none" stroke="#1c2550" stroke-width="1.1" stroke-linecap="round"/>
-                <!-- Superior temporal sulcus -->
-                <path d="M 90,170 C 118,160 156,155 194,153 C 220,152 250,158 266,165" fill="none" stroke="#1a2248" stroke-width="1.0" stroke-linecap="round"/>
-                <!-- Postcentral sulcus -->
-                <path d="M 207,10 C 215,35 222,64 224,96" fill="none" stroke="#172040" stroke-width="0.9" stroke-linecap="round"/>
-
-                <!-- Network nodes (halo + circle, labels outside) -->
-                <!-- VIS: occipital -->
-                <circle cx="268" cy="108" r="18" fill="#7a7af0" opacity="0.12"/>
-                <circle id="lc-Vis" cx="268" cy="108" r="0" opacity="0.9" filter="url(#nodeGlow)"/>
-                <text x="268" y="108" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:7px;fill:#7a7af0;pointer-events:none;font-weight:600">VIS</text>
-                <!-- SMN: sensorimotor near central sulcus -->
-                <circle cx="196" cy="58" r="18" fill="#f03aa0" opacity="0.12"/>
-                <circle id="lc-SomMot" cx="196" cy="58" r="0" opacity="0.9" filter="url(#nodeGlow)"/>
-                <text x="196" y="58" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:7px;fill:#f03aa0;pointer-events:none;font-weight:600">SMN</text>
-                <!-- DAN: superior parietal / IPS -->
-                <circle cx="244" cy="52" r="18" fill="#c03af0" opacity="0.12"/>
-                <circle id="lc-DorsAttn" cx="244" cy="52" r="0" opacity="0.9" filter="url(#nodeGlow)"/>
-                <text x="244" y="52" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:7px;fill:#c03af0;pointer-events:none;font-weight:600">DAN</text>
-                <!-- SAL: anterior insula / frontal operculum -->
-                <circle cx="118" cy="126" r="18" fill="#f0a83a" opacity="0.12"/>
-                <circle id="lc-SalVentAttn" cx="118" cy="126" r="0" opacity="0.9" filter="url(#nodeGlow)"/>
-                <text x="118" y="126" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:7px;fill:#f0a83a;pointer-events:none;font-weight:600">SAL</text>
-                <!-- LMB: temporal pole / orbitofrontal -->
-                <circle cx="68" cy="158" r="18" fill="#f05a5a" opacity="0.12"/>
-                <circle id="lc-Limbic" cx="68" cy="158" r="0" opacity="0.9" filter="url(#nodeGlow)"/>
-                <text x="68" y="158" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:7px;fill:#f05a5a;pointer-events:none;font-weight:600">LMB</text>
-                <!-- FPN: lateral PFC -->
-                <circle cx="100" cy="72" r="18" fill="#3af0c0" opacity="0.12"/>
-                <circle id="lc-Cont" cx="100" cy="72" r="0" opacity="0.9" filter="url(#nodeGlow)"/>
-                <text x="100" y="72" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:7px;fill:#3af0c0;pointer-events:none;font-weight:600">FPN</text>
-                <!-- DMN: angular gyrus / TPJ -->
-                <circle cx="214" cy="158" r="18" fill="#3a80f0" opacity="0.12"/>
-                <circle id="lc-Default" cx="214" cy="158" r="0" opacity="0.9" filter="url(#nodeGlow)"/>
-                <text x="214" y="158" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:7px;fill:#3a80f0;pointer-events:none;font-weight:600">DMN</text>
-              </svg>
+            <div class="brain3d-wrap">
+              <div class="brain-view-btns">
+                <button class="brain-view-btn active" data-view="lateral" onclick="setBrainView('lateral')">LATERAL</button>
+                <button class="brain-view-btn" data-view="medial" onclick="setBrainView('medial')">MEDIAL</button>
+              </div>
+              <div id="brain3dContainer" class="brain3d-container"></div>
+              <div class="brain-view-label">LEFT HEMISPHERE · DRAG TO ROTATE</div>
             </div>
-
-            <!-- ── Medial view ── -->
-            <div class="brain-svg-wrap">
-              <div class="brain-view-label">MEDIAL — LEFT HEMISPHERE</div>
-              <svg id="brainMedial" viewBox="0 0 340 215" xmlns="http://www.w3.org/2000/svg" style="width:100%">
-                <defs>
-                  <radialGradient id="medGrad" cx="56%" cy="46%" r="54%">
-                    <stop offset="0%" stop-color="#181e38"/>
-                    <stop offset="60%" stop-color="#0f1224"/>
-                    <stop offset="100%" stop-color="#090c18"/>
-                  </radialGradient>
-                  <filter id="nodeGlowM" x="-60%" y="-60%" width="220%" height="220%">
-                    <feGaussianBlur stdDeviation="4" result="blur"/>
-                    <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
-                  </filter>
-                  <filter id="brainShadowM" x="-5%" y="-5%" width="110%" height="110%">
-                    <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000" flood-opacity="0.5"/>
-                  </filter>
-                </defs>
-                <!-- Brain outline (medial view — mirrored) -->
-                <path d="M 296,108 C 298,82 286,54 266,35 C 246,16 220,7 190,5 C 160,3 132,11 110,24 C 88,37 70,56 60,78 C 50,100 50,126 58,148 C 66,170 84,184 108,192 C 132,200 160,202 185,196 C 210,190 232,178 250,162 C 268,146 282,128 290,112 C 294,109 296,108 296,108 Z"
-                  fill="url(#medGrad)" stroke="#2e3668" stroke-width="1.8" filter="url(#brainShadowM)"/>
-                <!-- Corpus callosum (arch — major medial feature) -->
-                <path d="M 128,88 C 148,72 170,68 192,70 C 212,72 228,82 234,94" fill="none" stroke="#2e3870" stroke-width="2.0" stroke-linecap="round"/>
-                <!-- Cingulate sulcus -->
-                <path d="M 124,104 C 146,92 170,88 194,90 C 212,92 228,102 232,112" fill="none" stroke="#1c2550" stroke-width="1.4" stroke-linecap="round"/>
-                <!-- Parieto-occipital sulcus -->
-                <path d="M 244,62 C 258,80 270,98 272,118" fill="none" stroke="#1c2550" stroke-width="1.4" stroke-linecap="round"/>
-                <!-- Calcarine sulcus (for visual cortex) -->
-                <path d="M 262,95 C 274,108 278,122 272,136" fill="none" stroke="#1c2550" stroke-width="1.2" stroke-linecap="round"/>
-                <!-- Cingulate gyrus lower border -->
-                <path d="M 130,118 C 150,108 172,104 194,106 C 212,108 226,118 228,126" fill="none" stroke="#172040" stroke-width="0.9" stroke-dasharray="4,3" stroke-linecap="round"/>
-
-                <!-- Network nodes -->
-                <!-- DMN mPFC: medial prefrontal -->
-                <circle cx="148" cy="68" r="18" fill="#3a80f0" opacity="0.12"/>
-                <circle id="mc-Default-pfc" cx="148" cy="68" r="0" opacity="0.9" filter="url(#nodeGlowM)"/>
-                <text x="148" y="68" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:7px;fill:#3a80f0;pointer-events:none;font-weight:600">DMN</text>
-                <!-- DMN PCC: posterior cingulate / precuneus -->
-                <circle id="mc-Default-pcc" cx="196" cy="128" r="0" opacity="0.7" fill="#3a80f0"/>
-                <!-- SAL: anterior cingulate -->
-                <circle cx="148" cy="106" r="18" fill="#f0a83a" opacity="0.12"/>
-                <circle id="mc-SalVentAttn" cx="148" cy="106" r="0" opacity="0.9" filter="url(#nodeGlow)"/>
-                <text x="148" y="106" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:7px;fill:#f0a83a;pointer-events:none;font-weight:600">SAL</text>
-                <!-- VIS: medial occipital / calcarine -->
-                <circle cx="268" cy="112" r="18" fill="#7a7af0" opacity="0.12"/>
-                <circle id="mc-Vis" cx="268" cy="112" r="0" opacity="0.9" filter="url(#nodeGlow)"/>
-                <text x="268" y="112" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:7px;fill:#7a7af0;pointer-events:none;font-weight:600">VIS</text>
-                <!-- SMN: paracentral lobule -->
-                <circle cx="188" cy="38" r="18" fill="#f03aa0" opacity="0.12"/>
-                <circle id="mc-SomMot" cx="188" cy="38" r="0" opacity="0.9" filter="url(#nodeGlow)"/>
-                <text x="188" y="38" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:7px;fill:#f03aa0;pointer-events:none;font-weight:600">SMN</text>
-                <!-- LMB: parahippocampal / medial temporal -->
-                <circle cx="186" cy="168" r="18" fill="#f05a5a" opacity="0.12"/>
-                <circle id="mc-Limbic" cx="186" cy="168" r="0" opacity="0.9" filter="url(#nodeGlow)"/>
-                <text x="186" y="168" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:7px;fill:#f05a5a;pointer-events:none;font-weight:600">LMB</text>
-              </svg>
-            </div>
-
             <div class="brain-legend" id="brainLegend"></div>
           </div>
         </div>
@@ -1434,42 +1323,201 @@ function renderRoiTable(rois) {
   });
 }
 
-// ── Brain map ─────────────────────────────────────────────────────────────────
-function renderBrainMap(act, suffix='') {
-  const MIN_R=8, MAX_R=26;
-  const mapping = {Vis:{lat:'lc-Vis',med:'mc-Vis'},SomMot:{lat:'lc-SomMot',med:'mc-SomMot'},DorsAttn:{lat:'lc-DorsAttn',med:null},SalVentAttn:{lat:'lc-SalVentAttn',med:'mc-SalVentAttn'},Limbic:{lat:'lc-Limbic',med:'mc-Limbic'},Cont:{lat:'lc-Cont',med:null},Default:{lat:'lc-Default',med:'mc-Default-pfc'}};
-  Object.entries(mapping).forEach(([net,ids])=>{
-    const val=act[net]??0, r=Math.round(MIN_R+val*(MAX_R-MIN_R)), color=NET_COLORS[net];
-    const s = suffix ? suffix+'-' : '';
-    const lc=document.getElementById(s+ids.lat); if(lc){lc.setAttribute('r',r);lc.setAttribute('fill',color);}
-    if(ids.med){const mc=document.getElementById(s+ids.med); if(mc){mc.setAttribute('r',r);mc.setAttribute('fill',color);}}
+// ── Three.js 3D Brain ─────────────────────────────────────────────────────────
+const NET_COLOR_RGB = {
+  Vis:        [0.478, 0.478, 0.941],
+  SomMot:     [0.941, 0.227, 0.627],
+  DorsAttn:   [0.753, 0.227, 0.941],
+  SalVentAttn:[0.941, 0.659, 0.227],
+  Limbic:     [0.941, 0.353, 0.353],
+  Cont:       [0.227, 0.941, 0.753],
+  Default:    [0.227, 0.502, 0.941],
+};
+let _brain3 = null;
+
+function _loadThreeJS() {
+  if (window.THREE && window.THREE.OrbitControls) return Promise.resolve();
+  if (window._threeJSP) return window._threeJSP;
+  window._threeJSP = new Promise((resolve, reject) => {
+    const s1 = document.createElement('script');
+    s1.src = 'https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js';
+    s1.onload = () => {
+      const s2 = document.createElement('script');
+      s2.src = 'https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js';
+      s2.onload = resolve; s2.onerror = reject;
+      document.head.appendChild(s2);
+    };
+    s1.onerror = reject;
+    document.head.appendChild(s1);
   });
-  const pcc=document.getElementById((suffix?suffix+'-':'')+'mc-Default-pcc');
-  if(pcc){const v=act['Default']??0;pcc.setAttribute('r',Math.round((MIN_R+v*(MAX_R-MIN_R))*0.7));}
-  // Add hover tooltips to all brain circles
-  const svgIds = suffix ? [`${suffix}-brainLateral`,`${suffix}-brainMedial`] : ['brainLateral','brainMedial'];
-  svgIds.forEach(svgId => {
-    const svgEl = document.getElementById(svgId);
-    if(!svgEl) return;
-    Object.entries(mapping).forEach(([net,ids])=>{
-      const pct=Math.round((act[net]??0)*100);
-      const s = suffix ? suffix+'-' : '';
-      [ids.lat, ids.med].filter(Boolean).forEach(cid=>{
-        const el = document.getElementById(s+cid);
-        if(el) tip(el, netTipHtml(net,pct), NET_ABBR[net]+' — '+NET_LABELS[net].toUpperCase());
-      });
-    });
-  });
-  if(!suffix) {
-    const leg=$('brainLegend'); leg.innerHTML='';
-    NET_ORDER.forEach(net=>{
-      const val=act[net]??0,pct=Math.round(val*100);
-      const item=document.createElement('div'); item.className='brain-legend-item';
-      item.innerHTML=`<div class="legend-dot" style="background:${NET_COLORS[net]};opacity:${(0.3+val*0.7).toFixed(2)}"></div><span>${NET_ABBR[net]}</span><span class="legend-pct" style="color:${NET_COLORS[net]}">${pct}%</span>`;
-      tip(item, netTipHtml(net,pct), NET_ABBR[net]+' — '+NET_LABELS[net].toUpperCase());
-      leg.appendChild(item);
-    });
+  return window._threeJSP;
+}
+
+function _netForVert(nx, ny, nz) {
+  // Yeo 7 region assignment by unit normal vector (+Y=superior, +Z=anterior, +X=lateral)
+  if (nz < -0.50 && ny > -0.35) return 'Vis';           // occipital
+  if (ny > 0.60) return 'SomMot';                         // superior / central strip
+  if (ny > 0.22 && nz < -0.12 && nz > -0.50) return 'DorsAttn'; // superior parietal / IPS
+  if (ny < -0.48) return 'Limbic';                        // inferior temporal / parahippocampal
+  if (nz > 0.46 && ny > 0.05) return 'Cont';             // lateral prefrontal
+  if (ny > -0.30 && ny < 0.22 && nz > -0.08 && nz < 0.46) return 'SalVentAttn'; // lateral mid
+  return 'Default';                                        // TPJ, angular gyrus, PCC, mPFC
+}
+
+function _createBrainGeo() {
+  const T = THREE;
+  const geo = new T.SphereGeometry(1.0, 96, 64);
+  const pos = geo.attributes.position;
+  const count = pos.count;
+  const vertNets = new Array(count);
+  const colors = new Float32Array(count * 3);
+
+  for (let i = 0; i < count; i++) {
+    let x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
+    const len = Math.sqrt(x*x+y*y+z*z);
+    const nx=x/len, ny=y/len, nz=z/len;
+
+    // Brain proportions: slight anterior bulge, compressed height, elongated AP
+    x = nx * (1.0 + Math.max(0, nz) * 0.10);
+    y = ny * 0.88;
+    z = nz * 1.12;
+
+    // Temporal lobe: inferior-lateral bulge
+    if (ny < -0.18 && nx > 0.08) {
+      const t = Math.max(0, -(ny+0.18)) * Math.max(0, nx-0.08);
+      x += nx * t * 0.55;
+      y += ny * t * 0.12;
+    }
+
+    // Gyral surface noise (multi-frequency sinusoidal — simulates gyri/sulci)
+    const phi = Math.atan2(nx, nz);
+    const theta = Math.acos(Math.max(-1, Math.min(1, ny)));
+    const gnoise = (
+      Math.sin(phi*5.7 + theta*4.2) * Math.cos(theta*6.1 + 1.3) * 0.50 +
+      Math.sin(phi*9.3 + 0.8) * Math.sin(theta*8.7 + 2.1)       * 0.30 +
+      Math.cos(phi*14.1 + theta*3.2) * Math.sin(phi*2.3 + theta*12.4) * 0.20
+    ) * 0.036;
+
+    const r = Math.sqrt(x*x+y*y+z*z);
+    pos.setXYZ(i, x+(x/r)*gnoise, y+(y/r)*gnoise, z+(z/r)*gnoise);
   }
+  geo.computeVertexNormals();
+
+  // Re-read deformed positions for network assignment
+  for (let i = 0; i < count; i++) {
+    const x=pos.getX(i),y=pos.getY(i),z=pos.getZ(i);
+    const r=Math.sqrt(x*x+y*y+z*z);
+    const net = _netForVert(x/r, y/r, z/r);
+    vertNets[i] = net;
+    const c = NET_COLOR_RGB[net];
+    colors[i*3]=c[0]*0.07; colors[i*3+1]=c[1]*0.07; colors[i*3+2]=c[2]*0.07;
+  }
+  geo.setAttribute('color', new T.BufferAttribute(colors, 3));
+  return { geo, vertNets };
+}
+
+function _updateBrainColors(activations) {
+  if (!_brain3) return;
+  const { mesh, vertNets } = _brain3;
+  const colors = mesh.geometry.attributes.color.array;
+  const count = mesh.geometry.attributes.position.count;
+  for (let i = 0; i < count; i++) {
+    const net = vertNets[i];
+    const act = activations[net] ?? 0;
+    const c = NET_COLOR_RGB[net];
+    const b = 0.07 + act * 0.86;
+    colors[i*3]=c[0]*b; colors[i*3+1]=c[1]*b; colors[i*3+2]=c[2]*b;
+  }
+  mesh.geometry.attributes.color.needsUpdate = true;
+}
+
+function setBrainView(view) {
+  document.querySelectorAll('.brain-view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
+  if (!_brain3) return;
+  const { camera, controls } = _brain3;
+  const end = new THREE.Vector3(...(view === 'medial' ? [-3.0, 0.15, 0.3] : [3.0, 0.15, 0.3]));
+  const start = camera.position.clone();
+  const t0 = performance.now(), dur = 700;
+  (function step() {
+    const t = Math.min(1, (performance.now()-t0)/dur);
+    const e = 1 - Math.pow(1-t, 3);
+    camera.position.lerpVectors(start, end, e);
+    camera.lookAt(0, 0, 0);
+    controls.target.set(0, 0, 0);
+    if (t < 1) requestAnimationFrame(step);
+  })();
+}
+
+function _initBrainRenderer(activations) {
+  const container = document.getElementById('brain3dContainer');
+  if (!container) return;
+  if (_brain3) { cancelAnimationFrame(_brain3.animId); _brain3.renderer.dispose(); container.innerHTML = ''; _brain3 = null; }
+
+  const T = THREE;
+  const W = container.clientWidth || 560, H = 320;
+
+  const renderer = new T.WebGLRenderer({ antialias: true, alpha: false });
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  renderer.setSize(W, H);
+  renderer.domElement.style.cssText = 'display:block;width:100%;height:100%';
+  container.appendChild(renderer.domElement);
+
+  const scene = new T.Scene();
+  scene.background = new T.Color(0x09090f);
+
+  const camera = new T.PerspectiveCamera(40, W/H, 0.1, 20);
+  camera.position.set(3.0, 0.15, 0.3);
+  camera.lookAt(0, 0, 0);
+
+  // Lighting setup: ambient + key + fill + cyan rim
+  scene.add(new T.AmbientLight(0x1a2444, 3.5));
+  const key = new T.DirectionalLight(0xc8d8ff, 1.8); key.position.set(2, 2.5, 1.5); scene.add(key);
+  const fill = new T.DirectionalLight(0x223366, 0.6); fill.position.set(-2, -1, -2); scene.add(fill);
+  const rim = new T.DirectionalLight(0x1a4060, 0.5); rim.position.set(0, 0, -3); scene.add(rim);
+
+  const { geo, vertNets } = _createBrainGeo();
+  const mat = new T.MeshPhongMaterial({ vertexColors: true, shininess: 20, specular: new T.Color(0x1a2a50) });
+  const mesh = new T.Mesh(geo, mat);
+  scene.add(mesh);
+
+  const controls = new T.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true; controls.dampingFactor = 0.07;
+  controls.minDistance = 1.8; controls.maxDistance = 7.0;
+  controls.enablePan = false; controls.rotateSpeed = 0.7;
+
+  _brain3 = { renderer, scene, camera, mesh, controls, vertNets, animId: null };
+  _updateBrainColors(activations);
+
+  (function animate() {
+    _brain3.animId = requestAnimationFrame(animate);
+    controls.update();
+    renderer.render(scene, camera);
+  })();
+
+  new ResizeObserver(() => {
+    const w = container.clientWidth;
+    if (w < 10) return;
+    renderer.setSize(w, H);
+    camera.aspect = w / H;
+    camera.updateProjectionMatrix();
+  }).observe(container);
+}
+
+// ── Brain map ─────────────────────────────────────────────────────────────────
+function renderBrainMap(act) {
+  _loadThreeJS().then(() => {
+    if (!_brain3) _initBrainRenderer(act);
+    else _updateBrainColors(act);
+  }).catch(err => console.warn('Three.js failed to load:', err));
+
+  const leg = $('brainLegend'); leg.innerHTML = '';
+  NET_ORDER.forEach(net => {
+    const val = act[net]??0, pct = Math.round(val*100);
+    const item = document.createElement('div'); item.className = 'brain-legend-item';
+    item.innerHTML = `<div class="legend-dot" style="background:${NET_COLORS[net]};opacity:${(0.3+val*0.7).toFixed(2)}"></div><span>${NET_ABBR[net]}</span><span class="legend-pct" style="color:${NET_COLORS[net]}">${pct}%</span>`;
+    tip(item, netTipHtml(net,pct), NET_ABBR[net]+' — '+NET_LABELS[net].toUpperCase());
+    leg.appendChild(item);
+  });
 }
 
 // ── Timeseries ────────────────────────────────────────────────────────────────
