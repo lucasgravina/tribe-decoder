@@ -159,15 +159,9 @@
 
     /* ── Brain map ── */
     .brain-map-wrap{display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap}
-    .brain-view-label{font-size:9px;letter-spacing:.18em;color:var(--cyan-dim);text-align:center;margin-top:8px;font-weight:500}
-    .brain3d-wrap{flex:1;min-width:300px}
-    .brain3d-container{width:100%;height:320px;border-radius:3px;overflow:hidden;cursor:grab;background:#09090f}
-    .brain3d-container:active{cursor:grabbing}
-    .brain-view-btns{display:flex;gap:6px;margin-bottom:8px}
-    .brain-view-btn{padding:4px 14px;font-family:var(--mono);font-size:9px;letter-spacing:.15em;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;border-radius:2px;transition:all .15s}
-    .brain-view-btn:hover{color:var(--text);border-color:var(--border-hi)}
-    .brain-view-btn.active{background:var(--cyan-glow);color:var(--cyan);border-color:var(--cyan-dim)}
-    .brain-legend{flex-shrink:0;display:flex;flex-direction:column;gap:8px;padding-top:44px}
+    .brain-view-label{font-size:9px;letter-spacing:.15em;color:var(--text-dim);text-align:center;margin-bottom:6px}
+    .brain-svg-wrap{flex:1;min-width:180px}
+    .brain-legend{flex-shrink:0;display:flex;flex-direction:column;gap:8px;padding-top:24px}
     .brain-legend-item{display:flex;align-items:center;gap:8px;font-size:10px;color:var(--text-dim)}
     .legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
     .legend-pct{margin-left:auto;font-size:10px;min-width:28px;text-align:right}
@@ -763,23 +757,49 @@
         </div>
       </div>
       <div class="panel">
-        <div class="panel-header"><span class="panel-label">Cortical Network Map</span><span style="font-size:10px;color:var(--text-dim)">Yeo 7 networks · 3D surface · drag to rotate</span></div>
+        <div class="panel-header"><span class="panel-label">Cortical Network Map</span><span style="font-size:10px;color:var(--text-dim)">schematic · Yeo 7-network anatomy · circle size = relative activation</span></div>
         <div class="panel-body">
           <div class="brain-map-wrap">
-            <div class="brain3d-wrap">
-              <div class="brain-view-btns">
-                <button class="brain-view-btn active" data-view="lateral" onclick="setBrainView('lateral')">LATERAL</button>
-                <button class="brain-view-btn" data-view="medial" onclick="setBrainView('medial')">MEDIAL</button>
-              </div>
-              <div id="brain3dContainer" class="brain3d-container"></div>
-              <div class="brain-view-label">LEFT HEMISPHERE · DRAG TO ROTATE</div>
+            <div class="brain-svg-wrap">
+              <div class="brain-view-label">LATERAL (LEFT HEMISPHERE)</div>
+              <svg id="brainLateral" viewBox="0 0 280 195" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+                <path d="M 38,102 C 36,70 50,40 78,26 C 106,12 136,8 162,14 C 188,20 212,36 228,62 C 244,88 246,116 238,140 C 230,164 212,178 188,184 C 164,190 138,186 114,176 C 90,166 68,150 54,130 C 44,118 39,110 38,102 Z" fill="#0d0f1c" stroke="#2a3060" stroke-width="1.5"/>
+                <path d="M 62,138 C 95,118 132,118 168,132" fill="none" stroke="#1c2040" stroke-width="1.2"/>
+                <path d="M 144,12 C 148,55 150,95 146,138" fill="none" stroke="#1c2040" stroke-width="1" stroke-dasharray="3,3"/>
+                <g><circle id="lc-Vis" cx="218" cy="102" r="0" opacity="0.85"/><text id="lt-Vis" x="218" y="102" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#7a7af0;pointer-events:none">VIS</text></g>
+                <g><circle id="lc-SomMot" cx="148" cy="50" r="0" opacity="0.85"/><text id="lt-SomMot" x="148" y="50" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#f03aa0;pointer-events:none">SMN</text></g>
+                <g><circle id="lc-DorsAttn" cx="192" cy="46" r="0" opacity="0.85"/><text id="lt-DorsAttn" x="192" y="46" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#c03af0;pointer-events:none">DAN</text></g>
+                <g><circle id="lc-SalVentAttn" cx="110" cy="122" r="0" opacity="0.85"/><text id="lt-SalVentAttn" x="110" y="122" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#f0a83a;pointer-events:none">SAL</text></g>
+                <g><circle id="lc-Limbic" cx="66" cy="152" r="0" opacity="0.85"/><text id="lt-Limbic" x="66" y="152" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#f05a5a;pointer-events:none">LMB</text></g>
+                <g><circle id="lc-Cont" cx="78" cy="70" r="0" opacity="0.85"/><text id="lt-Cont" x="78" y="70" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#3af0c0;pointer-events:none">FPN</text></g>
+                <g><circle id="lc-Default" cx="182" cy="150" r="0" opacity="0.85"/><text id="lt-Default" x="182" y="150" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#3a80f0;pointer-events:none">DMN</text></g>
+              </svg>
+            </div>
+            <div class="brain-svg-wrap">
+              <div class="brain-view-label">MEDIAL (LEFT HEMISPHERE)</div>
+              <svg id="brainMedial" viewBox="0 0 280 195" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+                <path d="M 242,102 C 244,70 230,40 202,26 C 174,12 144,8 118,14 C 92,20 68,36 52,62 C 36,88 34,116 42,140 C 50,164 68,178 92,184 C 116,190 142,186 166,176 C 190,166 212,150 226,130 C 236,118 241,110 242,102 Z" fill="#0d0f1c" stroke="#2a3060" stroke-width="1.5"/>
+                <path d="M 100,102 C 120,94 160,94 180,102" fill="none" stroke="#1c2040" stroke-width="1" stroke-dasharray="2,3"/>
+                <path d="M 108,80 C 130,72 150,72 172,80" fill="none" stroke="#1c2040" stroke-width="1" stroke-dasharray="2,3"/>
+                <circle id="mc-Default-pfc" cx="118" cy="60" r="0" opacity="0.85" fill="#3a80f0"/>
+                <text x="118" y="60" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#3a80f0;pointer-events:none">DMN</text>
+                <circle id="mc-Default-pcc" cx="162" cy="120" r="0" opacity="0.7" fill="#3a80f0"/>
+                <circle id="mc-SalVentAttn" cx="118" cy="100" r="0" opacity="0.85" fill="#f0a83a"/>
+                <text x="118" y="100" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#f0a83a;pointer-events:none">SAL</text>
+                <circle id="mc-Vis" cx="202" cy="110" r="0" opacity="0.85" fill="#7a7af0"/>
+                <text x="202" y="110" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#7a7af0;pointer-events:none">VIS</text>
+                <circle id="mc-SomMot" cx="148" cy="38" r="0" opacity="0.85" fill="#f03aa0"/>
+                <text x="148" y="38" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#f03aa0;pointer-events:none">SMN</text>
+                <circle id="mc-Limbic" cx="162" cy="155" r="0" opacity="0.85" fill="#f05a5a"/>
+                <text x="162" y="155" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#f05a5a;pointer-events:none">LMB</text>
+              </svg>
             </div>
             <div class="brain-legend" id="brainLegend"></div>
           </div>
         </div>
       </div>
       <div class="panel">
-        <div class="panel-header"><span class="panel-label">Network Activation Timeseries — Neural Activation Over Time</span><span style="font-size:10px;color:var(--text-dim)">1 TR = 1 second · normalized per network · click legend to toggle · click chart to explore</span></div>
+        <div class="panel-header"><span class="panel-label">Network Activation Timeseries</span><span style="font-size:10px;color:var(--text-dim)">1 TR = 1 second · normalized per network · click legend to toggle · click chart to explore</span></div>
         <div class="panel-body">
           <div style="position:relative">
             <svg id="tsSvg" style="width:100%;height:180px;overflow:visible"></svg>
@@ -789,13 +809,8 @@
         </div>
       </div>
       <div class="panel">
-        <div class="panel-header clickable" onclick="toggleSegments(this)" style="user-select:none">
-          <span class="panel-label">See Full Sentence-Level Analysis <span id="segCollapseArrow" class="collapse-arrow">▼</span></span>
-          <span style="font-size:10px;color:var(--text-dim)">dominant reaction profile per sentence · click any row to explore</span>
-        </div>
-        <div id="segmentsBody" style="max-height:0;overflow:hidden;transition:max-height .35s ease">
-          <div class="panel-body"><div class="segments-wrap" id="segmentsWrap"></div></div>
-        </div>
+        <div class="panel-header"><span class="panel-label">Sentence-Level Analysis</span><span style="font-size:10px;color:var(--text-dim)">dominant reaction profile per sentence · click any row to explore</span></div>
+        <div class="panel-body"><div class="segments-wrap" id="segmentsWrap"></div></div>
       </div>
       <div class="panel">
         <div class="panel-header"><span class="panel-label">Influence Profiles</span><span style="font-size:10px;color:var(--text-dim)">scored from activation pattern · rule-based · no LLM</span></div>
@@ -1323,201 +1338,42 @@ function renderRoiTable(rois) {
   });
 }
 
-// ── Three.js 3D Brain ─────────────────────────────────────────────────────────
-const NET_COLOR_RGB = {
-  Vis:        [0.478, 0.478, 0.941],
-  SomMot:     [0.941, 0.227, 0.627],
-  DorsAttn:   [0.753, 0.227, 0.941],
-  SalVentAttn:[0.941, 0.659, 0.227],
-  Limbic:     [0.941, 0.353, 0.353],
-  Cont:       [0.227, 0.941, 0.753],
-  Default:    [0.227, 0.502, 0.941],
-};
-let _brain3 = null;
-
-function _loadThreeJS() {
-  if (window.THREE && window.THREE.OrbitControls) return Promise.resolve();
-  if (window._threeJSP) return window._threeJSP;
-  window._threeJSP = new Promise((resolve, reject) => {
-    const s1 = document.createElement('script');
-    s1.src = 'https://cdn.jsdelivr.net/npm/three@0.134.0/build/three.min.js';
-    s1.onload = () => {
-      const s2 = document.createElement('script');
-      s2.src = 'https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js';
-      s2.onload = resolve; s2.onerror = reject;
-      document.head.appendChild(s2);
-    };
-    s1.onerror = reject;
-    document.head.appendChild(s1);
-  });
-  return window._threeJSP;
-}
-
-function _netForVert(nx, ny, nz) {
-  // Yeo 7 region assignment by unit normal vector (+Y=superior, +Z=anterior, +X=lateral)
-  if (nz < -0.50 && ny > -0.35) return 'Vis';           // occipital
-  if (ny > 0.60) return 'SomMot';                         // superior / central strip
-  if (ny > 0.22 && nz < -0.12 && nz > -0.50) return 'DorsAttn'; // superior parietal / IPS
-  if (ny < -0.48) return 'Limbic';                        // inferior temporal / parahippocampal
-  if (nz > 0.46 && ny > 0.05) return 'Cont';             // lateral prefrontal
-  if (ny > -0.30 && ny < 0.22 && nz > -0.08 && nz < 0.46) return 'SalVentAttn'; // lateral mid
-  return 'Default';                                        // TPJ, angular gyrus, PCC, mPFC
-}
-
-function _createBrainGeo() {
-  const T = THREE;
-  const geo = new T.SphereGeometry(1.0, 96, 64);
-  const pos = geo.attributes.position;
-  const count = pos.count;
-  const vertNets = new Array(count);
-  const colors = new Float32Array(count * 3);
-
-  for (let i = 0; i < count; i++) {
-    let x = pos.getX(i), y = pos.getY(i), z = pos.getZ(i);
-    const len = Math.sqrt(x*x+y*y+z*z);
-    const nx=x/len, ny=y/len, nz=z/len;
-
-    // Brain proportions: slight anterior bulge, compressed height, elongated AP
-    x = nx * (1.0 + Math.max(0, nz) * 0.10);
-    y = ny * 0.88;
-    z = nz * 1.12;
-
-    // Temporal lobe: inferior-lateral bulge
-    if (ny < -0.18 && nx > 0.08) {
-      const t = Math.max(0, -(ny+0.18)) * Math.max(0, nx-0.08);
-      x += nx * t * 0.55;
-      y += ny * t * 0.12;
-    }
-
-    // Gyral surface noise (multi-frequency sinusoidal — simulates gyri/sulci)
-    const phi = Math.atan2(nx, nz);
-    const theta = Math.acos(Math.max(-1, Math.min(1, ny)));
-    const gnoise = (
-      Math.sin(phi*5.7 + theta*4.2) * Math.cos(theta*6.1 + 1.3) * 0.50 +
-      Math.sin(phi*9.3 + 0.8) * Math.sin(theta*8.7 + 2.1)       * 0.30 +
-      Math.cos(phi*14.1 + theta*3.2) * Math.sin(phi*2.3 + theta*12.4) * 0.20
-    ) * 0.036;
-
-    const r = Math.sqrt(x*x+y*y+z*z);
-    pos.setXYZ(i, x+(x/r)*gnoise, y+(y/r)*gnoise, z+(z/r)*gnoise);
-  }
-  geo.computeVertexNormals();
-
-  // Re-read deformed positions for network assignment
-  for (let i = 0; i < count; i++) {
-    const x=pos.getX(i),y=pos.getY(i),z=pos.getZ(i);
-    const r=Math.sqrt(x*x+y*y+z*z);
-    const net = _netForVert(x/r, y/r, z/r);
-    vertNets[i] = net;
-    const c = NET_COLOR_RGB[net];
-    colors[i*3]=c[0]*0.07; colors[i*3+1]=c[1]*0.07; colors[i*3+2]=c[2]*0.07;
-  }
-  geo.setAttribute('color', new T.BufferAttribute(colors, 3));
-  return { geo, vertNets };
-}
-
-function _updateBrainColors(activations) {
-  if (!_brain3) return;
-  const { mesh, vertNets } = _brain3;
-  const colors = mesh.geometry.attributes.color.array;
-  const count = mesh.geometry.attributes.position.count;
-  for (let i = 0; i < count; i++) {
-    const net = vertNets[i];
-    const act = activations[net] ?? 0;
-    const c = NET_COLOR_RGB[net];
-    const b = 0.07 + act * 0.86;
-    colors[i*3]=c[0]*b; colors[i*3+1]=c[1]*b; colors[i*3+2]=c[2]*b;
-  }
-  mesh.geometry.attributes.color.needsUpdate = true;
-}
-
-function setBrainView(view) {
-  document.querySelectorAll('.brain-view-btn').forEach(b => b.classList.toggle('active', b.dataset.view === view));
-  if (!_brain3) return;
-  const { camera, controls } = _brain3;
-  const end = new THREE.Vector3(...(view === 'medial' ? [-3.0, 0.15, 0.3] : [3.0, 0.15, 0.3]));
-  const start = camera.position.clone();
-  const t0 = performance.now(), dur = 700;
-  (function step() {
-    const t = Math.min(1, (performance.now()-t0)/dur);
-    const e = 1 - Math.pow(1-t, 3);
-    camera.position.lerpVectors(start, end, e);
-    camera.lookAt(0, 0, 0);
-    controls.target.set(0, 0, 0);
-    if (t < 1) requestAnimationFrame(step);
-  })();
-}
-
-function _initBrainRenderer(activations) {
-  const container = document.getElementById('brain3dContainer');
-  if (!container) return;
-  if (_brain3) { cancelAnimationFrame(_brain3.animId); _brain3.renderer.dispose(); container.innerHTML = ''; _brain3 = null; }
-
-  const T = THREE;
-  const W = container.clientWidth || 560, H = 320;
-
-  const renderer = new T.WebGLRenderer({ antialias: true, alpha: false });
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  renderer.setSize(W, H);
-  renderer.domElement.style.cssText = 'display:block;width:100%;height:100%';
-  container.appendChild(renderer.domElement);
-
-  const scene = new T.Scene();
-  scene.background = new T.Color(0x09090f);
-
-  const camera = new T.PerspectiveCamera(40, W/H, 0.1, 20);
-  camera.position.set(3.0, 0.15, 0.3);
-  camera.lookAt(0, 0, 0);
-
-  // Lighting setup: ambient + key + fill + cyan rim
-  scene.add(new T.AmbientLight(0x1a2444, 3.5));
-  const key = new T.DirectionalLight(0xc8d8ff, 1.8); key.position.set(2, 2.5, 1.5); scene.add(key);
-  const fill = new T.DirectionalLight(0x223366, 0.6); fill.position.set(-2, -1, -2); scene.add(fill);
-  const rim = new T.DirectionalLight(0x1a4060, 0.5); rim.position.set(0, 0, -3); scene.add(rim);
-
-  const { geo, vertNets } = _createBrainGeo();
-  const mat = new T.MeshPhongMaterial({ vertexColors: true, shininess: 20, specular: new T.Color(0x1a2a50) });
-  const mesh = new T.Mesh(geo, mat);
-  scene.add(mesh);
-
-  const controls = new T.OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true; controls.dampingFactor = 0.07;
-  controls.minDistance = 1.8; controls.maxDistance = 7.0;
-  controls.enablePan = false; controls.rotateSpeed = 0.7;
-
-  _brain3 = { renderer, scene, camera, mesh, controls, vertNets, animId: null };
-  _updateBrainColors(activations);
-
-  (function animate() {
-    _brain3.animId = requestAnimationFrame(animate);
-    controls.update();
-    renderer.render(scene, camera);
-  })();
-
-  new ResizeObserver(() => {
-    const w = container.clientWidth;
-    if (w < 10) return;
-    renderer.setSize(w, H);
-    camera.aspect = w / H;
-    camera.updateProjectionMatrix();
-  }).observe(container);
-}
-
 // ── Brain map ─────────────────────────────────────────────────────────────────
-function renderBrainMap(act) {
-  _loadThreeJS().then(() => {
-    if (!_brain3) _initBrainRenderer(act);
-    else _updateBrainColors(act);
-  }).catch(err => console.warn('Three.js failed to load:', err));
-
-  const leg = $('brainLegend'); leg.innerHTML = '';
-  NET_ORDER.forEach(net => {
-    const val = act[net]??0, pct = Math.round(val*100);
-    const item = document.createElement('div'); item.className = 'brain-legend-item';
-    item.innerHTML = `<div class="legend-dot" style="background:${NET_COLORS[net]};opacity:${(0.3+val*0.7).toFixed(2)}"></div><span>${NET_ABBR[net]}</span><span class="legend-pct" style="color:${NET_COLORS[net]}">${pct}%</span>`;
-    tip(item, netTipHtml(net,pct), NET_ABBR[net]+' — '+NET_LABELS[net].toUpperCase());
-    leg.appendChild(item);
+function renderBrainMap(act, suffix='') {
+  const MIN_R=8, MAX_R=26;
+  const mapping = {Vis:{lat:'lc-Vis',med:'mc-Vis'},SomMot:{lat:'lc-SomMot',med:'mc-SomMot'},DorsAttn:{lat:'lc-DorsAttn',med:null},SalVentAttn:{lat:'lc-SalVentAttn',med:'mc-SalVentAttn'},Limbic:{lat:'lc-Limbic',med:'mc-Limbic'},Cont:{lat:'lc-Cont',med:null},Default:{lat:'lc-Default',med:'mc-Default-pfc'}};
+  Object.entries(mapping).forEach(([net,ids])=>{
+    const val=act[net]??0, r=Math.round(MIN_R+val*(MAX_R-MIN_R)), color=NET_COLORS[net];
+    const s = suffix ? suffix+'-' : '';
+    const lc=document.getElementById(s+ids.lat); if(lc){lc.setAttribute('r',r);lc.setAttribute('fill',color);}
+    if(ids.med){const mc=document.getElementById(s+ids.med); if(mc){mc.setAttribute('r',r);mc.setAttribute('fill',color);}}
   });
+  const pcc=document.getElementById((suffix?suffix+'-':'')+'mc-Default-pcc');
+  if(pcc){const v=act['Default']??0;pcc.setAttribute('r',Math.round((MIN_R+v*(MAX_R-MIN_R))*0.7));}
+  // Add hover tooltips to all brain circles
+  const svgIds = suffix ? [`${suffix}-brainLateral`,`${suffix}-brainMedial`] : ['brainLateral','brainMedial'];
+  svgIds.forEach(svgId => {
+    const svgEl = document.getElementById(svgId);
+    if(!svgEl) return;
+    Object.entries(mapping).forEach(([net,ids])=>{
+      const pct=Math.round((act[net]??0)*100);
+      const s = suffix ? suffix+'-' : '';
+      [ids.lat, ids.med].filter(Boolean).forEach(cid=>{
+        const el = document.getElementById(s+cid);
+        if(el) tip(el, netTipHtml(net,pct), NET_ABBR[net]+' — '+NET_LABELS[net].toUpperCase());
+      });
+    });
+  });
+  if(!suffix) {
+    const leg=$('brainLegend'); leg.innerHTML='';
+    NET_ORDER.forEach(net=>{
+      const val=act[net]??0,pct=Math.round(val*100);
+      const item=document.createElement('div'); item.className='brain-legend-item';
+      item.innerHTML=`<div class="legend-dot" style="background:${NET_COLORS[net]};opacity:${(0.3+val*0.7).toFixed(2)}"></div><span>${NET_ABBR[net]}</span><span class="legend-pct" style="color:${NET_COLORS[net]}">${pct}%</span>`;
+      tip(item, netTipHtml(net,pct), NET_ABBR[net]+' — '+NET_LABELS[net].toUpperCase());
+      leg.appendChild(item);
+    });
+  }
 }
 
 // ── Timeseries ────────────────────────────────────────────────────────────────
@@ -2697,14 +2553,6 @@ function openMethodModal() { $('methodModal').classList.add('open'); document.bo
 function closeMethodModal() { $('methodModal').classList.remove('open'); document.body.style.overflow=''; }
 $('methodModal')?.addEventListener('click',e=>{ if(e.target===$('methodModal')) closeMethodModal(); });
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeMethodModal(); });
-
-// ── Sentence panel toggle ─────────────────────────────────────────────────────
-function toggleSegments(hdr) {
-  const body = $('segmentsBody'), arrow = $('segCollapseArrow');
-  const open = body.style.maxHeight !== '0px' && body.style.maxHeight !== '';
-  body.style.maxHeight = open ? '0px' : body.scrollHeight + 'px';
-  if (arrow) arrow.style.transform = open ? '' : 'rotate(180deg)';
-}
 
 // ── Comparison layer toggles ──────────────────────────────────────────────────
 ['compareL2Toggle','compareL3Toggle'].forEach((id, i) => {
