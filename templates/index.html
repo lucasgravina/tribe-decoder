@@ -3,7 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TRIBE Decoder</title>
+  <title>TRIBE Decoder — Neural Reaction Analysis</title>
+  <meta name="description" content="Reverse-engineer what emotional brain circuits a piece of text is designed to activate. Powered by Meta FAIR's TRIBE v2 fMRI brain encoding model.">
+  <meta property="og:title" content="TRIBE Decoder — Neural Reaction Analysis">
+  <meta property="og:description" content="Feed any text into a brain encoding model trained on 500+ hours of real fMRI data. See which circuits it targets and why.">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="TRIBE Decoder">
+  <meta name="twitter:description" content="Neural manipulation analysis powered by Meta FAIR TRIBE v2.">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2309090f'/><ellipse cx='16' cy='16' rx='11' ry='9' fill='none' stroke='%233af0c0' stroke-width='1.5'/><circle cx='10' cy='13' r='2' fill='%233a80f0'/><circle cx='22' cy='13' r='2' fill='%23f0a83a'/><circle cx='16' cy='20' r='2' fill='%23f03aa0'/></svg>">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
   <style>
@@ -48,7 +56,7 @@
     .panel-header{padding:11px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
     .panel-header.clickable{cursor:pointer;user-select:none;transition:background .15s}
     .panel-header.clickable:hover{background:rgba(255,255,255,.02)}
-    .panel-label{font-size:10px;letter-spacing:.2em;color:var(--text-dim);text-transform:uppercase}
+    .panel-label{font-size:12px;letter-spacing:.1em;color:var(--text-bright);text-transform:uppercase;font-weight:500}
     .panel-body{padding:18px 20px}
     .collapse-arrow{font-size:10px;color:var(--text-dim);transition:transform .25s;display:inline-block;margin-left:8px}
     .collapse-arrow.open{transform:rotate(180deg)}
@@ -132,8 +140,8 @@
     .network-bars{display:flex;flex-direction:column;gap:10px}
     .net-row{display:grid;grid-template-columns:52px 1fr 46px;align-items:center;gap:10px}
     .net-abbr{font-size:10px;letter-spacing:.1em;color:var(--text-dim);text-align:right}
-    .net-bar-bg{height:6px;background:var(--border);border-radius:3px;overflow:hidden;position:relative}
-    .net-bar-fill{height:100%;border-radius:3px;transition:width .8s cubic-bezier(.16,1,.3,1)}
+    .net-bar-bg{height:8px;background:var(--border);border-radius:4px;overflow:hidden;position:relative}
+    .net-bar-fill{height:100%;border-radius:4px;transition:width .8s cubic-bezier(.16,1,.3,1)}
     .net-value{font-size:11px;color:var(--text-dim);text-align:right}
     .net-label-row{margin-bottom:4px;display:flex;align-items:center;justify-content:space-between}
     .net-label{font-size:10px;letter-spacing:.06em}
@@ -185,7 +193,7 @@
     .profile-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
     .profile-label{font-size:12px;font-weight:500;color:var(--text-bright)}
     .profile-score-wrap{display:flex;align-items:center;gap:10px}
-    .profile-score-bar{width:80px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+    .profile-score-bar{width:100px;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
     .profile-score-fill{height:100%;border-radius:2px}
     .profile-score-num{font-size:11px;width:36px;text-align:right}
     .profile-mechanism{font-family:var(--serif);font-size:13px;color:var(--text-dim);line-height:1.65}
@@ -257,6 +265,172 @@
     .brain-compare-label{font-size:9px;letter-spacing:.12em;margin-bottom:8px}
 
     .hidden{display:none!important}
+
+    /* ── Tooltip ── */
+    .tt{position:fixed;z-index:9999;background:var(--surface-2);border:1px solid var(--border-hi);border-radius:4px;padding:12px 14px;max-width:300px;pointer-events:none;box-shadow:0 8px 32px rgba(0,0,0,.75);display:none}
+    .tt-title{font-size:9px;letter-spacing:.18em;color:var(--cyan);margin-bottom:8px;text-transform:uppercase}
+    .tt-value{font-size:20px;font-weight:300;color:var(--text-bright);letter-spacing:-.5px;line-height:1;margin-bottom:4px}
+    .tt-body{font-family:var(--serif);font-size:12px;color:var(--text);line-height:1.55}
+    .tt-note{font-size:11px;color:var(--text-dim);margin-top:6px;font-family:var(--serif);line-height:1.5}
+    .tt-ref{font-size:9px;color:var(--text-dim);margin-top:8px;border-top:1px solid var(--border);padding-top:6px;font-style:italic;letter-spacing:.04em}
+    .tt-badge{display:inline-block;font-size:9px;letter-spacing:.1em;padding:2px 7px;border-radius:2px;margin-bottom:6px;border:1px solid}
+
+    /* ── Signal quality ── */
+    .signal-row{display:flex;align-items:center;gap:12px;margin-top:8px;flex-wrap:wrap}
+    .sq-wrap{display:flex;align-items:center;gap:6px;font-size:9px;letter-spacing:.12em;color:var(--text-dim)}
+    .sq-dots{display:flex;gap:2px}
+    .sq-dot{width:6px;height:6px;border-radius:1px;background:var(--border);transition:background .3s}
+    .sq-dot.filled{background:var(--cyan)}
+    .sq-label{font-size:9px;letter-spacing:.12em}
+    .analytical-ratio{font-size:9px;color:var(--text-dim);letter-spacing:.08em}
+
+    /* ── Comparison: divergence overview ── */
+    .divergence-card{background:var(--surface-2);border:1px solid var(--border);border-radius:4px;padding:14px 18px;margin-bottom:16px;display:flex;align-items:flex-start;gap:32px;flex-wrap:wrap}
+    .div-metric{min-width:100px}
+    .div-metric-label{font-size:9px;letter-spacing:.18em;color:var(--text-dim);margin-bottom:4px}
+    .div-metric-value{font-size:26px;font-weight:300;letter-spacing:-1px;line-height:1}
+    .div-metric-sub{font-size:10px;color:var(--text-dim);margin-top:3px}
+    .div-net-bars{flex:1;min-width:200px}
+    .div-bar-row{display:grid;grid-template-columns:28px 1fr 28px 28px;align-items:center;gap:6px;margin-bottom:5px}
+    .div-bar-bg{height:4px;background:var(--border);border-radius:2px;overflow:hidden;position:relative}
+    .div-bar-fill{position:absolute;top:0;height:100%;border-radius:2px}
+
+    /* ── Comparison: per-source panels ── */
+    .src-panel{background:var(--surface);border:1px solid var(--border);border-radius:4px;margin-bottom:12px;overflow:hidden}
+    .src-panel-header{padding:11px 16px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;transition:background .15s}
+    .src-panel-header:hover{background:rgba(255,255,255,.02)}
+    .src-panel-body{display:none;padding:16px}
+    .src-panel-body.open{display:block}
+    .src-panel-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+    @media(max-width:760px){.src-panel-grid{grid-template-columns:1fr}}
+    .src-panel-section-label{font-size:9px;letter-spacing:.18em;color:var(--text-dim);margin-bottom:10px}
+
+    /* ── Mini network bars (comparison panels) ── */
+    .mini-nets{display:flex;flex-direction:column;gap:7px}
+    .mini-net-row{display:grid;grid-template-columns:28px 1fr 32px;align-items:center;gap:6px}
+    .mini-net-abbr{font-size:9px;letter-spacing:.06em;color:var(--text-dim);text-align:right}
+    .mini-bar-bg{height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+    .mini-bar-fill{height:100%;border-radius:2px;transition:width .8s cubic-bezier(.16,1,.3,1)}
+    .mini-net-pct{font-size:9px;color:var(--text-dim);text-align:right}
+
+    /* ── Compact profiles (comparison panels) ── */
+    .compact-profiles{display:flex;flex-direction:column;gap:7px}
+    .compact-profile-row{display:grid;grid-template-columns:1fr 56px 30px;align-items:center;gap:8px}
+    .compact-profile-name{font-size:10px;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .compact-bar-bg{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+    .compact-bar-fill{height:100%;border-radius:2px;transition:width .8s cubic-bezier(.16,1,.3,1)}
+    .compact-profile-pct{font-size:9px;text-align:right}
+
+    /* ── Comparison enhanced summary cards ── */
+    .compare-summary-card .card-mini-nets{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:5px}
+    .compare-summary-card .card-mini-row{display:grid;grid-template-columns:24px 1fr 26px;align-items:center;gap:5px}
+    .compare-summary-card .card-mini-abbr{font-size:8px;color:var(--text-dim);text-align:right}
+    .compare-summary-card .card-mini-bar{height:3px;background:var(--border);border-radius:2px;overflow:hidden}
+    .compare-summary-card .card-mini-fill{height:100%;border-radius:2px}
+    .compare-summary-card .card-mini-pct{font-size:8px;color:var(--text-dim);text-align:right}
+    .compare-summary-card .card-profiles{margin-top:10px;padding-top:10px;border-top:1px solid var(--border)}
+    .compare-summary-card .card-profile-line{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+    .compare-summary-card .card-profile-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+    .compare-summary-card .card-profile-name{font-size:10px;color:var(--text)}
+    .compare-summary-card .card-profile-pct{font-size:10px;margin-left:auto}
+
+    /* ── Timeseries clip ── */
+    .ts-axis-label{font-family:var(--mono);font-size:9px;fill:var(--text-dim)}
+
+    /* ── Hero ── */
+    .hero{background:var(--surface);border:1px solid var(--border);border-top:2px solid var(--cyan);border-radius:4px;padding:32px 36px;margin-bottom:16px;display:flex;align-items:center;gap:40px}
+    .hero-text{flex:1;min-width:0}
+    .hero-brain{flex-shrink:0;width:260px;opacity:.88}
+    @media(max-width:860px){.hero{flex-direction:column;gap:24px}.hero-brain{width:100%;max-width:300px;margin:0 auto}}
+    .hero-eyebrow{font-size:9px;letter-spacing:.25em;color:var(--cyan-dim);margin-bottom:12px}
+    .hero-headline{font-family:var(--serif);font-size:24px;font-weight:600;color:var(--text-bright);line-height:1.25;margin-bottom:12px}
+    .hero-sub{font-family:var(--serif);font-size:14px;color:var(--text-dim);line-height:1.7;margin-bottom:16px}
+    .hero-badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+    .hero-badge{font-size:9px;letter-spacing:.12em;padding:3px 10px;border:1px solid var(--border-hi);border-radius:2px;color:var(--text-dim)}
+    .hero-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding-top:14px;border-top:1px solid var(--border)}
+
+    /* ── Example buttons ── */
+    .example-section{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+    .example-label{font-size:9px;letter-spacing:.15em;color:var(--text-dim);margin-bottom:8px}
+    .example-btns{display:flex;gap:6px;flex-wrap:wrap}
+    .example-btn{font-family:var(--mono);font-size:10px;letter-spacing:.08em;padding:5px 12px;background:transparent;border:1px solid var(--border);border-radius:2px;color:var(--text-dim);cursor:pointer;transition:border-color .15s,color .15s;white-space:nowrap}
+    .example-btn:hover{border-color:var(--cyan-dim);color:var(--cyan)}
+
+    /* ── Methodology accordion ── */
+    .method-accordion{background:var(--surface);border:1px solid var(--border);border-radius:4px;margin-bottom:16px;overflow:hidden}
+    .method-header{padding:11px 20px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;transition:background .15s}
+    .method-header:hover{background:rgba(255,255,255,.02)}
+    .method-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+    .method-body.open{max-height:1400px}
+    .method-inner{padding:16px 20px 20px}
+    .method-steps{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
+    .method-step{display:flex;gap:14px;align-items:flex-start}
+    .method-step-num{width:22px;height:22px;border-radius:50%;border:1px solid var(--border-hi);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--cyan-dim);flex-shrink:0;margin-top:2px}
+    .method-step-content{font-family:var(--serif);font-size:13px;color:var(--text);line-height:1.6}
+    .method-step-label{font-size:10px;letter-spacing:.08em;color:var(--text-bright);font-family:var(--mono);display:block;margin-bottom:3px}
+    .method-disclaimer{background:var(--bg);border-left:3px solid var(--amber-dim);padding:12px 16px;border-radius:0 3px 3px 0;font-family:var(--serif);font-size:13px;color:var(--text-dim);line-height:1.6;margin-top:16px}
+    .method-disclaimer strong{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--amber);display:block;margin-bottom:4px}
+
+    /* ── Empty state ── */
+    .empty-state{padding:48px 20px;text-align:center;display:flex;flex-direction:column;align-items:center;gap:10px}
+    .empty-state-glyph{font-size:36px;opacity:.1;margin-bottom:4px}
+    .empty-state-title{font-size:11px;letter-spacing:.2em;color:var(--text-dim)}
+    .empty-state-sub{font-family:var(--serif);font-size:14px;color:var(--text-dim);max-width:380px;line-height:1.65}
+
+    /* ── Results bar ── */
+    .results-bar{display:flex;align-items:center;gap:8px;margin-bottom:16px}
+    .results-bar-left{flex:1;font-family:var(--serif);font-size:13px;color:var(--text-dim);font-style:italic}
+    .btn-sm{font-family:var(--mono);font-size:10px;letter-spacing:.1em;padding:6px 12px;border:1px solid var(--border-hi);border-radius:2px;background:transparent;color:var(--text-dim);cursor:pointer;transition:border-color .15s,color .15s}
+    .btn-sm:hover{border-color:var(--cyan-dim);color:var(--cyan)}
+
+    /* ── Elapsed timer ── */
+    .elapsed-wrap{margin-top:14px;font-size:11px;color:var(--text-dim);letter-spacing:.06em}
+    #elapsedTimer{color:var(--text-bright);font-variant-numeric:tabular-nums}
+
+    /* ── Footer ── */
+    footer{border-top:1px solid var(--border);padding:20px 32px 32px;font-size:10px;color:var(--text-dim);line-height:1.8}
+    .footer-inner{max-width:1200px;margin:0 auto}
+    .footer-credits{display:flex;flex-wrap:wrap;gap:24px;margin-bottom:14px}
+    .footer-credit-label{letter-spacing:.12em;color:var(--text-dim);margin-bottom:2px}
+    .footer-credit-val{color:var(--text)}
+    .footer-disclaimer{font-family:var(--serif);font-size:12px;color:var(--text-dim);max-width:800px;border-top:1px solid var(--border);padding-top:12px;line-height:1.7}
+
+    /* ── Methodology modal ── */
+    .modal-overlay{position:fixed;inset:0;background:rgba(9,9,15,.94);z-index:10000;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px 60px}
+    .modal-overlay.open{display:flex}
+    .modal-box{background:var(--surface);border:1px solid var(--border-hi);border-radius:6px;max-width:780px;width:100%;padding:36px 40px;position:relative;flex-shrink:0}
+    @media(max-width:600px){.modal-box{padding:24px 20px}}
+    .modal-close{position:absolute;top:16px;right:20px;background:none;border:1px solid var(--border);border-radius:2px;font-family:var(--mono);font-size:11px;letter-spacing:.12em;color:var(--text-dim);cursor:pointer;padding:4px 10px;transition:color .15s,border-color .15s}
+    .modal-close:hover{color:var(--text);border-color:var(--border-hi)}
+    .modal-title{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--text-bright);margin-bottom:6px}
+    .modal-sub{font-family:var(--serif);font-size:14px;color:var(--text-dim);margin-bottom:24px;line-height:1.6}
+    .modal-section{margin-bottom:24px}
+    .modal-section-title{font-size:9px;letter-spacing:.22em;color:var(--cyan-dim);margin-bottom:12px;border-bottom:1px solid var(--border);padding-bottom:6px}
+    .modal-step{display:flex;gap:14px;align-items:flex-start;margin-bottom:12px}
+    .modal-step-num{width:22px;height:22px;border-radius:50%;border:1px solid var(--cyan-dim);display:flex;align-items:center;justify-content:center;font-size:9px;color:var(--cyan-dim);flex-shrink:0;margin-top:2px}
+    .modal-step-text{font-family:var(--serif);font-size:13px;color:var(--text);line-height:1.6}
+    .modal-step-label{font-size:10px;letter-spacing:.08em;color:var(--text-bright);font-family:var(--mono);display:block;margin-bottom:3px}
+    .modal-lim{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--amber-dim);border-radius:0 3px 3px 0;padding:10px 14px;margin-bottom:8px;font-family:var(--serif);font-size:13px;color:var(--text-dim);line-height:1.5}
+    .modal-lim strong{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--amber);display:block;margin-bottom:2px}
+    .modal-cit{font-family:var(--serif);font-size:12px;color:var(--text-dim);line-height:1.8}
+
+    /* ── Fade-in transitions ── */
+    @keyframes fadeInUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .results-wrap.active .primary-card{animation:fadeInUp .3s ease .0s both}
+    .results-wrap.active .two-col{animation:fadeInUp .3s ease .08s both}
+
+    /* ── Mobile improvements ── */
+    @media(max-width:600px){
+      .hero{padding:20px 16px}
+      .hero-headline{font-size:18px}
+      header{padding:10px 16px;flex-wrap:wrap;gap:10px}
+      .main{padding:16px 16px 60px}
+      .primary-card{padding:18px 20px;flex-direction:column}
+      .primary-right{text-align:left}
+      .manip-value{font-size:40px}
+      footer{padding:16px 16px 24px}
+      .results-bar{flex-wrap:wrap}
+    }
   </style>
 </head>
 <body>
@@ -280,22 +454,111 @@
 
 <div class="main">
 
-  <!-- Config panel — collapsed by default -->
-  <div class="panel">
-    <div class="panel-header clickable" id="configToggle">
-      <span class="panel-label">Colab Endpoint</span>
-      <div class="config-status-row">
-        <div class="status-dot" id="statusDot2"></div>
-        <span id="statusText2">NOT CONNECTED</span>
-        <span class="collapse-arrow" id="configArrow">▾</span>
+  <!-- ── Hero ── -->
+  <div class="hero">
+    <div class="hero-text">
+      <div class="hero-eyebrow">Open-Source · No LLM Interpretation · Rule-Based Neuroscience</div>
+      <div class="hero-headline">Decode the neural target of any piece of news.</div>
+      <div class="hero-sub">Feed any text into Meta FAIR's TRIBE v2 model — trained on 500+ hours of fMRI data from 700+ subjects — and get back a predicted cortical activation map. The interpretation layer is entirely rule-based, citing published neuroscience. No opinion. No AI speculation.</div>
+      <div class="hero-badges">
+        <span class="hero-badge">Meta FAIR TRIBE v2</span>
+        <span class="hero-badge">Schaefer 2018 · 200 parcels</span>
+        <span class="hero-badge">Yeo 7-network atlas</span>
+        <span class="hero-badge">20,484 cortical vertices</span>
+        <span class="hero-badge">700+ fMRI subjects</span>
+      </div>
+      <div class="hero-actions">
+        <button class="btn btn-ghost" onclick="openMethodModal()" style="font-size:10px">HOW DOES THIS WORK?</button>
+        <span style="font-size:10px;color:var(--text-dim)">↓ try an example or paste your own text</span>
       </div>
     </div>
-    <div class="collapsible-body" id="configBody">
-      <div class="panel-body">
-        <div class="config-row">
-          <input class="config-input" id="ngrokUrl" type="text" placeholder="https://xxxx-xx.ngrok-free.app" value="{{ ngrok_url }}" spellcheck="false" autocomplete="off"/>
-          <button class="btn btn-primary" id="saveConfigBtn">CONNECT</button>
+    <div class="hero-brain">
+      <svg viewBox="0 0 280 210" xmlns="http://www.w3.org/2000/svg" style="width:100%;filter:drop-shadow(0 0 24px rgba(58,240,192,0.07))">
+        <defs>
+          <radialGradient id="hbg" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#3af0c0" stop-opacity="0.05"/>
+            <stop offset="100%" stop-color="#3af0c0" stop-opacity="0"/>
+          </radialGradient>
+          <filter id="ng" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur stdDeviation="3.5" result="b"/>
+            <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <ellipse cx="140" cy="106" rx="126" ry="96" fill="url(#hbg)"/>
+        <!-- Main brain body -->
+        <path d="M 42,108 C 40,74 56,44 84,28 C 112,12 146,6 176,14 C 206,22 232,40 248,66 C 264,92 264,126 252,150 C 240,174 220,188 194,196 C 168,202 140,198 116,186 C 92,174 72,154 56,132 C 46,120 43,114 42,108 Z" fill="#0b0d1a" stroke="#2a3d5e" stroke-width="1.8"/>
+        <!-- Subtle top highlight -->
+        <path d="M 42,108 C 40,74 56,44 84,28 C 112,12 146,6 176,14 C 206,22 232,40 248,66" fill="none" stroke="#3af0c0" stroke-width="0.8" opacity="0.22" stroke-linecap="round"/>
+        <!-- Central sulcus -->
+        <path d="M 144,18 C 140,52 136,90 134,132" fill="none" stroke="#1c2d48" stroke-width="1.6" stroke-dasharray="5,3"/>
+        <!-- Sylvian fissure -->
+        <path d="M 62,116 C 90,104 128,102 162,108 C 182,112 198,120 206,130" fill="none" stroke="#1c2d48" stroke-width="1.8" stroke-dasharray="3,2"/>
+        <!-- Frontal sulci -->
+        <path d="M 70,80 C 90,66 116,62 136,70" fill="none" stroke="#162038" stroke-width="1.2"/>
+        <path d="M 68,94 C 88,82 114,80 132,88" fill="none" stroke="#162038" stroke-width="1"/>
+        <!-- Superior frontal gyrus edge -->
+        <path d="M 64,66 C 82,52 108,46 130,54" fill="none" stroke="#162038" stroke-width="1"/>
+        <!-- Parietal sulci -->
+        <path d="M 158,34 C 162,58 164,84 158,108" fill="none" stroke="#162038" stroke-width="1.2"/>
+        <path d="M 180,26 C 188,54 190,84 184,112" fill="none" stroke="#162038" stroke-width="1.2"/>
+        <!-- Occipital -->
+        <path d="M 218,72 C 238,90 244,116 238,140" fill="none" stroke="#162038" stroke-width="1.2"/>
+        <!-- Temporal gyri -->
+        <path d="M 76,142 C 100,132 128,130 154,138" fill="none" stroke="#162038" stroke-width="1"/>
+        <path d="M 82,156 C 106,148 132,148 158,154" fill="none" stroke="#162038" stroke-width="1"/>
+        <!-- Cerebellum -->
+        <path d="M 242,162 C 255,168 264,178 258,192 C 252,204 234,208 216,202 C 210,196 218,184 230,178 C 236,175 242,170 242,162 Z" fill="#0b0d1a" stroke="#1c2d48" stroke-width="1.2"/>
+        <path d="M 218,188 C 230,184 244,182 252,186" fill="none" stroke="#162038" stroke-width="0.8"/>
+        <path d="M 220,194 C 232,190 246,190 254,193" fill="none" stroke="#162038" stroke-width="0.8"/>
+        <!-- Brainstem -->
+        <path d="M 222,198 C 220,206 216,214 212,218" fill="none" stroke="#1c2d48" stroke-width="2.2" stroke-linecap="round"/>
+
+        <!-- Network activation dots — outer glow ring + core -->
+        <!-- FPN cyan (dlPFC) -->
+        <circle cx="80" cy="66" r="9" fill="#3af0c0" opacity="0.1"/>
+        <circle cx="80" cy="66" r="4" fill="#3af0c0" opacity="0.85" filter="url(#ng)"/>
+        <!-- SMN pink (precentral) -->
+        <circle cx="142" cy="42" r="9" fill="#f03aa0" opacity="0.1"/>
+        <circle cx="142" cy="42" r="4" fill="#f03aa0" opacity="0.8" filter="url(#ng)"/>
+        <!-- DAN purple (IPS) -->
+        <circle cx="192" cy="50" r="7" fill="#c03af0" opacity="0.1"/>
+        <circle cx="192" cy="50" r="3.5" fill="#c03af0" opacity="0.75" filter="url(#ng)"/>
+        <!-- SAL amber (ant. insula) -->
+        <circle cx="108" cy="106" r="9" fill="#f0a83a" opacity="0.1"/>
+        <circle cx="108" cy="106" r="4" fill="#f0a83a" opacity="0.82" filter="url(#ng)"/>
+        <!-- DMN blue (mPFC) -->
+        <circle cx="92" cy="52" r="7" fill="#3a80f0" opacity="0.1"/>
+        <circle cx="92" cy="52" r="3.5" fill="#3a80f0" opacity="0.8" filter="url(#ng)"/>
+        <!-- DMN blue (PCC) -->
+        <circle cx="188" cy="142" r="7" fill="#3a80f0" opacity="0.1"/>
+        <circle cx="188" cy="142" r="3" fill="#3a80f0" opacity="0.65" filter="url(#ng)"/>
+        <!-- VIS indigo (occipital) -->
+        <circle cx="236" cy="102" r="9" fill="#7a7af0" opacity="0.1"/>
+        <circle cx="236" cy="102" r="4" fill="#7a7af0" opacity="0.78" filter="url(#ng)"/>
+        <!-- LMB red (temporal pole) -->
+        <circle cx="62" cy="148" r="6" fill="#f05a5a" opacity="0.1"/>
+        <circle cx="62" cy="148" r="3" fill="#f05a5a" opacity="0.65" filter="url(#ng)"/>
+      </svg>
+    </div>
+  </div>
+
+  <!-- ── Methodology accordion ── -->
+  <div class="method-accordion">
+    <div class="method-header" id="methodAccordionHeader">
+      <span class="panel-label">Pipeline Overview</span>
+      <span class="collapse-arrow" id="methodArrow">▾</span>
+    </div>
+    <div class="method-body" id="methodBody">
+      <div class="method-inner">
+        <div class="method-steps">
+          <div class="method-step"><div class="method-step-num">1</div><div class="method-step-content"><span class="method-step-label">TEXT → SPEECH → WORD TIMING</span>TRIBE v2 converts your text to synthesized audio, then uses WhisperX for word-level timing alignment. Each word maps to a TR (1 second) of predicted brain activity.</div></div>
+          <div class="method-step"><div class="method-step-num">2</div><div class="method-step-content"><span class="method-step-label">LLAMA 3.2 + WAV2VEC-BERT FEATURE EXTRACTION</span>A LLaMA 3.2-3B model extracts semantic context; Wav2Vec-BERT extracts acoustic features from the synthesized speech. Both streams feed a multimodal transformer.</div></div>
+          <div class="method-step"><div class="method-step-num">3</div><div class="method-step-content"><span class="method-step-label">BOLD SIGNAL PREDICTION</span>The TRIBE v2 transformer outputs a predicted fMRI BOLD time series across all 20,484 vertices of the fsaverage5 cortical surface — one prediction per vertex per second.</div></div>
+          <div class="method-step"><div class="method-step-num">4</div><div class="method-step-content"><span class="method-step-label">SCHAEFER 2018 ATLAS MAPPING + Z-SCORING</span>Vertices are grouped into 200 named brain parcels (Schaefer 2018). Each parcel's temporal mean is z-scored relative to the full distribution.</div></div>
+          <div class="method-step"><div class="method-step-num">5</div><div class="method-step-content"><span class="method-step-label">YEO 7-NETWORK AGGREGATION</span>The 200 parcels are grouped into 7 functional networks following the Yeo 2011 atlas: DMN, Limbic, SAL, DAN, FPN (analytical/protective), SMN, VIS.</div></div>
+          <div class="method-step"><div class="method-step-num">6</div><div class="method-step-content"><span class="method-step-label">RULE-BASED REACTION PROFILE SCORING</span>Six emotional reaction profiles are scored from network activations using weighted rules grounded in published neuroscience. No LLM is involved in interpretation.</div></div>
         </div>
+        <div class="method-disclaimer"><strong>⚠ IMPORTANT LIMITATIONS</strong>This tool predicts population-average neural responses — not individual reactions. A high manipulation index reflects a predicted activation pattern, not proof of deceptive intent. Limbic (LMB) is consistently underestimated due to limited coverage in Schaefer 200. Results below 6 TRs are directionally informative but not robust. Research tool only.</div>
       </div>
     </div>
   </div>
@@ -315,6 +578,15 @@
       </div>
       <div class="collapsible-body expanded" id="inputBody">
         <div class="panel-body">
+          <div class="example-section">
+            <div class="example-label">LOAD EXAMPLE TEXT</div>
+            <div class="example-btns">
+              <button class="example-btn" onclick="loadExample(0)">Breaking News</button>
+              <button class="example-btn" onclick="loadExample(1)">Political Speech</button>
+              <button class="example-btn" onclick="loadExample(2)">Ad Copy</button>
+              <button class="example-btn" onclick="loadExample(3)">Neutral Control</button>
+            </div>
+          </div>
           <textarea class="text-input" id="textInput" placeholder="Paste any text — news article, headline, ad copy, political speech, social media post..." spellcheck="false"></textarea>
           <div class="input-footer">
             <span style="font-size:10px;color:var(--text-dim);max-width:500px;line-height:1.5">Text is converted to speech internally by TRIBE v2 for word-timing alignment. Expect 30–120 sec per query.</span>
@@ -325,6 +597,15 @@
     </div>
 
     <div class="error-panel" id="errorPanel"><div class="error-title">ERROR</div><div class="error-msg" id="errorMsg"></div></div>
+
+    <!-- Empty state (shown before first analysis) -->
+    <div class="panel" id="emptyState">
+      <div class="empty-state">
+        <div class="empty-state-glyph">⬡</div>
+        <div class="empty-state-title">NO ANALYSIS YET</div>
+        <div class="empty-state-sub">Paste text above or load an example, then click Run. Expect 30–120 seconds for inference — the model predicts fMRI activation across 20,484 cortical vertices.</div>
+      </div>
+    </div>
 
     <div class="panel" id="loadingPanel" style="display:none">
       <div class="panel-body loading-panel active">
@@ -338,11 +619,18 @@
           <div class="step" id="step4">4 — SCHAEFER 200-PARCEL ATLAS MAPPING</div>
           <div class="step" id="step5">5 — TIMESERIES + SEGMENT ANALYSIS</div>
         </div>
+        <div class="elapsed-wrap">Elapsed: <span id="elapsedTimer">0s</span></div>
       </div>
     </div>
 
     <!-- Normal results -->
     <div class="results-wrap" id="normalResults">
+      <div class="results-bar" id="resultsBar">
+        <span class="results-bar-left" id="resultsBarLabel">Analysis complete</span>
+        <button class="btn-sm" id="copySummaryBtn" onclick="copySummary()">COPY SUMMARY</button>
+        <button class="btn-sm" onclick="exportRawData()">EXPORT JSON</button>
+        <button class="btn-sm" onclick="resetAnalysis()">NEW ANALYSIS</button>
+      </div>
       <div class="warning-bar hidden" id="warningBar"></div>
       <div class="primary-card">
         <div>
@@ -354,6 +642,7 @@
           <div class="manip-eyebrow">MANIPULATION INDEX</div>
           <div class="manip-value" id="manipIndex">—</div>
           <div class="manip-scale">out of 10</div>
+          <div style="font-size:9px;color:var(--text-dim);margin-top:8px;max-width:160px;line-height:1.5;font-family:var(--serif)">Reflects predicted neural activation patterns — not evidence of intent.</div>
         </div>
       </div>
       <div class="two-col">
@@ -464,7 +753,7 @@
         <div class="loading-title">RUNNING PARALLEL TRIBE V2 INFERENCE</div>
         <div class="loading-sub">Analyzing all sources simultaneously · results will appear together</div>
         <div class="loading-steps">
-          <div class="step active" id="cstep1">SENDING ALL SOURCES TO COLAB</div>
+          <div class="step active" id="cstep1">SENDING ALL SOURCES TO MODAL</div>
           <div class="step" id="cstep2">TRIBE V2 INFERENCE RUNNING IN PARALLEL</div>
           <div class="step" id="cstep3">COMPUTING NETWORK DELTAS</div>
         </div>
@@ -473,36 +762,129 @@
 
     <!-- Comparison results -->
     <div class="results-wrap" id="compareResults">
+      <div id="divergenceOverview"></div>
       <div id="compareSummaryCards" class="compare-summary"></div>
+      <div id="compareSourcePanels"></div>
       <div class="panel">
         <div class="panel-header"><span class="panel-label">Network Activation Delta</span><span style="font-size:10px;color:var(--text-dim)">Δ max = largest spread across sources for that network</span></div>
         <div class="panel-body"><div id="deltaTableWrap"></div></div>
       </div>
       <div class="panel">
-        <div class="panel-header"><span class="panel-label">Sentence-Level Framing Diff</span><span style="font-size:10px;color:var(--text-dim)">dominant reaction profile per sentence per source</span></div>
-        <div class="panel-body"><div id="framingDiffWrap"></div></div>
-      </div>
-      <div class="panel">
         <div class="panel-header"><span class="panel-label">Brain Map Comparison</span><span style="font-size:10px;color:var(--text-dim)">circle size = relative activation · same scale across sources</span></div>
         <div class="panel-body"><div class="brain-compare-grid" id="brainCompareGrid"></div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><span class="panel-label">Sentence-Level Framing Diff</span><span style="font-size:10px;color:var(--text-dim)">dominant reaction profile per sentence per source</span></div>
+        <div class="panel-body"><div id="framingDiffWrap"></div></div>
       </div>
     </div>
   </div><!-- /compareMode -->
 
 </div><!-- /main -->
 
+<!-- ── Footer ── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-credits">
+      <div><div class="footer-credit-label">BRAIN ENCODING MODEL</div><div class="footer-credit-val">TRIBE v2 · Meta FAIR · d'Ascoli et al. (2026)</div></div>
+      <div><div class="footer-credit-label">BRAIN ATLAS</div><div class="footer-credit-val">Schaefer et al. (2018) Cerebral Cortex · doi:10.1093/cercor/bhx179</div></div>
+      <div><div class="footer-credit-label">NETWORK PARCELLATION</div><div class="footer-credit-val">Yeo et al. (2011) J Neurophysiol · 7-network atlas</div></div>
+      <div><div class="footer-credit-label">COMPUTE</div><div class="footer-credit-val">Modal · A10G GPU · serverless inference</div></div>
+    </div>
+    <div class="footer-disclaimer">TRIBE Decoder is a research tool. Predicted activation patterns reflect population-average responses from the TRIBE v2 model trained on 700+ subjects. High manipulation index scores indicate a predicted neural activation pattern consistent with emotional engagement — they do not imply deceptive intent or constitute a factual claim about any specific content. TRIBE v2 model weights are distributed under CC BY-NC 4.0 (Meta FAIR). Use responsibly.</div>
+  </div>
+</footer>
+
+<!-- ── Methodology modal ── -->
+<div class="modal-overlay" id="methodModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeMethodModal()">✕ CLOSE</button>
+    <div class="modal-title">How TRIBE Decoder Works</div>
+    <div class="modal-sub">A full-stack neuroscience pipeline — from raw text to predicted cortical activation maps — with no LLM in the interpretation layer.</div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">THE PIPELINE — 6 STEPS</div>
+      <div class="modal-step"><div class="modal-step-num">1</div><div class="modal-step-text"><span class="modal-step-label">TEXT → SPEECH → WORD-LEVEL TIMING</span>TRIBE v2 uses a text-to-speech engine internally to synthesize audio from your input. WhisperX then performs forced-alignment to assign every word to a specific time offset. This is why inference takes 30–120 seconds — the speech synthesis and alignment steps run on every query.</div></div>
+      <div class="modal-step"><div class="modal-step-num">2</div><div class="modal-step-text"><span class="modal-step-label">MULTI-MODAL FEATURE EXTRACTION</span>Two parallel encoders process the content: a LLaMA 3.2-3B language model extracts semantic and contextual features from text, while a Wav2Vec-BERT model extracts acoustic/prosodic features from the synthesized audio. Both streams are combined.</div></div>
+      <div class="modal-step"><div class="modal-step-num">3</div><div class="modal-step-text"><span class="modal-step-label">BOLD SIGNAL PREDICTION (20,484 VERTICES)</span>The TRIBE v2 transformer (trained on 500+ hours of naturalistic fMRI data from 700+ subjects) predicts a BOLD fMRI time series across all 20,484 vertices of the fsaverage5 cortical surface mesh. Output shape: (n_seconds, 20,484). This represents where the brain would activate when hearing this content.</div></div>
+      <div class="modal-step"><div class="modal-step-num">4</div><div class="modal-step-text"><span class="modal-step-label">SCHAEFER 2018 ATLAS MAPPING</span>The 20,484 vertex values are averaged within each of the 200 named parcels of the Schaefer 2018 atlas. Each parcel gets a single mean activation value. These are then z-scored relative to each other, so z=0 is average activation for this content, z=2 means 2 standard deviations above average.</div></div>
+      <div class="modal-step"><div class="modal-step-num">5</div><div class="modal-step-text"><span class="modal-step-label">YEO 7-NETWORK AGGREGATION</span>The 200 parcel z-scores are grouped into 7 functional networks following the Yeo 2011 parcellation: Default Mode (DMN), Limbic (LMB), Salience/VentAttn (SAL), Dorsal Attention (DAN), Frontoparietal Control (FPN — the analytical/protective network), Somatomotor (SMN), and Visual (VIS).</div></div>
+      <div class="modal-step"><div class="modal-step-num">6</div><div class="modal-step-text"><span class="modal-step-label">RULE-BASED REACTION PROFILE SCORING</span>Six emotional reaction profiles are scored from the network activation pattern using weighted combinations of network z-scores. Every scoring rule cites a specific published neuroscience paper. No LLM generates the scores or text. The manipulation index = top emotional profile score × 5 + analytical bypass score × 5, capped at 10.</div></div>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">KNOWN LIMITATIONS</div>
+      <div class="modal-lim"><strong>LIMBIC ALWAYS NEAR ZERO</strong>The Schaefer 200-parcel atlas has limited limbic coverage compared to dedicated amygdala/hippocampus atlases. Emotional content may show lower limbic scores than expected. This is a known atlas coverage issue, not a model failure.</div>
+      <div class="modal-lim"><strong>SHORT TEXT (&lt;8 TRs) = UNRELIABLE SIGNAL</strong>Below 6 seconds of content the activation estimates are based on very few timepoints. Results are directionally informative but should not be interpreted confidently.</div>
+      <div class="modal-lim"><strong>POPULATION AVERAGE — NOT INDIVIDUAL</strong>TRIBE v2 predicts the average neural response across the training population. Individual responses can differ substantially based on prior beliefs, expertise, and emotional state.</div>
+      <div class="modal-lim"><strong>ACTIVATION ≠ MANIPULATION INTENT</strong>High emotional activation scores mean the content predicted strong emotional brain circuit activation. This does not imply the creator intended manipulation — emotionally evocative language appears in poetry, literature, and public health communication too.</div>
+    </div>
+
+    <div class="modal-section">
+      <div class="modal-section-title">KEY CITATIONS</div>
+      <div class="modal-cit">
+        d'Ascoli et al. (2026). <em>A foundation model of vision, audition, and language for in-silico neuroscience.</em> Meta FAIR / TRIBE v2.<br>
+        Schaefer et al. (2018). <em>Local-Global Parcellation of the Human Cerebral Cortex.</em> Cerebral Cortex, doi:10.1093/cercor/bhx179.<br>
+        Yeo et al. (2011). <em>The organization of the human cerebral cortex estimated by intrinsic functional connectivity.</em> J Neurophysiol 106(3):1125–65.<br>
+        LeDoux (1996). <em>The Emotional Brain.</em> · Seeley et al. (2007). J Neurosci. · Buckner et al. (2008). Ann NY Acad Sci.<br>
+        Kahneman (2011). <em>Thinking, Fast and Slow.</em> · Miller &amp; Cohen (2001). Annu Rev Neurosci.
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
 const $ = id => document.getElementById(id);
 
 // ── Constants ─────────────────────────────────────────────────────────────────
 const NET_COLORS = {Default:'#3a80f0',Limbic:'#f05a5a',SalVentAttn:'#f0a83a',DorsAttn:'#c03af0',Cont:'#3af0c0',SomMot:'#f03aa0',Vis:'#7a7af0'};
-const NET_LABELS = {Default:'Default Mode',Limbic:'Limbic',SalVentAttn:'Salience / VentAttn',DorsAttn:'Dorsal Attention',Cont:'Frontoparietal ⓘ',SomMot:'Somatomotor',Vis:'Visual'};
+const NET_LABELS = {Default:'Default Mode',Limbic:'Limbic',SalVentAttn:'Salience / VentAttn',DorsAttn:'Dorsal Attention',Cont:'Frontoparietal',SomMot:'Somatomotor',Vis:'Visual'};
 const NET_ABBR   = {Default:'DMN',Limbic:'LMB',SalVentAttn:'SAL',DorsAttn:'DAN',Cont:'FPN',SomMot:'SMN',Vis:'VIS'};
 const NET_ORDER  = ['Default','Limbic','SalVentAttn','DorsAttn','Cont','SomMot','Vis'];
 const PROFILE_COLORS = {fear_threat:'#f05a5a',self_relevance:'#3a80f0',social_tribal:'#f0a83a',reward_validation:'#3af08a',analytical_bypass:'#7a7af0',urgency_action:'#f03aa0'};
 const PROFILE_SHORT  = {fear_threat:'Fear',self_relevance:'Identity',social_tribal:'Social',reward_validation:'Reward',analytical_bypass:'Bypass',urgency_action:'Urgency'};
 const SOURCE_COLORS  = ['#3a80f0','#f05a5a','#3af08a'];
 const SOURCE_NAMES   = ['Source A','Source B','Source C'];
+
+// Network info for tooltips — mirrors NETWORK_PROFILES in modal_app.py
+const NET_INFO = {
+  Default:     {fn:'Self-referential thought, autobiographical memory, social cognition', interp:'Content has made itself feel personally relevant. You are reading this as being about you or your beliefs.', ref:'Buckner et al. (2008) Ann NY Acad Sci', protective:false},
+  Limbic:      {fn:'Emotional valuation, visceral responses, value-based decision-making', interp:'Emotional charge circuits engaged — fear, craving, disgust, or strong affect. Includes temporal pole (familiarity) and OFC (threat/reward value).', ref:'Olson et al. (2007); Wallis (2007) Nat Rev Neurosci', protective:false},
+  SalVentAttn: {fn:'Alerting to salient events, social alarm, TPJ-mediated moral judgment', interp:'Your threat-detection system is triggered — the same circuitry that evolved to flag predators and moral violations. TPJ within this network governs in-group/out-group distinctions.', ref:'Seeley et al. (2007) J Neurosci', protective:false},
+  DorsAttn:    {fn:'Top-down sustained attention, task engagement, spatial attention control', interp:'Content is holding your sustained attention. Can reflect genuine interest or engineered engagement — context matters.', ref:'Corbetta & Shulman (2002) Nat Rev Neurosci', protective:false},
+  Cont:        {fn:'Analytical reasoning, working memory, executive control, deliberate evaluation', interp:'PROTECTIVE — this is System 2 thinking. HIGH activation means you are evaluating the content critically. LOW is the warning sign: content may be designed to bypass your reasoning.', ref:'Miller & Cohen (2001); Kahneman (2011)', protective:true},
+  SomMot:      {fn:'Motor planning, embodied simulation, action readiness', interp:'Your brain is preparing for physical action in response to symbolic content. Creates the felt urgency: "something must be done." Classic pattern in mobilization rhetoric.', ref:'Huth et al. (2016) Nature; Pessoa (2017) Trends Cogn Sci', protective:false},
+  Vis:         {fn:'Visual processing and mental imagery', interp:'Text is generating strong visual imagery — concrete scenes, vivid language. Mental imagery increases emotional impact and reduces abstract evaluation.', ref:'Kosslyn et al. (2006) Nat Rev Neurosci', protective:false},
+};
+
+// ── Tooltip system ────────────────────────────────────────────────────────────
+const TT = document.createElement('div');
+TT.className = 'tt'; document.body.appendChild(TT);
+
+function tip(el, html, title='') {
+  el.style.cursor = 'help';
+  el.addEventListener('mouseenter', e => {
+    TT.innerHTML = (title ? `<div class="tt-title">${title}</div>` : '') + html;
+    TT.style.display = 'block';
+    moveTip(e);
+  });
+  el.addEventListener('mousemove', moveTip);
+  el.addEventListener('mouseleave', () => { TT.style.display = 'none'; });
+}
+function moveTip(e) {
+  TT.style.visibility = 'hidden'; TT.style.display = 'block';
+  const tw = TT.offsetWidth, th = TT.offsetHeight;
+  TT.style.visibility = '';
+  const vw = window.innerWidth, vh = window.innerHeight;
+  const x = e.clientX + 16 + tw > vw ? e.clientX - tw - 8 : e.clientX + 16;
+  const y = e.clientY + 16 + th > vh ? e.clientY - th - 8 : e.clientY + 16;
+  TT.style.left = x + 'px'; TT.style.top = y + 'px';
+}
+function netTipHtml(net, pct) {
+  const info = NET_INFO[net]||{};
+  const protBadge = info.protective ? `<span class="tt-badge" style="color:var(--cyan);border-color:var(--cyan-dim);background:var(--cyan-glow)">ANALYTICAL · HIGH IS PROTECTIVE</span><br>` : '';
+  return `${protBadge}<div class="tt-value">${pct}%</div><div class="tt-body">${info.fn||''}</div><div class="tt-note">${info.interp||''}</div>${info.ref?`<div class="tt-ref">${info.ref}</div>`:''}`;
+}
 
 // ── Mode state ────────────────────────────────────────────────────────────────
 let currentMode = 'normal';
@@ -523,12 +905,6 @@ function switchMode(mode) {
 }
 
 // ── Collapsible panels ────────────────────────────────────────────────────────
-$('configToggle').addEventListener('click', () => {
-  const body = $('configBody'), arrow = $('configArrow');
-  const expanded = body.classList.toggle('expanded');
-  arrow.classList.toggle('open', expanded);
-});
-
 $('inputToggle').addEventListener('click', () => {
   const body = $('inputBody'), arrow = $('inputArrow');
   const expanded = body.classList.toggle('expanded');
@@ -537,10 +913,9 @@ $('inputToggle').addEventListener('click', () => {
 
 // ── Status ────────────────────────────────────────────────────────────────────
 function setStatus(state, text) {
-  [$('statusDot'), $('statusDot2')].forEach(d => {
-    d.className = 'status-dot' + (state === 'connected' ? ' connected' : state === 'error' ? ' error' : state === 'checking' ? ' checking' : '');
-  });
-  [$('statusText'), $('statusText2')].forEach(el => el.textContent = text);
+  const dot = $('statusDot');
+  if(dot) dot.className = 'status-dot' + (state === 'connected' ? ' connected' : state === 'error' ? ' error' : state === 'checking' ? ' checking' : '');
+  const el = $('statusText'); if(el) el.textContent = text;
   connected = state === 'connected';
   updateAnalyzeBtn();
   updateCompareBtn();
@@ -550,23 +925,12 @@ async function checkStatus() {
   setStatus('checking', 'CHECKING...');
   try {
     const d = await (await fetch('/health')).json();
-    if (d.colab === 'connected')      setStatus('connected', 'COLAB CONNECTED');
-    else if (d.colab === 'not_configured') setStatus('', 'NOT CONFIGURED');
-    else                               setStatus('error', 'COLAB UNREACHABLE');
+    if (d.modal === 'connected')           setStatus('connected', 'MODAL CONNECTED');
+    else if (d.modal === 'not_configured') setStatus('error', 'MODAL_ENDPOINT NOT SET');
+    else                                   setStatus('error', 'MODAL UNREACHABLE');
   } catch { setStatus('error', 'LOCAL ERROR'); }
 }
 
-// ── Config ────────────────────────────────────────────────────────────────────
-$('saveConfigBtn').addEventListener('click', async () => {
-  await fetch('/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ngrok_url:$('ngrokUrl').value.trim()})});
-  await checkStatus();
-  // Auto-collapse config after connecting
-  if (connected) {
-    $('configBody').classList.remove('expanded');
-    $('configArrow').classList.remove('open');
-  }
-});
-$('ngrokUrl').addEventListener('keydown', e => { if(e.key==='Enter') $('saveConfigBtn').click(); });
 
 // ── Normal input ──────────────────────────────────────────────────────────────
 $('textInput').addEventListener('input', () => {
@@ -602,20 +966,23 @@ $('analyzeBtn').addEventListener('click', async () => {
   const text = $('textInput').value.trim(); if (!text) return;
   $('errorPanel').className = 'error-panel';
   $('normalResults').className = 'results-wrap';
+  const es = $('emptyState'); if(es) es.style.display = 'none';
   $('loadingPanel').style.display = 'block';
   $('analyzeBtn').disabled = true;
   // Collapse input panel while running
   $('inputBody').classList.remove('expanded');
   $('inputArrow').classList.remove('open');
   animateSteps();
+  startTimer();
   try {
     const resp = await fetch('/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});
     const data = await resp.json();
-    $('loadingPanel').style.display = 'none'; clearSteps();
+    $('loadingPanel').style.display = 'none'; clearSteps(); stopTimer();
     if (!data.success) { showError('errorPanel','errorMsg', data.error||'Unknown error'); return; }
+    window._lastResult = data;
     renderNormal(data);
   } catch(e) {
-    $('loadingPanel').style.display = 'none'; clearSteps();
+    $('loadingPanel').style.display = 'none'; clearSteps(); stopTimer();
     showError('errorPanel','errorMsg', 'Network error: '+e.message);
   }
   updateAnalyzeBtn();
@@ -636,6 +1003,24 @@ function renderNormal(data) {
   const mi = $('manipIndex');
   mi.textContent = manip.toFixed(1);
   mi.className = 'manip-value'+(manip>=7.5?' danger':manip>=5?' warn':'');
+  tip(mi,
+    `<div class="tt-value">${manip.toFixed(1)} / 10</div><div class="tt-body">Formula: top emotional profile score × 5 + analytical bypass score × 5</div><div class="tt-note"><b>&lt;2.5</b> neutral &nbsp;·&nbsp; <b>2.5–5</b> low-moderate &nbsp;·&nbsp; <b>5–7.5</b> moderate &nbsp;·&nbsp; <b>&gt;7.5</b> high<br><br>Reflects predicted neural activation patterns, not editorial intent. A high score means these brain circuits were activated — not that the content is dishonest.</div>`,
+    'MANIPULATION INDEX'
+  );
+  // Signal quality + analytical ratio
+  const nTR = data.raw_stats?.n_timesteps||0;
+  const sq = nTR>=20?4:nTR>=12?3:nTR>=6?2:nTR>=2?1:0;
+  const sqLabel = ['VERY LOW','LOW','MODERATE','GOOD','HIGH'][sq];
+  const sqColor = sq>=3?'var(--green)':sq>=2?'var(--amber)':'var(--red)';
+  const act = data.network_activations||{};
+  const emotional = ((act.Limbic||0)+(act.SalVentAttn||0)+(act.SomMot||0))/3;
+  const analytical = act.Cont||0;
+  const ratioColor = analytical > emotional ? 'var(--cyan)' : emotional > 0.6 ? 'var(--amber)' : 'var(--text-dim)';
+  let sqEl = document.getElementById('signalQualityRow');
+  if (!sqEl) { sqEl = document.createElement('div'); sqEl.id='signalQualityRow'; sqEl.className='signal-row'; $('manipIndex').parentElement.appendChild(sqEl); }
+  const dots = Array.from({length:4},(_,i)=>`<div class="sq-dot${i<sq?' filled':''}"></div>`).join('');
+  sqEl.innerHTML = `<div class="sq-wrap"><div class="sq-dots">${dots}</div><span class="sq-label" style="color:${sqColor}">${sqLabel} SIGNAL</span></div><span class="analytical-ratio" style="color:${ratioColor}">ANALYTICAL ${Math.round(analytical*100)}% · EMOTIONAL ${Math.round(emotional*100)}%</span>`;
+  tip(sqEl, `<div class="tt-body">Signal quality is based on number of TRs (${nTR} TRs = ${nTR}s of content). More TRs = more reliable activation estimates. Below 6 TRs, results are directionally informative but not robust.<br><br>Analytical ratio = FPN activation. Emotional = mean of Limbic + SAL + SomMot. High emotional with low analytical is the key warning pattern.</div>`, 'SIGNAL QUALITY');
   renderNetworkBars(data.network_activations||{});
   renderRoiTable(data.top_rois||[]);
   renderBrainMap(data.network_activations||{});
@@ -646,13 +1031,15 @@ function renderNormal(data) {
   $('interpBenefits').textContent    = interp.who_benefits||'';
   $('interpInoculation').textContent = interp.inoculation||'';
   renderRawStats(data.raw_stats||{});
+  // Update results bar label
+  const rbl=$('resultsBarLabel'); if(rbl){const nTR=data.raw_stats?.n_timesteps||0;rbl.textContent=`${nTR} TR · ${nTR}s of content · ${new Date().toLocaleTimeString()}`;}
   $('normalResults').className = 'results-wrap active';
   $('normalResults').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
 // ── Network bars ──────────────────────────────────────────────────────────────
-function renderNetworkBars(act) {
-  const c = $('networkBars'); c.innerHTML = '';
+function renderNetworkBars(act, containerId='networkBars') {
+  const c = $(containerId); if(!c) return; c.innerHTML = '';
   NET_ORDER.filter(k=>k in act).sort((a,b)=>{if(a==='Cont')return 1;if(b==='Cont')return -1;return(act[b]||0)-(act[a]||0);}).forEach(net=>{
     const val=act[net]??0,pct=Math.round(val*100),color=NET_COLORS[net],isP=net==='Cont';
     const w=document.createElement('div');
@@ -661,6 +1048,7 @@ function renderNetworkBars(act) {
     const r=document.createElement('div'); r.className='net-row';
     r.innerHTML=`<span class="net-abbr">${NET_ABBR[net]}</span><div class="net-bar-bg"><div class="net-bar-fill" style="width:0%;background:${color}"></div></div><span class="net-value">${pct}%</span>`;
     w.appendChild(lr); w.appendChild(r); c.appendChild(w);
+    tip(w, netTipHtml(net,pct), NET_ABBR[net]+' — '+NET_LABELS[net].toUpperCase());
     requestAnimationFrame(()=>requestAnimationFrame(()=>{ r.querySelector('.net-bar-fill').style.width=pct+'%'; }));
   });
 }
@@ -674,6 +1062,10 @@ function renderRoiTable(rois) {
     const zColor=roi.z_score>1.5?'var(--amber)':roi.z_score>0.5?'var(--text-bright)':'var(--text-dim)';
     const tr=document.createElement('tr');
     tr.innerHTML=`<td><div class="roi-name">${roi.roi_name||roi.parcel}</div><div class="roi-desc">${roi.description||''}</div></td><td class="roi-net" style="color:${color}">${roi.network||''}</td><td class="roi-score" style="color:${zColor}">${zStr}σ</td>`;
+    tip(tr,
+      `<div class="tt-value">${zStr}σ</div><div class="tt-body"><b>${roi.roi_name||roi.parcel}</b><br><span style="font-size:10px;color:var(--text-dim)">${roi.parcel}</span></div><div class="tt-note">${roi.description||''}</div><div class="tt-note" style="margin-top:6px">σ = standard deviations above mean parcel activation for this content. Values >1.5σ indicate a meaningfully active region.</div>`,
+      NET_ABBR[roi.network]||roi.network
+    );
     b.appendChild(tr);
   });
 }
@@ -690,12 +1082,27 @@ function renderBrainMap(act, suffix='') {
   });
   const pcc=document.getElementById((suffix?suffix+'-':'')+'mc-Default-pcc');
   if(pcc){const v=act['Default']??0;pcc.setAttribute('r',Math.round((MIN_R+v*(MAX_R-MIN_R))*0.7));}
+  // Add hover tooltips to all brain circles
+  const svgIds = suffix ? [`${suffix}-brainLateral`,`${suffix}-brainMedial`] : ['brainLateral','brainMedial'];
+  svgIds.forEach(svgId => {
+    const svgEl = document.getElementById(svgId);
+    if(!svgEl) return;
+    Object.entries(mapping).forEach(([net,ids])=>{
+      const pct=Math.round((act[net]??0)*100);
+      const s = suffix ? suffix+'-' : '';
+      [ids.lat, ids.med].filter(Boolean).forEach(cid=>{
+        const el = document.getElementById(s+cid);
+        if(el) tip(el, netTipHtml(net,pct), NET_ABBR[net]+' — '+NET_LABELS[net].toUpperCase());
+      });
+    });
+  });
   if(!suffix) {
     const leg=$('brainLegend'); leg.innerHTML='';
     NET_ORDER.forEach(net=>{
       const val=act[net]??0,pct=Math.round(val*100);
       const item=document.createElement('div'); item.className='brain-legend-item';
       item.innerHTML=`<div class="legend-dot" style="background:${NET_COLORS[net]};opacity:${(0.3+val*0.7).toFixed(2)}"></div><span>${NET_ABBR[net]}</span><span class="legend-pct" style="color:${NET_COLORS[net]}">${pct}%</span>`;
+      tip(item, netTipHtml(net,pct), NET_ABBR[net]+' — '+NET_LABELS[net].toUpperCase());
       leg.appendChild(item);
     });
   }
@@ -706,33 +1113,59 @@ function renderTimeSeries(ts, nTR) {
   const svg=$('tsSvg'); svg.innerHTML='';
   const nets=Object.keys(ts).filter(n=>ts[n]&&ts[n].length>1);
   if(!nets.length){const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x','50%');t.setAttribute('y','50%');t.setAttribute('text-anchor','middle');t.setAttribute('style','font-family:var(--mono);font-size:11px;fill:var(--text-dim)');t.textContent='No timeseries (text too short)';svg.appendChild(t);return;}
-  const W=860,H=160,ml=36,mt=10,mb=30,mr=20,cW=W-ml-mr,cH=H-mt-mb;
+  const W=860,H=180,ml=44,mt=12,mb=28,mr=16,cW=W-ml-mr,cH=H-mt-mb;
   const ns='http://www.w3.org/2000/svg';
   svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  svg.style.height = '180px';
+
+  // Compute actual data range so z-scored values (can be negative) stay in bounds
+  const allVals = nets.flatMap(n=>ts[n]);
+  const rawMin=Math.min(...allVals), rawMax=Math.max(...allVals);
+  const pad=Math.max(0.3,(rawMax-rawMin)*0.15);
+  const yMin=rawMin-pad, yMax=rawMax+pad, yRange=yMax-yMin;
+  const toY = v => cH*(1-(v-yMin)/yRange);
+
+  // Clip path so lines never draw outside chart area
+  const defs=document.createElementNS(ns,'defs'); svg.appendChild(defs);
+  const clip=document.createElementNS(ns,'clipPath'); clip.setAttribute('id','ts-clip'); defs.appendChild(clip);
+  const clipR=document.createElementNS(ns,'rect'); clipR.setAttribute('x','0');clipR.setAttribute('y','0');clipR.setAttribute('width',cW);clipR.setAttribute('height',cH); clip.appendChild(clipR);
+
   const g=document.createElementNS(ns,'g'); g.setAttribute('transform',`translate(${ml},${mt})`); svg.appendChild(g);
-  [0,0.25,0.5,0.75,1].forEach(v=>{
-    const y=cH*(1-v);
+
+  // Gridlines + Y axis labels (actual z-score values)
+  const yTicks = [yMin, yMin+yRange*0.25, yMin+yRange*0.5, yMin+yRange*0.75, yMax];
+  yTicks.forEach(v=>{
+    const y=toY(v);
     const line=document.createElementNS(ns,'line'); line.setAttribute('x1',0);line.setAttribute('x2',cW);line.setAttribute('y1',y);line.setAttribute('y2',y);line.setAttribute('stroke','#1c2040');line.setAttribute('stroke-width','1');g.appendChild(line);
-    const lbl=document.createElementNS(ns,'text');lbl.setAttribute('x',-6);lbl.setAttribute('y',y+3);lbl.setAttribute('text-anchor','end');lbl.setAttribute('style','font-family:var(--mono);font-size:9px;fill:var(--text-dim)');lbl.textContent=v.toFixed(2);g.appendChild(lbl);
+    const lbl=document.createElementNS(ns,'text');lbl.setAttribute('x',-6);lbl.setAttribute('y',y+3);lbl.setAttribute('text-anchor','end');lbl.setAttribute('class','ts-axis-label');lbl.textContent=v.toFixed(1)+'σ';g.appendChild(lbl);
   });
+  // Zero line if in range
+  if(yMin<0&&yMax>0){const zy=toY(0);const zl=document.createElementNS(ns,'line');zl.setAttribute('x1',0);zl.setAttribute('x2',cW);zl.setAttribute('y1',zy);zl.setAttribute('y2',zy);zl.setAttribute('stroke','#2a3060');zl.setAttribute('stroke-width','1.5');zl.setAttribute('stroke-dasharray','4,3');g.appendChild(zl);}
+
+  // X axis ticks (time in seconds)
   const tickGap=Math.max(1,Math.floor(nTR/8));
   for(let t=0;t<=nTR;t+=tickGap){
     const x=(t/Math.max(nTR-1,1))*cW;
-    const line=document.createElementNS(ns,'line');line.setAttribute('x1',x);line.setAttribute('x2',x);line.setAttribute('y1',0);line.setAttribute('y2',cH);line.setAttribute('stroke','#1c2040');line.setAttribute('stroke-width','1');g.appendChild(line);
-    const lbl=document.createElementNS(ns,'text');lbl.setAttribute('x',x);lbl.setAttribute('y',cH+16);lbl.setAttribute('text-anchor','middle');lbl.setAttribute('style','font-family:var(--mono);font-size:9px;fill:var(--text-dim)');lbl.textContent=t+'s';g.appendChild(lbl);
+    const lbl=document.createElementNS(ns,'text');lbl.setAttribute('x',x);lbl.setAttribute('y',cH+16);lbl.setAttribute('text-anchor','middle');lbl.setAttribute('class','ts-axis-label');lbl.textContent=t+'s';g.appendChild(lbl);
   }
+
+  // Data lines — inside clip group
+  const lineG=document.createElementNS(ns,'g'); lineG.setAttribute('clip-path','url(#ts-clip)'); g.appendChild(lineG);
   nets.forEach(net=>{
     const vals=ts[net],color=NET_COLORS[net]||'#5a6080',n=vals.length;
     let d='';
-    vals.forEach((v,i)=>{const x=(i/Math.max(n-1,1))*cW,y=cH*(1-v);d+=(i===0?`M ${x.toFixed(1)},${y.toFixed(1)}`:`L ${x.toFixed(1)},${y.toFixed(1)}`);});
-    const path=document.createElementNS(ns,'path');path.setAttribute('d',d);path.setAttribute('stroke',color);path.setAttribute('stroke-width','1.5');path.setAttribute('fill','none');path.setAttribute('stroke-linecap','round');path.setAttribute('stroke-linejoin','round');path.setAttribute('opacity',tsHidden[net]?'0':'0.85');path.setAttribute('id','ts-path-'+net);g.appendChild(path);
+    vals.forEach((v,i)=>{const x=(i/Math.max(n-1,1))*cW,y=toY(v);d+=(i===0?`M ${x.toFixed(1)},${y.toFixed(1)}`:`L ${x.toFixed(1)},${y.toFixed(1)}`);});
+    const path=document.createElementNS(ns,'path');path.setAttribute('d',d);path.setAttribute('stroke',color);path.setAttribute('stroke-width','1.5');path.setAttribute('fill','none');path.setAttribute('stroke-linecap','round');path.setAttribute('stroke-linejoin','round');path.setAttribute('opacity',tsHidden[net]?'0':'0.85');path.setAttribute('id','ts-path-'+net);lineG.appendChild(path);
   });
+
+  // Legend
   const leg=$('tsLegend'); leg.innerHTML='';
   nets.forEach(net=>{
     const color=NET_COLORS[net];
     const item=document.createElement('div'); item.className='ts-legend-item'+(tsHidden[net]?' dimmed':'');
     item.innerHTML=`<div class="ts-legend-line" style="background:${color}"></div><span>${NET_LABELS[net]||net}</span>`;
     item.addEventListener('click',()=>{tsHidden[net]=!tsHidden[net];item.classList.toggle('dimmed',tsHidden[net]);const p=document.getElementById('ts-path-'+net);if(p)p.setAttribute('opacity',tsHidden[net]?'0':'0.85');});
+    tip(item, netTipHtml(net, Math.round((ts[net]?.slice(-1)[0]??0)*100)), NET_ABBR[net]+' — TIMESERIES');
     leg.appendChild(item);
   });
 }
@@ -768,6 +1201,8 @@ function renderProfiles(profiles) {
     const nets=(p.networks_driving||[]).map(n=>`<span class="net-chip">${NET_ABBR[n]||n}</span>`).join('');
     const row=document.createElement('div'); row.className='profile-row'+(isPrim?' primary-profile':'');
     row.innerHTML=`<div class="profile-header"><span class="profile-label">${p.label}</span><div class="profile-score-wrap"><div class="profile-score-bar"><div class="profile-score-fill" style="width:0%;background:${barColor}"></div></div><span class="profile-score-num" style="color:${numColor}">${pct}%</span></div></div><div class="profile-networks">${nets}${p.key_roi?`<span class="net-chip" style="color:var(--amber);border-color:var(--amber-dim)">ROI: ${p.key_roi}</span>`:''}</div><div class="profile-mechanism">${p.mechanism}</div>${p.literature?`<div class="profile-lit">Lit: ${p.literature}</div>`:''}`;
+    const scoreNum = row.querySelector('.profile-score-num');
+    tip(scoreNum, `<div class="tt-value">${pct}%</div><div class="tt-body">Score formula: weighted combination of activations from driving networks (${(p.networks_driving||[]).map(n=>NET_ABBR[n]||n).join(', ')})${p.inverted?' — inverted: LOW network = HIGH bypass score':''}.</div><div class="tt-note">${pct>70?'HIGH — prominent pattern for this content':pct>45?'MODERATE — present but not dominant':'LOW — not a primary mechanism here'}</div>`, p.label.toUpperCase());
     g.appendChild(row);
     requestAnimationFrame(()=>requestAnimationFrame(()=>{ row.querySelector('.profile-score-fill').style.width=pct+'%'; }));
   });
@@ -830,7 +1265,7 @@ function addSourceCard(i) {
       <input class="source-name-input" id="srcName${i}" value="${name}" placeholder="Source name" style="color:${color}"/>
     </div>
     <textarea class="compare-textarea" id="srcText${i}" placeholder="Paste article or headline here..."></textarea>
-    <div class="compare-char-count" id="srcCount${i}">0 / 6,000</div>
+    <div class="compare-char-count" id="srcCount${i}">0 / 2,000</div>
   `;
   // Insert before the add row if it exists
   if (addRow) grid.insertBefore(card, addRow);
@@ -840,7 +1275,8 @@ function addSourceCard(i) {
   const cc = card.querySelector('.compare-char-count');
   ta.addEventListener('input', () => {
     const l = ta.value.length;
-    cc.textContent = `${l.toLocaleString()} / 6,000`;
+    cc.textContent = `${l.toLocaleString()} / 2,000${l > 2000 ? ' — will be trimmed' : ''}`;
+    cc.style.color = l > 2000 ? 'var(--amber, #f59e0b)' : '';
     updateCompareBtn();
   });
 }
@@ -865,9 +1301,10 @@ async function runComparison() {
   $('cstep1').className = 'step done';
   $('cstep2').className = 'step active';
 
+  const COMPARE_CHAR_LIMIT = 2000;
   const sources = Array.from({length: activeSourceCount}, (_, i) => ({
     name: $('srcName'+i)?.value?.trim() || SOURCE_NAMES[i],
-    text: $('srcText'+i)?.value?.trim() || '',
+    text: ($('srcText'+i)?.value?.trim() || '').slice(0, COMPARE_CHAR_LIMIT),
     color: SOURCE_COLORS[i],
   })).filter(s => s.text.length > 0);
 
@@ -901,39 +1338,237 @@ async function runComparison() {
 }
 
 function renderComparison(sources, results) {
+  renderDivergenceOverview(sources, results);
   renderCompareSummary(sources, results);
+  renderCompareSourcePanels(sources, results);
   renderDeltaTable(sources, results);
-  renderFramingDiff(sources, results);
   renderBrainCompare(sources, results);
+  renderFramingDiff(sources, results);
   $('compareResults').className = 'results-wrap active';
   $('compareResults').scrollIntoView({behavior:'smooth',block:'start'});
   $('compareBtn').disabled = false;
   updateCompareBtn();
 }
 
-// ── Compare summary cards ─────────────────────────────────────────────────────
+// ── Divergence overview ───────────────────────────────────────────────────────
+function renderDivergenceOverview(sources, results) {
+  const el = $('divergenceOverview'); if(!el) return;
+  const netDiffs = NET_ORDER.map(net => {
+    const vals = results.map(r => (r.network_activations||{})[net]??0);
+    const mean = vals.reduce((a,b)=>a+b,0)/vals.length;
+    const mad  = vals.reduce((s,v)=>s+Math.abs(v-mean),0)/vals.length;
+    return {net, mad, vals};
+  });
+  const overallDiv = netDiffs.reduce((s,d)=>s+d.mad,0)/netDiffs.length;
+  const topDiv = [...netDiffs].sort((a,b)=>b.mad-a.mad)[0];
+  const manips = results.map(r=>r.interpretation?.manipulation_index??0);
+  const manipDiff = Math.abs(manips[0]-(manips[1]||0));
+  const divPct = Math.round(overallDiv*100);
+  const divColor = divPct>30?'var(--amber)':divPct>15?'var(--text-bright)':'var(--text-dim)';
+  const nTRs = results.map(r=>r.raw_stats?.n_timesteps||0);
+
+  el.innerHTML = `
+    <div class="divergence-card">
+      <div class="div-metric">
+        <div class="div-metric-label">NEURAL DIVERGENCE</div>
+        <div class="div-metric-value" style="color:${divColor}">${divPct}%</div>
+        <div class="div-metric-sub">mean activation spread</div>
+      </div>
+      <div class="div-metric">
+        <div class="div-metric-label">HIGHEST DIVERGENCE</div>
+        <div class="div-metric-value" style="font-size:18px;color:${NET_COLORS[topDiv.net]}">${NET_ABBR[topDiv.net]}</div>
+        <div class="div-metric-sub">${NET_LABELS[topDiv.net]||topDiv.net}</div>
+      </div>
+      <div class="div-metric">
+        <div class="div-metric-label">MANIP INDEX SPREAD</div>
+        <div class="div-metric-value" style="font-size:18px;color:${manipDiff>2?'var(--amber)':'var(--text-dim)'}">${manipDiff.toFixed(1)} pts</div>
+        <div class="div-metric-sub">${manips.map((m,i)=>`${sources[i]?.name||i}: ${m.toFixed(1)}`).join(' · ')}</div>
+      </div>
+      <div class="div-metric">
+        <div class="div-metric-label">SIGNAL (TRs)</div>
+        <div class="div-metric-value" style="font-size:18px;color:var(--text-dim)">${nTRs.join(' / ')}</div>
+        <div class="div-metric-sub">seconds of content per source</div>
+      </div>
+      <div class="div-net-bars" style="align-self:center">
+        <div style="font-size:9px;letter-spacing:.15em;color:var(--text-dim);margin-bottom:8px">NETWORK SPREAD PER SOURCE</div>
+        ${NET_ORDER.map(net=>{
+          const vals=results.map(r=>Math.round(((r.network_activations||{})[net]??0)*100));
+          return `<div class="div-bar-row">
+            <span style="font-size:8px;color:${NET_COLORS[net]};text-align:right">${NET_ABBR[net]}</span>
+            <div class="div-bar-bg">${vals.map((v,i)=>`<div class="div-bar-fill" style="left:${i===0?0:vals[0]}%;width:${Math.abs(v-(i===0?0:vals[0]))}%;background:${sources[i]?.color||NET_COLORS[net]};opacity:0.8"></div>`).join('')}</div>
+            ${vals.map((v,i)=>`<span style="font-size:8px;color:${sources[i]?.color||'var(--text-dim)'}">${v}%</span>`).join('')}
+          </div>`;
+        }).join('')}
+      </div>
+    </div>`;
+}
+
+// ── Compare summary cards (enhanced) ─────────────────────────────────────────
 function renderCompareSummary(sources, results) {
   const wrap = $('compareSummaryCards'); wrap.innerHTML = '';
   sources.forEach((src, i) => {
     const r = results[i], interp = r.interpretation||{}, manip = interp.manipulation_index??0;
+    const act = r.network_activations||{};
     const color = src.color;
     const card = document.createElement('div');
     card.className = 'compare-summary-card';
     card.style.borderTopColor = color;
     const manipColor = manip>=7.5?'var(--red)':manip>=5?'var(--amber)':color;
+
+    // Top 2 profiles
+    const topProfiles = (r.reaction_profiles||[]).slice(0,2);
+    const profileLines = topProfiles.map(p=>`
+      <div class="card-profile-line">
+        <div class="card-profile-dot" style="background:${PROFILE_COLORS[p.id]||'#5a6080'}"></div>
+        <span class="card-profile-name">${p.label}</span>
+        <span class="card-profile-pct" style="color:${PROFILE_COLORS[p.id]||'var(--text-dim)'}">${Math.round(p.score*100)}%</span>
+      </div>`).join('');
+
+    // Mini network bars (top 4 by activation, excluding Cont which goes last)
+    const sortedNets = NET_ORDER.filter(n=>n in act).sort((a,b)=>{if(a==='Cont')return 1;if(b==='Cont')return -1;return (act[b]||0)-(act[a]||0);}).slice(0,5);
+    const miniRows = sortedNets.map(net=>{
+      const pct=Math.round((act[net]??0)*100);
+      return `<div class="card-mini-row">
+        <span class="card-mini-abbr" style="color:${NET_COLORS[net]}">${NET_ABBR[net]}</span>
+        <div class="card-mini-bar"><div class="card-mini-fill" style="width:${pct}%;background:${NET_COLORS[net]}"></div></div>
+        <span class="card-mini-pct">${pct}%</span>
+      </div>`;
+    }).join('');
+
     card.innerHTML = `
       <div class="compare-card-source" style="color:${color}">
         <div class="source-dot" style="background:${color}"></div>
         <span style="letter-spacing:.15em">${src.name.toUpperCase()}</span>
       </div>
-      <div class="compare-card-headline">${src.text.trim().slice(0,120)}${src.text.trim().length>120?'…':''}</div>
+      <div class="compare-card-headline">${src.text.trim().slice(0,100)}${src.text.trim().length>100?'…':''}</div>
       <div class="compare-card-reaction">${interp.primary_target||'—'}</div>
       <div class="compare-card-manip">
         <span class="compare-manip-num" style="color:${manipColor}">${manip.toFixed(1)}</span>
         <span class="compare-manip-label">/ 10</span>
       </div>
+      <div class="card-mini-nets">${miniRows}</div>
+      <div class="card-profiles">${profileLines}</div>
     `;
     wrap.appendChild(card);
+  });
+}
+
+// ── Per-source full analysis panels ──────────────────────────────────────────
+function renderCompareSourcePanels(sources, results) {
+  const wrap = $('compareSourcePanels'); if(!wrap) return;
+  wrap.innerHTML = '';
+  const heading = document.createElement('div');
+  heading.style.cssText = 'font-size:9px;letter-spacing:.2em;color:var(--text-dim);margin-bottom:10px';
+  heading.textContent = 'FULL ANALYSIS PER SOURCE';
+  wrap.appendChild(heading);
+
+  sources.forEach((src, i) => {
+    const r = results[i];
+    const act = r.network_activations||{};
+    const interp = r.interpretation||{};
+    const profiles = r.reaction_profiles||[];
+    const color = src.color;
+
+    const panel = document.createElement('div');
+    panel.className = 'src-panel';
+    panel.style.borderTopColor = color;
+    panel.style.borderTopWidth = '2px';
+
+    const header = document.createElement('div');
+    header.className = 'src-panel-header';
+    const manip = interp.manipulation_index??0;
+    const manipColor = manip>=7.5?'var(--red)':manip>=5?'var(--amber)':color;
+    header.innerHTML = `
+      <div style="display:flex;align-items:center;gap:10px">
+        <div class="source-dot" style="background:${color}"></div>
+        <span style="font-size:11px;font-weight:500;color:${color};letter-spacing:.08em">${src.name.toUpperCase()}</span>
+        <span style="font-size:11px;color:var(--text-dim)">${interp.primary_target||'—'}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:16px">
+        <span style="font-size:11px;color:var(--text-dim)">Manip: <span style="color:${manipColor};font-weight:500">${manip.toFixed(1)}</span>/10</span>
+        <span style="font-size:10px;color:var(--text-dim);letter-spacing:.08em">▾ expand</span>
+      </div>`;
+
+    const body = document.createElement('div');
+    body.className = 'src-panel-body';
+    const bodyId = `srcPanelBody${i}`;
+    body.id = bodyId;
+
+    // Two-column: network bars + reaction profiles
+    const grid = document.createElement('div');
+    grid.className = 'src-panel-grid';
+
+    // Network bars column
+    const netCol = document.createElement('div');
+    netCol.innerHTML = `<div class="src-panel-section-label">YEO 7-NETWORK ACTIVATIONS</div>`;
+    const netBarsEl = document.createElement('div');
+    netBarsEl.className = 'mini-nets';
+    netBarsEl.id = `srcNets${i}`;
+    netCol.appendChild(netBarsEl);
+
+    // Profiles column
+    const profCol = document.createElement('div');
+    profCol.innerHTML = `<div class="src-panel-section-label">REACTION PROFILES</div>`;
+    const profEl = document.createElement('div');
+    profEl.className = 'compact-profiles';
+    profiles.forEach(p=>{
+      const pct = Math.round(p.score*100);
+      const c = PROFILE_COLORS[p.id]||'var(--text-dim)';
+      const row = document.createElement('div'); row.className='compact-profile-row';
+      row.innerHTML=`<span class="compact-profile-name" style="color:${c}">${p.label}</span><div class="compact-bar-bg"><div class="compact-bar-fill" style="width:0%;background:${c}" id="cpb${i}-${p.id}"></div></div><span class="compact-profile-pct" style="color:${c}">${pct}%</span>`;
+      tip(row, `<div class="tt-value">${pct}%</div><div class="tt-body">${p.mechanism}</div>${p.literature?`<div class="tt-ref">${p.literature}</div>`:''}`, p.label.toUpperCase());
+      profEl.appendChild(row);
+    });
+    profCol.appendChild(profEl);
+    grid.appendChild(netCol); grid.appendChild(profCol);
+    body.appendChild(grid);
+
+    // Interpretation block
+    const interpBlock = document.createElement('div');
+    interpBlock.style.cssText = 'border-top:1px solid var(--border);padding-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:16px';
+    interpBlock.innerHTML = `
+      <div>
+        <div class="src-panel-section-label">INTENDED OUTCOME</div>
+        <div style="font-family:var(--serif);font-size:13px;color:var(--text);line-height:1.6">${interp.intended_outcome||'—'}</div>
+      </div>
+      <div>
+        <div class="src-panel-section-label">WHO BENEFITS</div>
+        <div style="font-family:var(--serif);font-size:13px;color:var(--text);line-height:1.6">${interp.who_benefits||'—'}</div>
+      </div>
+      <div style="grid-column:1/-1;background:var(--bg);border-left:3px solid var(--cyan-dim);padding:12px 14px;border-radius:0 3px 3px 0">
+        <div style="font-size:9px;letter-spacing:.18em;color:var(--cyan-dim);margin-bottom:6px">INOCULATION</div>
+        <div style="font-family:var(--serif);font-size:13px;color:var(--text);line-height:1.6">${interp.inoculation||'—'}</div>
+      </div>`;
+    body.appendChild(interpBlock);
+
+    panel.appendChild(header); panel.appendChild(body);
+    wrap.appendChild(panel);
+
+    // Toggle expand
+    header.addEventListener('click', () => {
+      const isOpen = body.classList.toggle('open');
+      header.querySelector('span:last-child').textContent = isOpen ? '▴ collapse' : '▾ expand';
+      if(isOpen) {
+        // Render mini network bars
+        const netContainer = document.getElementById(`srcNets${i}`);
+        if(netContainer && !netContainer.dataset.rendered) {
+          netContainer.dataset.rendered='1';
+          NET_ORDER.filter(k=>k in act).sort((a,b)=>{if(a==='Cont')return 1;if(b==='Cont')return -1;return(act[b]||0)-(act[a]||0);}).forEach(net=>{
+            const val=act[net]??0,pct=Math.round(val*100),nc=NET_COLORS[net];
+            const row=document.createElement('div'); row.className='mini-net-row';
+            row.innerHTML=`<span class="mini-net-abbr" style="color:${nc}">${NET_ABBR[net]}</span><div class="mini-bar-bg"><div class="mini-bar-fill" id="mnb${i}-${net}" style="width:0%;background:${nc}"></div></div><span class="mini-net-pct">${pct}%</span>`;
+            tip(row, netTipHtml(net,pct), NET_ABBR[net]+' — '+NET_LABELS[net].toUpperCase());
+            netContainer.appendChild(row);
+            requestAnimationFrame(()=>requestAnimationFrame(()=>{const f=document.getElementById(`mnb${i}-${net}`);if(f)f.style.width=pct+'%';}));
+          });
+        }
+        // Animate compact profile bars
+        profiles.forEach(p=>{
+          const f=document.getElementById(`cpb${i}-${p.id}`);
+          if(f) requestAnimationFrame(()=>requestAnimationFrame(()=>{f.style.width=Math.round(p.score*100)+'%';}));
+        });
+      }
+    });
   });
 }
 
@@ -989,7 +1624,7 @@ function renderFramingDiff(sources, results) {
   // Get segments from each source
   const allSegs = results.map(r => r.segments_breakdown || []);
   const maxSents = Math.max(...allSegs.map(s => s.length), 1);
-  const showCount = Math.min(maxSents, 4);
+  const showCount = maxSents; // show all sentences
 
   if (showCount === 0) {
     wrap.innerHTML = '<div style="font-size:11px;color:var(--text-dim)">No segment data available — try longer text inputs.</div>';
@@ -1046,17 +1681,21 @@ function renderFramingDiff(sources, results) {
 // ── Brain compare ─────────────────────────────────────────────────────────────
 function renderBrainCompare(sources, results) {
   const grid = $('brainCompareGrid'); grid.innerHTML = '';
-
-  // Find global max activation across all sources for consistent scaling
+  // Use global max for consistent cross-source scaling
   const globalMax = {};
-  NET_ORDER.forEach(net => {
-    globalMax[net] = Math.max(...results.map(r => (r.network_activations||{})[net]??0));
-  });
+  NET_ORDER.forEach(net => { globalMax[net] = Math.max(...results.map(r => (r.network_activations||{})[net]??0), 0.01); });
+
+  const POSITIONS = {
+    Vis:{cx:92,cy:50},SomMot:{cx:60,cy:16},DorsAttn:{cx:80,cy:22},
+    SalVentAttn:{cx:44,cy:54},Limbic:{cx:24,cy:66},Cont:{cx:30,cy:28},Default:{cx:76,cy:65}
+  };
+  const MIN_R=5, MAX_R=22;
+  const svgNs='http://www.w3.org/2000/svg';
 
   sources.forEach((src, si) => {
     const act = results[si].network_activations || {};
-    const color = src.color;
     const manip = results[si].interpretation?.manipulation_index ?? 0;
+    const color = src.color;
 
     const card = document.createElement('div');
     card.className = 'brain-compare-card';
@@ -1068,48 +1707,169 @@ function renderBrainCompare(sources, results) {
     label.textContent = src.name.toUpperCase();
     card.appendChild(label);
 
-    const svgNs = 'http://www.w3.org/2000/svg';
     const svg = document.createElementNS(svgNs, 'svg');
-    svg.setAttribute('viewBox', '0 0 120 85');
+    svg.setAttribute('viewBox','0 0 120 90');
     svg.style.width = '100%';
 
-    // Brain outline
-    const outline = document.createElementNS(svgNs, 'ellipse');
-    outline.setAttribute('cx','60'); outline.setAttribute('cy','42');
-    outline.setAttribute('rx','52'); outline.setAttribute('ry','38');
-    outline.setAttribute('fill','#0d1421'); outline.setAttribute('stroke','#2a3060'); outline.setAttribute('stroke-width','1');
+    const outline = document.createElementNS(svgNs,'ellipse');
+    outline.setAttribute('cx','60');outline.setAttribute('cy','44');
+    outline.setAttribute('rx','52');outline.setAttribute('ry','40');
+    outline.setAttribute('fill','#0d1421');outline.setAttribute('stroke','#2a3060');outline.setAttribute('stroke-width','1');
     svg.appendChild(outline);
 
-    // Network blobs — fixed positions, radius scales with activation
-    const POSITIONS = {
-      Vis:{cx:95,cy:42},SomMot:{cx:62,cy:18},DorsAttn:{cx:82,cy:22},
-      SalVentAttn:{cx:46,cy:52},Limbic:{cx:27,cy:64},Cont:{cx:33,cy:30},Default:{cx:78,cy:62}
-    };
-    const MIN_R=4, MAX_R=20;
-
-    NET_ORDER.forEach(net => {
-      const val = act[net]??0;
-      const r = Math.round(MIN_R + val*(MAX_R-MIN_R));
-      const pos = POSITIONS[net];
-      const netColor = NET_COLORS[net];
-      const circle = document.createElementNS(svgNs,'circle');
-      circle.setAttribute('cx', pos.cx); circle.setAttribute('cy', pos.cy);
-      circle.setAttribute('r', r); circle.setAttribute('fill', netColor);
-      circle.setAttribute('opacity', (0.3+val*0.6).toFixed(2));
-      svg.appendChild(circle);
+    // Sulcal landmarks
+    [[' M 38,44 C 50,36 70,36 82,44','#1c2040'],['M 50,28 C 60,22 70,22 80,30','#1c2040']].forEach(([d,s])=>{
+      const p=document.createElementNS(svgNs,'path');p.setAttribute('d',d);p.setAttribute('fill','none');p.setAttribute('stroke',s);p.setAttribute('stroke-width','1');p.setAttribute('stroke-dasharray','2,3');svg.appendChild(p);
     });
 
+    // Network circles with labels
+    NET_ORDER.forEach(net => {
+      const val = act[net]??0;
+      // Scale radius relative to global max for this network so cross-source comparison is fair
+      const scaledVal = val / globalMax[net];
+      const r = Math.round(MIN_R + scaledVal*(MAX_R-MIN_R));
+      const pos = POSITIONS[net];
+      const netColor = NET_COLORS[net];
+
+      const circle = document.createElementNS(svgNs,'circle');
+      circle.setAttribute('cx',pos.cx);circle.setAttribute('cy',pos.cy);
+      circle.setAttribute('r',r);circle.setAttribute('fill',netColor);
+      circle.setAttribute('opacity',(0.25+val*0.65).toFixed(2));
+      svg.appendChild(circle);
+
+      if(r>=7) { // only show label if circle is big enough
+        const txt=document.createElementNS(svgNs,'text');
+        txt.setAttribute('x',pos.cx);txt.setAttribute('y',pos.cy+3);
+        txt.setAttribute('text-anchor','middle');txt.setAttribute('dominant-baseline','middle');
+        txt.setAttribute('style',`font-family:var(--mono);font-size:${r>=12?7:6}px;fill:${netColor};pointer-events:none;font-weight:500`);
+        txt.textContent=NET_ABBR[net];
+        svg.appendChild(txt);
+      }
+
+      // Hover on circle
+      tip(circle, netTipHtml(net, Math.round(val*100)), NET_ABBR[net]+' — '+NET_LABELS[net].toUpperCase());
+    });
     card.appendChild(svg);
 
-    const footer = document.createElement('div');
-    footer.style.cssText = 'font-size:10px;color:var(--text-dim);margin-top:6px;line-height:1.4';
+    // Footer with manip + top network
+    const topNet = NET_ORDER.filter(n=>n!=='Cont').sort((a,b)=>(act[b]||0)-(act[a]||0))[0];
     const manipColor = manip>=7.5?'var(--red)':manip>=5?'var(--amber)':color;
-    footer.innerHTML = `Manip index: <span style="color:${manipColor};font-weight:500">${manip.toFixed(1)}</span>`;
+    const footer = document.createElement('div');
+    footer.style.cssText='font-size:10px;color:var(--text-dim);margin-top:8px;line-height:1.6;border-top:1px solid var(--border);padding-top:8px';
+    footer.innerHTML=`<div>Manip index: <span style="color:${manipColor};font-weight:500">${manip.toFixed(1)}</span></div><div>Top network: <span style="color:${NET_COLORS[topNet]}">${NET_ABBR[topNet]} ${Math.round((act[topNet]||0)*100)}%</span></div>`;
     card.appendChild(footer);
-
     grid.appendChild(card);
   });
 }
+
+// ── Methodology accordion toggle ─────────────────────────────────────────────
+$('methodAccordionHeader')?.addEventListener('click', () => {
+  const body = $('methodBody'), arrow = $('methodArrow');
+  const isOpen = body.classList.toggle('open');
+  arrow.classList.toggle('open', isOpen);
+});
+
+// ── Example texts ─────────────────────────────────────────────────────────────
+const EXAMPLES = [
+  {
+    label: 'BREAKING NEWS',
+    text: `BREAKING: Three killed and fifteen wounded as explosions rock downtown district. Emergency services are overwhelmed as fires continue to spread. Authorities have not confirmed the cause but terrorism is not being ruled out. Residents are urged to shelter in place immediately. Officials warn the situation remains "extremely dangerous and fluid." National Guard has been deployed. The President is expected to address the nation within the hour.`
+  },
+  {
+    label: 'POLITICAL SPEECH',
+    text: `They have stolen your future. They have taken your jobs, destroyed your communities, and left your families behind. Every day, hardworking people like you are suffering while the elites in Washington laugh at you. But I am here to tell you: that ends today. Together we will take back what is ours. We will protect our families, restore our dignity, and make sure that the people who did this to us are held fully accountable. The time is now. Are you with me?`
+  },
+  {
+    label: 'AD COPY',
+    text: `You deserve better. You work hard, you sacrifice, and yet every morning you wake up feeling the same: drained, unappreciated, like you're falling behind. That's why we created this. Thousands of people just like you have already made the change. They feel focused. They feel energized. They feel like themselves again. Don't wait for things to get better on their own. You have one life. Make it extraordinary. Try it today — completely risk-free.`
+  },
+  {
+    label: 'NEUTRAL CONTROL',
+    text: `The Schaefer 2018 parcellation divides the cerebral cortex into 200 regions of interest based on resting-state fMRI data from 1,489 participants. The parcels are organized according to the Yeo 7-network functional architecture, which includes the default mode, somatomotor, dorsal attention, salience, limbic, frontoparietal, and visual networks. Each parcel corresponds to a specific anatomical location on the fsaverage5 surface mesh, enabling reliable group-level comparisons across studies.`
+  }
+];
+
+function loadExample(idx) {
+  const ex = EXAMPLES[idx]; if(!ex) return;
+  $('textInput').value = ex.text;
+  $('textInput').dispatchEvent(new Event('input'));
+  $('inputBody').classList.add('expanded');
+  $('inputArrow').classList.add('open');
+  $('textInput').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+// ── Elapsed timer ─────────────────────────────────────────────────────────────
+let _timerStart=null, _timerInterval=null;
+function startTimer() {
+  _timerStart=Date.now();
+  const el=$('elapsedTimer'); if(!el) return;
+  el.textContent='0s';
+  _timerInterval=setInterval(()=>{
+    const s=Math.floor((Date.now()-_timerStart)/1000);
+    const m=Math.floor(s/60), sec=s%60;
+    el.textContent=m>0?`${m}m ${sec}s`:`${s}s`;
+  },1000);
+}
+function stopTimer() { if(_timerInterval){clearInterval(_timerInterval);_timerInterval=null;} }
+
+// ── Copy summary ─────────────────────────────────────────────────────────────
+function copySummary() {
+  const d=window._lastResult; if(!d) return;
+  const interp=d.interpretation||{}, act=d.network_activations||{}, profiles=d.reaction_profiles||[];
+  const nTR=d.raw_stats?.n_timesteps||0;
+  const netLines=NET_ORDER.filter(k=>k in act).map(n=>`  ${NET_ABBR[n].padEnd(5)}${NET_LABELS[n].padEnd(24)}${Math.round((act[n]??0)*100)}%`).join('\n');
+  const profLines=profiles.slice(0,3).map(p=>`  ${p.label}: ${Math.round(p.score*100)}%`).join('\n');
+  const txt=[
+    '=== TRIBE DECODER — Neural Reaction Analysis ===',
+    `Primary Target:     ${interp.primary_target||'—'}`,
+    `Manipulation Index: ${(interp.manipulation_index??0).toFixed(1)} / 10`,
+    `Signal:             ${nTR} TRs (${nTR}s of content)`,
+    '',
+    'NETWORK ACTIVATIONS (Yeo 7-network):',
+    netLines,
+    '',
+    'TOP REACTION PROFILES:',
+    profLines,
+    '',
+    `Intended Outcome: ${interp.intended_outcome||'—'}`,
+    `Who Benefits:     ${interp.who_benefits||'—'}`,
+    '',
+    'Inoculation:',
+    `  ${interp.inoculation||'—'}`,
+    '',
+    '--- Powered by Meta FAIR TRIBE v2 (d\'Ascoli et al. 2026) ---',
+    '--- Schaefer 2018 atlas · Yeo 7-network parcellation ---',
+  ].join('\n');
+  navigator.clipboard.writeText(txt).then(()=>{
+    const btn=$('copySummaryBtn');
+    if(btn){btn.textContent='COPIED!';setTimeout(()=>btn.textContent='COPY SUMMARY',1800);}
+  }).catch(()=>{ prompt('Copy this analysis summary:',txt); });
+}
+
+// ── Export raw JSON ───────────────────────────────────────────────────────────
+function exportRawData() {
+  if(!window._lastResult) return;
+  const blob=new Blob([JSON.stringify(window._lastResult,null,2)],{type:'application/json'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download='tribe_decoder_output.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+
+// ── Reset analysis ────────────────────────────────────────────────────────────
+function resetAnalysis() {
+  $('normalResults').className='results-wrap';
+  $('errorPanel').className='error-panel';
+  const es=$('emptyState'); if(es) es.style.display='';
+  $('inputBody').classList.add('expanded');
+  $('inputArrow').classList.add('open');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── Methodology modal ─────────────────────────────────────────────────────────
+function openMethodModal() { $('methodModal').classList.add('open'); document.body.style.overflow='hidden'; }
+function closeMethodModal() { $('methodModal').classList.remove('open'); document.body.style.overflow=''; }
+$('methodModal')?.addEventListener('click',e=>{ if(e.target===$('methodModal')) closeMethodModal(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeMethodModal(); });
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 checkStatus();

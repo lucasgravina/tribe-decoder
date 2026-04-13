@@ -1,0 +1,18 @@
+# Modal deployment dependencies
+# These are installed into the Modal container image defined in modal_app.py.
+# They are listed here for reference — the image is built via .run_commands()
+# and .pip_install() in modal_app.py, not from this file directly.
+#
+# To install locally for development/testing:
+#   pip install -r requirements_modal.txt
+
+modal>=0.64.0
+
+# GPU-side inference deps (built into Modal image)
+# tribev2[plotting] @ git+https://github.com/facebookresearch/tribev2.git
+numpy==2.2.6
+langdetect==1.0.9
+nibabel>=3.2.0
+nilearn>=0.10.0
+huggingface-hub>=0.23.0
+fastapi[standard]>=0.110.0

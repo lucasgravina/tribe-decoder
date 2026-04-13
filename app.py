@@ -1,10 +1,15 @@
 """
-TRIBE Decoder — Local Proxy Server
-Run: python app.py
-Then open: http://localhost:5001
+TRIBE Decoder — Flask Frontend + Proxy
+Reads MODAL_ENDPOINT from environment (set in Railway or .env locally).
+Optionally reads ACCESS_KEY — if set, all /analyze calls require the header
+  X-Access-Key: <value>  or query param  ?key=<value>
+
+Local dev:
+    export MODAL_ENDPOINT=https://lgravina--tribe-decoder-web.modal.run
+    python app.py
+    Open: http://localhost:5001
 """
 
-import json
 import os
 import requests
 from flask import Flask, render_template, request, jsonify
@@ -13,77 +18,78 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-CONFIG_FILE = ".tribe_config.json"
+
+def get_modal_url() -> str:
+    return os.environ.get("MODAL_ENDPOINT", "").rstrip("/")
 
 
-def load_config() -> dict:
-    if os.path.exists(CONFIG_FILE):
-        with open(CONFIG_FILE) as f:
-            return json.load(f)
-    return {"ngrok_url": ""}
-
-
-def save_config(cfg: dict):
-    with open(CONFIG_FILE, "w") as f:
-        json.dump(cfg, f)
+def check_access() -> bool:
+    """Return True if access is allowed. Always True when ACCESS_KEY is not set."""
+    key = os.environ.get("ACCESS_KEY", "")
+    if not key:
+        return True
+    provided = (
+        request.headers.get("X-Access-Key", "")
+        or request.args.get("key", "")
+        or (request.get_json(silent=True) or {}).get("access_key", "")
+    )
+    return provided == key
 
 
 @app.route("/")
 def index():
-    cfg = load_config()
-    return render_template("index.html", ngrok_url=cfg.get("ngrok_url", ""))
-
-
-@app.route("/config", methods=["POST"])
-def update_config():
-    data = request.get_json(silent=True) or {}
-    cfg = load_config()
-    cfg["ngrok_url"] = data.get("ngrok_url", "").rstrip("/")
-    save_config(cfg)
-    return jsonify({"success": True})
+    return render_template("index.html")
 
 
 @app.route("/health", methods=["GET"])
 def health():
-    cfg = load_config()
-    ngrok_url = cfg.get("ngrok_url", "").rstrip("/")
-    if not ngrok_url:
-        return jsonify({"local": "ok", "colab": "not_configured"})
+    modal_url = get_modal_url()
+    if not modal_url:
+        return jsonify({"local": "ok", "modal": "not_configured"})
     try:
-        resp = requests.get(f"{ngrok_url}/health", timeout=10)
+        resp = requests.get(f"{modal_url}/health", timeout=10)
         resp.raise_for_status()
-        return jsonify({"local": "ok", "colab": "connected", **resp.json()})
+        return jsonify({"local": "ok", "modal": "connected", **resp.json()})
     except requests.exceptions.ConnectionError:
-        return jsonify({"local": "ok", "colab": "unreachable"})
+        return jsonify({"local": "ok", "modal": "unreachable"})
     except Exception as e:
-        return jsonify({"local": "ok", "colab": "error", "error": str(e)})
+        return jsonify({"local": "ok", "modal": "error", "error": str(e)})
 
 
 @app.route("/analyze", methods=["POST"])
 def analyze():
-    cfg = load_config()
-    ngrok_url = cfg.get("ngrok_url", "").rstrip("/")
+    if not check_access():
+        return jsonify({"success": False, "error": "Unauthorized."}), 401
 
-    if not ngrok_url:
+    modal_url = get_modal_url()
+    if not modal_url:
         return jsonify({
             "success": False,
-            "error": "No Colab URL configured. Enter your ngrok URL in the config panel."
+            "error": "MODAL_ENDPOINT not set. Add it as an environment variable."
         }), 400
 
     data = request.get_json(silent=True) or {}
 
     try:
         resp = requests.post(
-            f"{ngrok_url}/analyze",
+            f"{modal_url}/analyze",
             json=data,
-            timeout=600,  # TRIBE inference can take several minutes on T4
+            timeout=600,
         )
-        return jsonify(resp.json()), resp.status_code
+        try:
+            result = resp.json()
+        except Exception:
+            return jsonify({
+                "success": False,
+                "error": f"Modal returned an empty response (HTTP {resp.status_code}). "
+                         "The request likely timed out — try shorter text or redeploy with modal deploy."
+            }), 504
+        return jsonify(result), resp.status_code
 
     except requests.exceptions.ConnectionError:
         return jsonify({
             "success": False,
-            "error": "Cannot reach Colab. Is Cell 7 running? Is the ngrok URL current?"
+            "error": "Cannot reach Modal endpoint. Check that the deployment is live."
         }), 503
 
     except requests.exceptions.Timeout:
@@ -97,11 +103,15 @@ def analyze():
 
 
 if __name__ == "__main__":
+    modal_url = get_modal_url()
+    access_key = os.environ.get("ACCESS_KEY", "")
     print()
-    print("=" * 50)
+    print("=" * 55)
     print("  TRIBE Decoder — Local Interface")
-    print("=" * 50)
-    print("  Open: http://localhost:5001")
-    print("=" * 50)
+    print("=" * 55)
+    print(f"  Open:       http://localhost:5001")
+    print(f"  Backend:    {modal_url or '(MODAL_ENDPOINT not set)'}")
+    print(f"  Access key: {'set' if access_key else 'not set (open access)'}")
+    print("=" * 55)
     print()
     app.run(port=5001, debug=False)
