@@ -414,6 +414,66 @@
     .modal-lim strong{font-family:var(--mono);font-size:9px;letter-spacing:.1em;color:var(--amber);display:block;margin-bottom:2px}
     .modal-cit{font-family:var(--serif);font-size:12px;color:var(--text-dim);line-height:1.8}
 
+    /* ── Key Takeaway ── */
+    .takeaway-card{background:var(--surface-2);border:1px solid var(--border);border-left:3px solid var(--cyan);border-radius:4px;padding:20px 24px;margin-bottom:16px}
+    .takeaway-eyebrow{font-size:9px;letter-spacing:.22em;color:var(--cyan-dim);margin-bottom:10px}
+    .takeaway-body{font-family:var(--serif);font-size:15px;color:var(--text-bright);line-height:1.75}
+
+    /* ── Emotional Activation Score ── */
+    .eas-row{display:grid;gap:12px;margin-bottom:16px}
+    .eas-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:18px 20px;border-top-width:2px;display:flex;gap:20px;align-items:flex-start}
+    @media(max-width:640px){.eas-card{flex-direction:column}}
+    .eas-left{flex-shrink:0;min-width:110px}
+    .eas-source-name{font-size:10px;letter-spacing:.15em;margin-bottom:6px}
+    .eas-score-big{font-size:52px;font-weight:300;letter-spacing:-2px;line-height:1}
+    .eas-score-sub{font-size:9px;letter-spacing:.08em;color:var(--text-dim);margin-top:5px;line-height:1.5}
+    .eas-right{flex:1}
+    .eas-right-label{font-size:9px;letter-spacing:.15em;color:var(--text-dim);margin-bottom:10px}
+    .eas-comp-row{display:grid;grid-template-columns:1fr 80px 34px;align-items:center;gap:8px;margin-bottom:8px}
+    .eas-comp-name{font-size:10px;color:var(--text)}
+    .eas-comp-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden}
+    .eas-comp-fill{height:100%;border-radius:3px;transition:width .8s cubic-bezier(.16,1,.3,1)}
+    .eas-comp-pct{font-size:10px;text-align:right}
+
+    /* ── Key differences ── */
+    .key-diffs{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:16px}
+    @media(max-width:800px){.key-diffs{grid-template-columns:1fr}}
+    .key-diff-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:14px 16px}
+    .key-diff-eyebrow{font-size:9px;letter-spacing:.18em;color:var(--text-dim);margin-bottom:7px}
+    .key-diff-value{font-size:13px;font-weight:500;color:var(--text-bright);margin-bottom:6px}
+    .key-diff-interp{font-family:var(--serif);font-size:12px;color:var(--text-dim);line-height:1.55}
+
+    /* ── Network human labels ── */
+    .net-human{font-size:10px;color:var(--text-dim);font-style:italic;margin-top:2px;font-family:var(--serif)}
+
+    /* ── Layer sections ── */
+    .layer-section{margin-bottom:12px}
+    .layer-toggle{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:12px 20px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;transition:background .15s}
+    .layer-toggle:hover{background:rgba(255,255,255,.02)}
+    .layer-toggle-left{display:flex;flex-direction:column;gap:2px}
+    .layer-toggle-title{font-size:11px;letter-spacing:.12em;color:var(--text-bright);font-weight:500}
+    .layer-toggle-hint{font-size:10px;color:var(--text-dim)}
+    .layer-body{display:none;padding-top:12px}
+    .layer-body.open{display:block}
+
+    /* ── Framing summary ── */
+    .framing-summary-card{background:var(--surface-2);border:1px solid var(--border);border-radius:4px;padding:14px 18px;margin-bottom:12px}
+    .framing-summary-eyebrow{font-size:9px;letter-spacing:.18em;color:var(--text-dim);margin-bottom:8px}
+    .framing-summary-text{font-family:var(--serif);font-size:14px;color:var(--text);line-height:1.65}
+
+    /* ── Why this score ── */
+    .why-score-wrap{margin-top:14px;padding-top:14px;border-top:1px solid var(--border)}
+    .why-score-label{font-size:9px;letter-spacing:.18em;color:var(--text-dim);margin-bottom:8px}
+    .phrase-ex{background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:8px 12px;margin-bottom:6px;display:flex;align-items:flex-start;gap:10px}
+    .phrase-ex-text{font-family:var(--serif);font-size:12px;color:var(--text);line-height:1.5;flex:1;font-style:italic}
+    .phrase-ex-tag{font-size:9px;letter-spacing:.1em;padding:2px 7px;border-radius:2px;border:1px solid;white-space:nowrap;flex-shrink:0;margin-top:1px}
+
+    /* ── Interpretation tags ── */
+    .itag{display:inline-flex;align-items:center;font-size:9px;letter-spacing:.1em;padding:1px 7px;border-radius:2px;margin-left:6px;vertical-align:middle}
+    .itag.high{color:var(--amber);background:var(--amber-glow);border:1px solid var(--amber-dim)}
+    .itag.mod{color:var(--text-bright);background:rgba(255,255,255,.04);border:1px solid var(--border-hi)}
+    .itag.low{color:var(--text-dim);background:transparent;border:1px solid var(--border)}
+
     /* ── Fade-in transitions ── */
     @keyframes fadeInUp{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
     .results-wrap.active .primary-card{animation:fadeInUp .3s ease .0s both}
@@ -639,7 +699,7 @@
           <div class="primary-outcome" id="primaryOutcome"></div>
         </div>
         <div class="primary-right">
-          <div class="manip-eyebrow">MANIPULATION INDEX</div>
+          <div class="manip-eyebrow">EMOTIONAL ACTIVATION SCORE</div>
           <div class="manip-value" id="manipIndex">—</div>
           <div class="manip-scale">out of 10</div>
           <div style="font-size:9px;color:var(--text-dim);margin-top:8px;max-width:160px;line-height:1.5;font-family:var(--serif)">Reflects predicted neural activation patterns — not evidence of intent.</div>
@@ -762,21 +822,47 @@
 
     <!-- Comparison results -->
     <div class="results-wrap" id="compareResults">
-      <div id="divergenceOverview"></div>
-      <div id="compareSummaryCards" class="compare-summary"></div>
-      <div id="compareSourcePanels"></div>
-      <div class="panel">
-        <div class="panel-header"><span class="panel-label">Network Activation Delta</span><span style="font-size:10px;color:var(--text-dim)">Δ max = largest spread across sources for that network</span></div>
-        <div class="panel-body"><div id="deltaTableWrap"></div></div>
+
+      <!-- Layer 1 — Key insights (always visible) -->
+      <div id="compareL1"></div>
+
+      <!-- Layer 2 — Detailed analysis (open by default) -->
+      <div class="layer-section">
+        <div class="layer-toggle" id="compareL2Toggle">
+          <div class="layer-toggle-left">
+            <div class="layer-toggle-title">DETAILED ANALYSIS</div>
+            <div class="layer-toggle-hint">Network breakdowns · Source comparison · Framing analysis</div>
+          </div>
+          <span class="collapse-arrow open">▾</span>
+        </div>
+        <div class="layer-body open" id="compareL2">
+          <div id="compareSummaryCards" class="compare-summary"></div>
+          <div id="compareSourcePanels"></div>
+          <div id="framingDiffPanel"></div>
+        </div>
       </div>
-      <div class="panel">
-        <div class="panel-header"><span class="panel-label">Brain Map Comparison</span><span style="font-size:10px;color:var(--text-dim)">circle size = relative activation · same scale across sources</span></div>
-        <div class="panel-body"><div class="brain-compare-grid" id="brainCompareGrid"></div></div>
+
+      <!-- Layer 3 — Technical / advanced (collapsed by default) -->
+      <div class="layer-section">
+        <div class="layer-toggle" id="compareL3Toggle">
+          <div class="layer-toggle-left">
+            <div class="layer-toggle-title">TECHNICAL VIEW</div>
+            <div class="layer-toggle-hint">Brain maps · Network delta table · Atlas-level data</div>
+          </div>
+          <span class="collapse-arrow">▾</span>
+        </div>
+        <div class="layer-body" id="compareL3">
+          <div class="panel">
+            <div class="panel-header"><span class="panel-label">Cognitive Engagement Profile</span><span style="font-size:10px;color:var(--text-dim)">Δ = spread across sources per network</span></div>
+            <div class="panel-body"><div id="deltaTableWrap"></div></div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><span class="panel-label">Brain Map Comparison</span><span style="font-size:10px;color:var(--text-dim)">circle size = relative activation · same scale across sources</span></div>
+            <div class="panel-body"><div class="brain-compare-grid" id="brainCompareGrid"></div></div>
+          </div>
+        </div>
       </div>
-      <div class="panel">
-        <div class="panel-header"><span class="panel-label">Sentence-Level Framing Diff</span><span style="font-size:10px;color:var(--text-dim)">dominant reaction profile per sentence per source</span></div>
-        <div class="panel-body"><div id="framingDiffWrap"></div></div>
-      </div>
+
     </div>
   </div><!-- /compareMode -->
 
@@ -1044,7 +1130,7 @@ function renderNetworkBars(act, containerId='networkBars') {
     const val=act[net]??0,pct=Math.round(val*100),color=NET_COLORS[net],isP=net==='Cont';
     const w=document.createElement('div');
     const lr=document.createElement('div'); lr.className='net-label-row';
-    lr.innerHTML=`<span class="net-label" style="color:${color}">${NET_LABELS[net]}</span>${isP?'<span class="net-badge" style="border:1px solid var(--cyan-dim);color:var(--cyan-dim)">ANALYTICAL · HIGH IS PROTECTIVE</span>':''}`;
+    lr.innerHTML=`<div><span class="net-label" style="color:${color}">${NET_LABELS[net]}</span>${isP?'<span class="net-badge" style="border:1px solid var(--cyan-dim);color:var(--cyan-dim)">ANALYTICAL · HIGH IS PROTECTIVE</span>':''}<div class="net-human">${NET_HUMAN[net]||''}</div></div>`;
     const r=document.createElement('div'); r.className='net-row';
     r.innerHTML=`<span class="net-abbr">${NET_ABBR[net]}</span><div class="net-bar-bg"><div class="net-bar-fill" style="width:0%;background:${color}"></div></div><span class="net-value">${pct}%</span>`;
     w.appendChild(lr); w.appendChild(r); c.appendChild(w);
@@ -1338,12 +1424,12 @@ async function runComparison() {
 }
 
 function renderComparison(sources, results) {
-  renderDivergenceOverview(sources, results);
+  renderCompareL1(sources, results);
   renderCompareSummary(sources, results);
   renderCompareSourcePanels(sources, results);
+  renderFramingDiffEnhanced(sources, results);
   renderDeltaTable(sources, results);
   renderBrainCompare(sources, results);
-  renderFramingDiff(sources, results);
   $('compareResults').className = 'results-wrap active';
   $('compareResults').scrollIntoView({behavior:'smooth',block:'start'});
   $('compareBtn').disabled = false;
@@ -1541,6 +1627,27 @@ function renderCompareSourcePanels(sources, results) {
       </div>`;
     body.appendChild(interpBlock);
 
+    // Why This Score? — top sentences that drove the dominant profile
+    const segs = r.segments_breakdown || [];
+    if (segs.length > 0) {
+      const whyWrap = document.createElement('div');
+      whyWrap.className = 'why-score-wrap';
+      whyWrap.innerHTML = '<div class="why-score-label">WHY THIS SCORE? — SENTENCES THAT DROVE THE CLASSIFICATION</div>';
+      const topSegs = [...segs].sort((a, b) => {
+        const as = Math.max(...Object.values(a.profile_scores || {0:0}));
+        const bs = Math.max(...Object.values(b.profile_scores || {0:0}));
+        return bs - as;
+      }).slice(0, 3);
+      topSegs.forEach(seg => {
+        const color = PROFILE_COLORS[seg.dominant_profile] || 'var(--text-dim)';
+        const ex = document.createElement('div');
+        ex.className = 'phrase-ex';
+        ex.innerHTML = `<div class="phrase-ex-text">"${seg.text.slice(0,130)}${seg.text.length>130?'…':''}"</div><div class="phrase-ex-tag" style="color:${color};border-color:${color};background:${color}18">${seg.dominant_label}</div>`;
+        whyWrap.appendChild(ex);
+      });
+      body.appendChild(whyWrap);
+    }
+
     panel.appendChild(header); panel.appendChild(body);
     wrap.appendChild(panel);
 
@@ -1597,7 +1704,7 @@ function renderDeltaTable(sources, results) {
     const deltaColor = delta > 40 ? sources[maxIdx].color : delta > 20 ? 'var(--amber)' : 'var(--text-dim)';
 
     const tr = document.createElement('tr');
-    let tdHtml = `<td><span class="delta-net-name">${NET_ABBR[net]}</span><span style="font-size:9px;color:var(--text-dim);margin-left:6px">${net==='Cont'?'ⓘ protective':''}</span></td>`;
+    let tdHtml = `<td><span class="delta-net-name">${NET_ABBR[net]}</span><div style="font-size:9px;color:var(--text-dim);font-style:italic;font-family:var(--serif);margin-top:1px">${NET_HUMAN[net]||''}</div></td>`;
     sources.forEach((src, i) => {
       const pct = pcts[i], color = src.color;
       const barW = Math.round(pct * 0.5); // max 50px for mini bar
@@ -1762,6 +1869,279 @@ function renderBrainCompare(sources, results) {
   });
 }
 
+// ── Plain-English network labels ──────────────────────────────────────────────
+const NET_HUMAN = {
+  Default:     'Narrative / self-referential thinking',
+  Limbic:      'Emotional valuation & affect',
+  SalVentAttn: 'Attention & threat detection',
+  DorsAttn:    'Sustained focus & engagement',
+  Cont:        'Deliberate reasoning & critical control',
+  SomMot:      'Embodied urgency & action readiness',
+  Vis:         'Vivid imagery & scene construction'
+};
+
+// ── Profile implications (plain English) ─────────────────────────────────────
+const PROFILE_IMPLICATION = {
+  urgency_action:    'creating a felt pressure to act immediately',
+  self_relevance:    "making content feel personally relevant to the reader's identity",
+  fear_threat:       'activating threat-detection and anxiety circuitry',
+  social_tribal:     'triggering in-group / out-group alarm responses',
+  reward_validation: 'appealing to reward and identity validation circuits',
+  analytical_bypass: 'suppressing deliberate critical evaluation'
+};
+
+// ── Key Takeaway generator ────────────────────────────────────────────────────
+function generateKeyTakeaway(sources, results) {
+  const manips = results.map(r => r.interpretation?.manipulation_index ?? 0);
+  const profiles = results.map(r => (r.reaction_profiles || [])[0]);
+  const maxIdx = manips.indexOf(Math.max(...manips));
+  const minIdx = manips.indexOf(Math.min(...manips));
+  const diff = Math.abs(manips[0] - manips[1]);
+
+  const netDivs = NET_ORDER.map(net => {
+    const vals = results.map(r => (r.network_activations || {})[net] ?? 0);
+    return {net, diff: Math.max(...vals) - Math.min(...vals)};
+  }).sort((a, b) => b.diff - a.diff);
+  const topNet = netDivs[0];
+
+  let s1, s2, s3;
+
+  if (diff > 0.5) {
+    s1 = `${sources[maxIdx].name} produces stronger estimated emotional activation (${manips[maxIdx].toFixed(1)}/10) compared to ${sources[minIdx].name} (${manips[minIdx].toFixed(1)}/10).`;
+  } else {
+    s1 = `Both sources produce similar estimated emotional activation (${manips[0].toFixed(1)} vs ${manips[1].toFixed(1)} out of 10).`;
+  }
+
+  const p0 = profiles[0], p1 = profiles[1];
+  if (p0 && p1 && p0.id !== p1.id) {
+    const imp0 = PROFILE_IMPLICATION[p0.id] || p0.label.toLowerCase();
+    s2 = `${sources[0].name} primarily engages ${p0.label.toLowerCase()} circuits — ${imp0} — while ${sources[1].name} focuses on ${p1.label.toLowerCase()}.`;
+  } else if (p0) {
+    s2 = `Both sources use ${p0.label.toLowerCase()} as their primary framing strategy, though activation intensity differs.`;
+  }
+
+  const netPcts = results.map(r => Math.round(((r.network_activations || {})[topNet.net] ?? 0) * 100));
+  const hu = NET_HUMAN[topNet.net] || topNet.net;
+  s3 = `The largest neural divergence is in ${NET_ABBR[topNet.net]} (${hu.toLowerCase()}): ${sources[0].name} at ${netPcts[0]}% vs ${sources[1].name} at ${netPcts[1]}%.`;
+
+  return [s1, s2, s3].filter(Boolean).join(' ');
+}
+
+// ── Layer 1 renderer ──────────────────────────────────────────────────────────
+function renderCompareL1(sources, results) {
+  const el = $('compareL1'); if (!el) return;
+  el.innerHTML = '';
+
+  // Key Takeaway
+  const ta = document.createElement('div');
+  ta.className = 'takeaway-card';
+  ta.innerHTML = `<div class="takeaway-eyebrow">KEY TAKEAWAY — PLAIN ENGLISH SUMMARY</div><div class="takeaway-body">${generateKeyTakeaway(sources, results)}</div>`;
+  el.appendChild(ta);
+
+  // EAS cards
+  renderEmotionalActivationCards(sources, results, el);
+
+  // Key differences
+  renderKeyDifferences(sources, results, el);
+}
+
+// ── Emotional Activation Score cards ─────────────────────────────────────────
+function renderEmotionalActivationCards(sources, results, container) {
+  const row = document.createElement('div');
+  row.className = 'eas-row';
+  row.style.gridTemplateColumns = `repeat(${sources.length},1fr)`;
+
+  sources.forEach((src, i) => {
+    const r = results[i];
+    const manip = r.interpretation?.manipulation_index ?? 0;
+    const profiles = r.reaction_profiles || [];
+    const color = src.color;
+    const manipColor = manip >= 7.5 ? 'var(--red)' : manip >= 5 ? 'var(--amber)' : color;
+
+    const components = [
+      {key:'urgency_action',   label:'Urgency / Action'},
+      {key:'self_relevance',   label:'Identity Targeting'},
+      {key:'fear_threat',      label:'Fear / Threat'},
+      {key:'social_tribal',    label:'Social Alarm'},
+    ];
+
+    const compRows = components.map(c => {
+      const p = profiles.find(x => x.id === c.key);
+      const pct = p ? Math.round(p.score * 100) : 0;
+      const pc = PROFILE_COLORS[c.key] || 'var(--text-dim)';
+      return `<div class="eas-comp-row">
+        <span class="eas-comp-name">${c.label}</span>
+        <div class="eas-comp-bar"><div class="eas-comp-fill" style="width:0%;background:${pc}" id="easf-${i}-${c.key}" data-pct="${pct}"></div></div>
+        <span class="eas-comp-pct" style="color:${pc}">${pct}%</span>
+      </div>`;
+    }).join('');
+
+    const card = document.createElement('div');
+    card.className = 'eas-card';
+    card.style.borderTopColor = color;
+    card.innerHTML = `
+      <div class="eas-left">
+        <div class="eas-source-name" style="color:${color}">${src.name.toUpperCase()}</div>
+        <div class="eas-score-big" style="color:${manipColor}">${manip.toFixed(1)}</div>
+        <div class="eas-score-sub">EMOTIONAL<br>ACTIVATION<br>SCORE / 10</div>
+      </div>
+      <div class="eas-right">
+        <div class="eas-right-label">COMPONENT BREAKDOWN</div>
+        ${compRows}
+      </div>`;
+    row.appendChild(card);
+  });
+
+  container.appendChild(row);
+  // Animate bars after DOM insertion
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    sources.forEach((_, i) => {
+      ['urgency_action','self_relevance','fear_threat','social_tribal'].forEach(key => {
+        const f = document.getElementById(`easf-${i}-${key}`);
+        if (f) f.style.width = f.dataset.pct + '%';
+      });
+    });
+  }));
+}
+
+// ── Key differences cards ─────────────────────────────────────────────────────
+function renderKeyDifferences(sources, results, container) {
+  const wrap = document.createElement('div');
+  wrap.className = 'key-diffs';
+
+  // Card 1: Cognitive divergence
+  const netDivs = NET_ORDER.map(net => {
+    const vals = results.map(r => (r.network_activations || {})[net] ?? 0);
+    const mean = vals.reduce((a,b) => a+b, 0) / vals.length;
+    return {net, mad: vals.reduce((s,v) => s+Math.abs(v-mean), 0) / vals.length};
+  });
+  const overallDiv = netDivs.reduce((s,d) => s+d.mad, 0) / netDivs.length;
+  const divPct = Math.round(overallDiv * 100);
+  const divLabel = divPct > 30 ? 'HIGH' : divPct > 15 ? 'MODERATE' : 'LOW';
+  const divClass = divPct > 30 ? 'high' : divPct > 15 ? 'mod' : 'low';
+  const divInterp = divPct > 30
+    ? 'Sources activate substantially different brain circuits — significant framing divergence.'
+    : divPct > 15
+    ? 'Moderate difference in which circuits are engaged — some framing contrast present.'
+    : 'Sources engage similar brain systems — differences are in intensity, not strategy.';
+
+  const d1 = document.createElement('div');
+  d1.className = 'key-diff-card';
+  d1.innerHTML = `<div class="key-diff-eyebrow">COGNITIVE ENGAGEMENT DIVERGENCE</div><div class="key-diff-value">${divPct}%<span class="itag ${divClass}">${divLabel}</span></div><div class="key-diff-interp">${divInterp}</div>`;
+
+  // Card 2: Primary framing
+  const p0 = (results[0].reaction_profiles || [])[0];
+  const p1 = (results[1].reaction_profiles || [])[0];
+  const framingDiff = p0?.id !== p1?.id;
+  const d2 = document.createElement('div');
+  d2.className = 'key-diff-card';
+  d2.innerHTML = `<div class="key-diff-eyebrow">PRIMARY FRAMING STRATEGY</div>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:6px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:7px;height:7px;border-radius:50%;background:${sources[0].color};flex-shrink:0"></div>
+        <span style="font-size:10px;color:${sources[0].color}">${sources[0].name}</span>
+        <span style="font-size:11px;color:var(--text-bright);margin-left:auto">${p0?.label || '—'}</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:7px;height:7px;border-radius:50%;background:${sources[1].color};flex-shrink:0"></div>
+        <span style="font-size:10px;color:${sources[1].color}">${sources[1].name}</span>
+        <span style="font-size:11px;color:var(--text-bright);margin-left:auto">${p1?.label || '—'}</span>
+      </div>
+    </div>
+    <div class="key-diff-interp">${framingDiff ? 'Different primary framing — the mechanisms of influence differ between sources.' : 'Same primary framing — differences are in intensity, not approach.'}</div>`;
+
+  // Card 3: Analytical protection
+  const fpn0 = Math.round(((results[0].network_activations || {}).Cont ?? 0) * 100);
+  const fpn1 = Math.round(((results[1].network_activations || {}).Cont ?? 0) * 100);
+  const maxFpn = Math.max(fpn0, fpn1);
+  const fpnColor = maxFpn > 55 ? 'var(--cyan)' : maxFpn > 40 ? 'var(--text-bright)' : 'var(--amber)';
+  const fpnInterp = maxFpn > 55
+    ? 'Strong deliberate reasoning engagement — content invites critical evaluation.'
+    : maxFpn > 40
+    ? 'Moderate analytical engagement — some deliberate processing present.'
+    : 'Low analytical activation — content may bypass deliberate reasoning circuits.';
+  const d3 = document.createElement('div');
+  d3.className = 'key-diff-card';
+  d3.innerHTML = `<div class="key-diff-eyebrow">ANALYTICAL ENGAGEMENT (DELIBERATE REASONING)</div>
+    <div class="key-diff-value" style="color:var(--cyan)">${sources[0].name}: ${fpn0}% · ${sources[1].name}: ${fpn1}%</div>
+    <div class="key-diff-interp" style="color:${fpnColor}">${fpnInterp}</div>`;
+
+  wrap.appendChild(d1); wrap.appendChild(d2); wrap.appendChild(d3);
+  container.appendChild(wrap);
+}
+
+// ── Enhanced framing diff ─────────────────────────────────────────────────────
+function renderFramingDiffEnhanced(sources, results) {
+  const wrap = $('framingDiffPanel'); if (!wrap) return;
+  wrap.innerHTML = '';
+
+  const panel = document.createElement('div');
+  panel.className = 'panel';
+  panel.innerHTML = `<div class="panel-header"><span class="panel-label">Framing Analysis</span><span style="font-size:10px;color:var(--text-dim)">representative sentences · dominant profile per source</span></div>`;
+  const body = document.createElement('div');
+  body.className = 'panel-body';
+
+  // Framing summary sentence
+  const p0 = (results[0].reaction_profiles || [])[0];
+  const p1 = (results[1].reaction_profiles || [])[0];
+  const summaryText = (p0?.id !== p1?.id)
+    ? `${sources[0].name} predominantly uses <strong>${p0?.label || '—'}</strong> framing — ${PROFILE_IMPLICATION[p0?.id] || ''}. ${sources[1].name} focuses on <strong>${p1?.label || '—'}</strong> — ${PROFILE_IMPLICATION[p1?.id] || ''}.`
+    : `Both sources use <strong>${p0?.label || '—'}</strong> as their primary framing strategy.`;
+
+  const summaryCard = document.createElement('div');
+  summaryCard.className = 'framing-summary-card';
+  summaryCard.innerHTML = `<div class="framing-summary-eyebrow">FRAMING DIFFERENCE SUMMARY</div><div class="framing-summary-text">${summaryText}</div>`;
+  body.appendChild(summaryCard);
+
+  // Show up to 3 most interesting sentences
+  const allSegs = results.map(r => r.segments_breakdown || []);
+  const maxLen = Math.max(...allSegs.map(s => s.length), 0);
+  if (maxLen > 0) {
+    const interesting = [];
+    for (let si = 0; si < maxLen; si++) {
+      if (!allSegs.some(segs => segs[si])) continue;
+      const profs = allSegs.map(segs => segs[si]?.dominant_profile).filter(Boolean);
+      const profilesDiffer = new Set(profs).size > 1;
+      const maxScore = Math.max(...allSegs.map(segs => Math.max(...Object.values(segs[si]?.profile_scores || {0:0}))));
+      if (profilesDiffer || maxScore > 0.6) interesting.push(si);
+    }
+    const toShow = (interesting.length > 0 ? interesting : Array.from({length: maxLen}, (_, i) => i)).slice(0, 3);
+
+    const headerDiv = document.createElement('div');
+    headerDiv.className = 'framing-header';
+    headerDiv.style.gridTemplateColumns = `1fr repeat(${sources.length},1fr)`;
+    headerDiv.innerHTML = '<span>SENTENCE</span>' + sources.map(s => `<span style="color:${s.color}">${s.name.toUpperCase()}</span>`).join('');
+    body.appendChild(headerDiv);
+
+    toShow.forEach(si => {
+      const rowDiv = document.createElement('div');
+      rowDiv.className = 'framing-row';
+      rowDiv.style.gridTemplateColumns = `1fr repeat(${sources.length},1fr)`;
+      const sentText = allSegs.map(segs => segs[si]?.text).find(Boolean) || `Sentence ${si+1}`;
+      const sentEl = document.createElement('div');
+      sentEl.className = 'framing-sent';
+      sentEl.textContent = sentText.length > 120 ? sentText.slice(0, 120) + '…' : sentText;
+      rowDiv.appendChild(sentEl);
+      sources.forEach((src, i) => {
+        const seg = allSegs[i]?.[si];
+        const cell = document.createElement('div');
+        cell.className = 'framing-cell';
+        if (seg) {
+          const color = PROFILE_COLORS[seg.dominant_profile] || 'var(--text-dim)';
+          cell.innerHTML = `<div class="framing-badge" style="color:${color};border-color:${color};background:${color}18">${seg.dominant_label}</div>`;
+        } else {
+          cell.innerHTML = `<span style="font-size:10px;color:var(--text-dim)">—</span>`;
+        }
+        rowDiv.appendChild(cell);
+      });
+      body.appendChild(rowDiv);
+    });
+  }
+
+  panel.appendChild(body);
+  wrap.appendChild(panel);
+}
+
 // ── Methodology accordion toggle ─────────────────────────────────────────────
 $('methodAccordionHeader')?.addEventListener('click', () => {
   const body = $('methodBody'), arrow = $('methodArrow');
@@ -1870,6 +2250,18 @@ function openMethodModal() { $('methodModal').classList.add('open'); document.bo
 function closeMethodModal() { $('methodModal').classList.remove('open'); document.body.style.overflow=''; }
 $('methodModal')?.addEventListener('click',e=>{ if(e.target===$('methodModal')) closeMethodModal(); });
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeMethodModal(); });
+
+// ── Comparison layer toggles ──────────────────────────────────────────────────
+['compareL2Toggle','compareL3Toggle'].forEach((id, i) => {
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn = $(id); if (!btn) return;
+    btn.addEventListener('click', () => {
+      const body = $(i === 0 ? 'compareL2' : 'compareL3'); if (!body) return;
+      const isOpen = body.classList.toggle('open');
+      btn.querySelector('.collapse-arrow').classList.toggle('open', isOpen);
+    });
+  });
+});
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 checkStatus();
