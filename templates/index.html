@@ -1298,6 +1298,7 @@ function renderNormal(data) {
   renderNetworkBars(data.network_activations||{});
   renderRoiTable(data.top_rois||[]);
   renderBrainMap(data.network_activations||{});
+  _segmentsData = data.segments_breakdown || [];  // must be set before renderTimeSeries builds overlay
   renderTimeSeries(data.network_timeseries||{}, data.raw_stats?.n_timesteps||0);
   renderSegments(data.segments_breakdown||[]);
   renderProfiles(data.reaction_profiles||[]);
