@@ -516,8 +516,8 @@ NETWORK_PROFILES = {
         "high_activation_interpretation": (
             "Frontoparietal control network is PROTECTIVE — it governs deliberate, "
             "analytical reasoning. HIGH activation here means content is engaging your "
-            "evaluative faculties. LOW activation is the warning signal: content is "
-            "designed to bypass critical thinking."
+            "evaluative faculties. LOW activation is the pattern to notice: less "
+            "deliberate evaluation, more emotional or reflexive processing."
         ),
         "references": "Miller & Cohen (2001) Ann Rev Neurosci; Dosenbach et al. (2007) PNAS",
         "protective": True,  # Inverted: low Cont = high manipulation concern
@@ -722,9 +722,10 @@ def _score_reaction_profiles(network_mean_z: dict, network_display: dict, parcel
             "the slow, effortful reasoning of System 2 cognition. Emotionally loaded "
             "content suppresses this network as emotional processing competes for "
             "prefrontal resources (Bechara et al.). Low Cont activation + high Limbic/SAL "
-            "= content is designed to be felt and acted on rather than evaluated. "
-            "This is the neurological basis of 'hot cognition' — decisions made under "
-            "emotional load with reduced deliberative capacity."
+            "is a pattern consistent with 'hot cognition' — where emotional processing "
+            "tends to precede analytical evaluation, leaving less capacity for deliberate "
+            "scrutiny. This does not mean the content is dishonest, but it is worth "
+            "slowing down before acting or sharing."
         ),
         "literature": "Bechara et al. (2000) Cognition; Kahneman (2011) Thinking Fast and Slow",
     })
@@ -782,31 +783,31 @@ def _build_interpretation(profiles: list, network_display: dict) -> dict:
     top_ids = [p["id"] for p in profiles[:3]]
     outcomes = {
         frozenset(["fear_threat", "urgency_action"]): (
-            "Click through immediately, share to warn others (from anxiety), "
-            "take impulsive action before critical evaluation"
+            "Likely to produce: immediate clicking or sharing driven by anxiety, "
+            "action before critical evaluation — the urgency feels real and time-sensitive"
         ),
         frozenset(["fear_threat", "social_tribal"]): (
-            "Adopt in-group position on the threat, share to signal group loyalty, "
-            "heighten distrust of out-group framed as responsible"
+            "Likely to produce: adoption of in-group position on the threat, sharing as "
+            "group loyalty signal, heightened distrust of the framed out-group"
         ),
         frozenset(["self_relevance", "reward_validation"]): (
-            "Feel understood and validated, seek more confirming content, "
-            "adopt belief because it fits self-concept"
+            "Likely to produce: feeling understood and validated, seeking more confirming "
+            "content, belief adoption because it fits existing self-concept"
         ),
         frozenset(["social_tribal", "reward_validation"]): (
-            "Strengthen group identity, share for social signaling within in-group, "
-            "punish or ostracize out-group"
+            "Likely to produce: reinforced group identity, in-group sharing for social "
+            "signaling, increased moral distance from the framed out-group"
         ),
         frozenset(["fear_threat", "self_relevance"]): (
-            "Personalize the threat to your own life/identity, feel specifically targeted, "
-            "seek safety by engaging more deeply with the source"
+            "Likely to produce: personalizing the threat to your own identity, feeling "
+            "specifically targeted, seeking safety through deeper engagement with the source"
         ),
         frozenset(["urgency_action", "analytical_bypass"]): (
-            "Act impulsively without deliberation, share before reading fully, "
-            "circumvent your own critical evaluation process"
+            "Likely to produce: acting or sharing before deliberate evaluation — "
+            "emotional urgency tends to outpace critical reflection in this pattern"
         ),
     }
-    intended_outcome = "Engage emotionally, adopt the framed perspective, share or act"
+    intended_outcome = "Likely to produce: emotional engagement, perspective adoption, sharing or action"
     for key_set, outcome in outcomes.items():
         if key_set.issubset(set(top_ids)):
             intended_outcome = outcome
@@ -814,13 +815,13 @@ def _build_interpretation(profiles: list, network_display: dict) -> dict:
 
     # ── Who benefits ───────────────────────────────────────────────────────────
     if manip_index >= 7.5:
-        who_benefits = "The content creator. High emotional targeting + analytical suppression = engineered persuasion."
+        who_benefits = "Most likely the content source. High emotional activation combined with reduced analytical engagement — worth examining who benefits from your reaction before acting or sharing."
     elif manip_index >= 5.0:
-        who_benefits = "Possibly the source. Moderate emotional framing — may be legitimate, worth examining critically."
+        who_benefits = "Possibly the source. Moderate emotional framing that may or may not be intentional — legitimate reporting can produce similar patterns. Worth a second read."
     elif manip_index >= 2.5:
-        who_benefits = "Unclear. Low-moderate emotional activation, analytical engagement present."
+        who_benefits = "Unclear. Low-to-moderate emotional activation with analytical engagement still present — no strong signal of one-sided framing."
     else:
-        who_benefits = "Likely neutral. Low manipulation signature — content appears informational."
+        who_benefits = "Likely you, the reader. Low emotional activation signature — content appears primarily informational."
 
     # ── Inoculation ────────────────────────────────────────────────────────────
     # Based on inoculation theory (McGuire 1964) and prebunking research
@@ -828,9 +829,9 @@ def _build_interpretation(profiles: list, network_display: dict) -> dict:
     inoculation_map = {
         "fear_threat": (
             "Name the threat explicitly out loud. Then ask: what specific action does "
-            "this content want me to take, and does that action actually reduce the threat? "
+            "this content suggest I take, and would that action actually reduce the threat? "
             "Vague, unresolvable threats that don't translate into concrete protective action "
-            "are designed to maintain anxious engagement — not to help you."
+            "tend to maintain anxious engagement without giving you a clear path forward."
         ),
         "self_relevance": (
             "Notice when content feels personally about you — especially with second-person "
@@ -853,15 +854,16 @@ def _build_interpretation(profiles: list, network_display: dict) -> dict:
         ),
         "analytical_bypass": (
             "If you want to share this before finishing it, or before looking anything up, "
-            "that impulse is the mechanism. High-bypass content is optimized for reflexive "
-            "sharing — the emotional payload is front-loaded precisely so you act before "
-            "the analytical system catches up."
+            "notice that impulse. High-bypass content tends to front-load emotional impact "
+            "so the felt reaction precedes deliberate evaluation. Finishing it, and waiting "
+            "a beat before sharing, is usually enough to reactivate critical judgment."
         ),
         "urgency_action": (
-            "Urgency is almost always manufactured. Real emergencies give you enough "
-            "information to act; manufactured urgency withholds resolution to keep you "
-            "dependent on the source for the next update. Ask: what exactly would change "
-            "if I waited 24 hours before doing anything about this?"
+            "When content produces a strong felt urgency, it's worth pausing to check "
+            "whether the urgency maps to a concrete action that will actually help. "
+            "Content that generates urgency without a clear resolution path can keep you "
+            "engaged without moving you forward. Ask: what exactly would change if I "
+            "waited 24 hours before doing anything about this?"
         ),
     }
     primary_id  = primary["id"] if primary else "fear_threat"

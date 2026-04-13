@@ -694,14 +694,16 @@
       <div class="warning-bar hidden" id="warningBar"></div>
       <div class="primary-card">
         <div>
-          <div class="primary-eyebrow">TARGETED REACTION</div>
+          <div class="primary-eyebrow">PRIMARY INFLUENCE STYLE</div>
           <div class="primary-reaction" id="primaryReaction">—</div>
           <div class="primary-outcome" id="primaryOutcome"></div>
+          <div id="cautionBadge" style="display:none;margin-top:12px"></div>
         </div>
         <div class="primary-right">
           <div class="manip-eyebrow">EMOTIONAL ACTIVATION SCORE</div>
           <div class="manip-value" id="manipIndex">—</div>
           <div class="manip-scale">out of 10</div>
+          <div id="easBand" style="font-size:10px;letter-spacing:.1em;margin-top:6px;font-weight:500"></div>
           <div style="font-size:9px;color:var(--text-dim);margin-top:8px;max-width:160px;line-height:1.5;font-family:var(--serif)">Reflects predicted neural activation patterns — not evidence of intent.</div>
         </div>
       </div>
@@ -771,15 +773,15 @@
         <div class="panel-body"><div class="segments-wrap" id="segmentsWrap"></div></div>
       </div>
       <div class="panel">
-        <div class="panel-header"><span class="panel-label">Reaction Profiles</span><span style="font-size:10px;color:var(--text-dim)">scored from activation pattern · rule-based · no LLM</span></div>
+        <div class="panel-header"><span class="panel-label">Influence Profiles</span><span style="font-size:10px;color:var(--text-dim)">scored from activation pattern · rule-based · no LLM</span></div>
         <div class="panel-body"><div class="profiles-grid" id="profilesGrid"></div></div>
       </div>
       <div class="panel">
         <div class="panel-header"><span class="panel-label">Interpretation</span></div>
         <div class="panel-body">
           <div class="interp-grid">
-            <div><div class="interp-eyebrow">INTENDED BEHAVIORAL OUTCOME</div><div class="interp-text" id="interpOutcome"></div></div>
-            <div><div class="interp-eyebrow">WHO BENEFITS IF YOU REACT AS INTENDED</div><div class="interp-text" id="interpBenefits"></div></div>
+            <div><div class="interp-eyebrow">LIKELY BEHAVIORAL EFFECT</div><div class="interp-text" id="interpOutcome"></div></div>
+            <div><div class="interp-eyebrow">WHO BENEFITS FROM THIS REACTION</div><div class="interp-text" id="interpBenefits"></div></div>
           </div>
           <div class="inoculation-block">
             <div class="inoculation-label">INOCULATION — HOW TO MENTALLY DEFEND AGAINST THIS</div>
@@ -938,7 +940,7 @@ const NET_INFO = {
   Limbic:      {fn:'Emotional valuation, visceral responses, value-based decision-making', interp:'Emotional charge circuits engaged — fear, craving, disgust, or strong affect. Includes temporal pole (familiarity) and OFC (threat/reward value).', ref:'Olson et al. (2007); Wallis (2007) Nat Rev Neurosci', protective:false},
   SalVentAttn: {fn:'Alerting to salient events, social alarm, TPJ-mediated moral judgment', interp:'Your threat-detection system is triggered — the same circuitry that evolved to flag predators and moral violations. TPJ within this network governs in-group/out-group distinctions.', ref:'Seeley et al. (2007) J Neurosci', protective:false},
   DorsAttn:    {fn:'Top-down sustained attention, task engagement, spatial attention control', interp:'Content is holding your sustained attention. Can reflect genuine interest or engineered engagement — context matters.', ref:'Corbetta & Shulman (2002) Nat Rev Neurosci', protective:false},
-  Cont:        {fn:'Analytical reasoning, working memory, executive control, deliberate evaluation', interp:'PROTECTIVE — this is System 2 thinking. HIGH activation means you are evaluating the content critically. LOW is the warning sign: content may be designed to bypass your reasoning.', ref:'Miller & Cohen (2001); Kahneman (2011)', protective:true},
+  Cont:        {fn:'Analytical reasoning, working memory, executive control, deliberate evaluation', interp:'PROTECTIVE — this is System 2 thinking. HIGH activation means you are evaluating the content critically. LOW is the pattern to watch: less deliberate reasoning, more emotional or reflexive processing.', ref:'Miller & Cohen (2001); Kahneman (2011)', protective:true},
   SomMot:      {fn:'Motor planning, embodied simulation, action readiness', interp:'Your brain is preparing for physical action in response to symbolic content. Creates the felt urgency: "something must be done." Classic pattern in mobilization rhetoric.', ref:'Huth et al. (2016) Nature; Pessoa (2017) Trends Cogn Sci', protective:false},
   Vis:         {fn:'Visual processing and mental imagery', interp:'Text is generating strong visual imagery — concrete scenes, vivid language. Mental imagery increases emotional impact and reduces abstract evaluation.', ref:'Kosslyn et al. (2006) Nat Rev Neurosci', protective:false},
 };
@@ -1090,9 +1092,29 @@ function renderNormal(data) {
   mi.textContent = manip.toFixed(1);
   mi.className = 'manip-value'+(manip>=7.5?' danger':manip>=5?' warn':'');
   tip(mi,
-    `<div class="tt-value">${manip.toFixed(1)} / 10</div><div class="tt-body">Formula: top emotional profile score × 5 + analytical bypass score × 5</div><div class="tt-note"><b>&lt;2.5</b> neutral &nbsp;·&nbsp; <b>2.5–5</b> low-moderate &nbsp;·&nbsp; <b>5–7.5</b> moderate &nbsp;·&nbsp; <b>&gt;7.5</b> high<br><br>Reflects predicted neural activation patterns, not editorial intent. A high score means these brain circuits were activated — not that the content is dishonest.</div>`,
-    'MANIPULATION INDEX'
+    `<div class="tt-value">${manip.toFixed(1)} / 10</div><div class="tt-body">Formula: top emotional profile score × 5 + analytical bypass score × 5</div><div class="tt-note"><b>&lt;2.5</b> low &nbsp;·&nbsp; <b>2.5–5</b> moderate &nbsp;·&nbsp; <b>5–7.5</b> elevated &nbsp;·&nbsp; <b>&gt;7.5</b> high<br><br>Reflects predicted neural activation patterns, not editorial intent. Emotionally resonant journalism can score high. A high score means these circuits were activated — not that the content is dishonest or manipulative.</div>`,
+    'EMOTIONAL ACTIVATION SCORE'
   );
+  // EAS band label
+  const easBand = $('easBand');
+  if (easBand) {
+    const [bandLabel, bandColor] = manip>=7.5 ? ['HIGH ACTIVATION','var(--red)'] : manip>=5 ? ['ELEVATED ACTIVATION','var(--amber)'] : manip>=2.5 ? ['MODERATE ACTIVATION','var(--text)'] : ['LOW ACTIVATION','var(--text-dim)'];
+    easBand.textContent = bandLabel;
+    easBand.style.color = bandColor;
+  }
+  // Caution badge
+  const cautionBadge = $('cautionBadge');
+  if (cautionBadge) {
+    const [cautionLabel, cautionColor, cautionBg] = manip>=7.5
+      ? ['HIGH CAUTION — verify before sharing','var(--red)','rgba(240,90,90,0.1)']
+      : manip>=5
+      ? ['MODERATE CAUTION — worth a second read','var(--amber)','rgba(240,168,58,0.1)']
+      : manip>=2.5
+      ? ['LOW CAUTION — some emotional framing','var(--text)','rgba(255,255,255,0.04)']
+      : ['MINIMAL CONCERN — low emotional signal','var(--text-dim)','rgba(255,255,255,0.02)'];
+    cautionBadge.style.display = 'inline-block';
+    cautionBadge.innerHTML = `<span style="display:inline-block;padding:4px 10px;border-radius:3px;font-size:9px;letter-spacing:.14em;font-weight:500;border:1px solid ${cautionColor};color:${cautionColor};background:${cautionBg}">${cautionLabel}</span>`;
+  }
   // Signal quality + analytical ratio
   const nTR = data.raw_stats?.n_timesteps||0;
   const sq = nTR>=20?4:nTR>=12?3:nTR>=6?2:nTR>=2?1:0;
@@ -1571,7 +1593,7 @@ function renderCompareSourcePanels(sources, results) {
         <span style="font-size:11px;color:var(--text-dim)">${interp.primary_target||'—'}</span>
       </div>
       <div style="display:flex;align-items:center;gap:16px">
-        <span style="font-size:11px;color:var(--text-dim)">Manip: <span style="color:${manipColor};font-weight:500">${manip.toFixed(1)}</span>/10</span>
+        <span style="font-size:11px;color:var(--text-dim)">EAS: <span style="color:${manipColor};font-weight:500">${manip.toFixed(1)}</span>/10</span>
         <span style="font-size:10px;color:var(--text-dim);letter-spacing:.08em">▾ expand</span>
       </div>`;
 
@@ -1594,7 +1616,7 @@ function renderCompareSourcePanels(sources, results) {
 
     // Profiles column
     const profCol = document.createElement('div');
-    profCol.innerHTML = `<div class="src-panel-section-label">REACTION PROFILES</div>`;
+    profCol.innerHTML = `<div class="src-panel-section-label">INFLUENCE PROFILES</div>`;
     const profEl = document.createElement('div');
     profEl.className = 'compact-profiles';
     profiles.forEach(p=>{
@@ -1614,7 +1636,7 @@ function renderCompareSourcePanels(sources, results) {
     interpBlock.style.cssText = 'border-top:1px solid var(--border);padding-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:16px';
     interpBlock.innerHTML = `
       <div>
-        <div class="src-panel-section-label">INTENDED OUTCOME</div>
+        <div class="src-panel-section-label">LIKELY EFFECT</div>
         <div style="font-family:var(--serif);font-size:13px;color:var(--text);line-height:1.6">${interp.intended_outcome||'—'}</div>
       </div>
       <div>
@@ -2201,17 +2223,17 @@ function copySummary() {
   const profLines=profiles.slice(0,3).map(p=>`  ${p.label}: ${Math.round(p.score*100)}%`).join('\n');
   const txt=[
     '=== TRIBE DECODER — Neural Reaction Analysis ===',
-    `Primary Target:     ${interp.primary_target||'—'}`,
-    `Manipulation Index: ${(interp.manipulation_index??0).toFixed(1)} / 10`,
+    `Primary Influence:  ${interp.primary_target||'—'}`,
+    `Activation Score:   ${(interp.manipulation_index??0).toFixed(1)} / 10`,
     `Signal:             ${nTR} TRs (${nTR}s of content)`,
     '',
     'NETWORK ACTIVATIONS (Yeo 7-network):',
     netLines,
     '',
-    'TOP REACTION PROFILES:',
+    'TOP INFLUENCE PROFILES:',
     profLines,
     '',
-    `Intended Outcome: ${interp.intended_outcome||'—'}`,
+    `Likely Effect:    ${interp.intended_outcome||'—'}`,
     `Who Benefits:     ${interp.who_benefits||'—'}`,
     '',
     'Inoculation:',
