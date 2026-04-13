@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TRIBE Decoder</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600&family=Crimson+Pro:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:#09090f; --surface:#0d0f1c; --surface-2:#111427; --border:#1c2040; --border-hi:#2a3060;
+      --text:#c4cce0; --text-dim:#5a6080; --text-bright:#e8edf8;
+      --cyan:#3af0c0; --cyan-dim:#1a7060; --cyan-glow:rgba(58,240,192,0.12);
+      --amber:#f0a83a; --amber-dim:#705020; --amber-glow:rgba(240,168,58,0.10);
+      --red:#f05a5a; --red-dim:#601c1c; --green:#3af08a; --green-dim:#1a6040;
+      --mono:'JetBrains Mono','Courier New',monospace; --serif:'Crimson Pro',Georgia,serif;
+    }
+    html{height:100%}
+    body{font-family:var(--mono);background:var(--bg);color:var(--text);font-size:13px;line-height:1.6;min-height:100%}
+    ::-webkit-scrollbar{width:6px;background:var(--bg)}
+    ::-webkit-scrollbar-thumb{background:var(--border-hi);border-radius:3px}
+
+    /* ── Header ── */
+    header{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:12px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px;backdrop-filter:blur(8px)}
+    .logo-wrap{display:flex;flex-direction:column;gap:2px;flex-shrink:0}
+    .logo-main{font-size:15px;font-weight:600;letter-spacing:.25em;color:var(--cyan)}
+    .logo-sub{font-size:10px;letter-spacing:.1em;color:var(--text-dim)}
+    .status-wrap{display:flex;align-items:center;gap:8px;font-size:10px;letter-spacing:.12em;color:var(--text-dim);flex-shrink:0}
+    .status-dot{width:7px;height:7px;border-radius:50%;background:var(--text-dim);transition:background .4s,box-shadow .4s}
+    .status-dot.connected{background:var(--green);box-shadow:0 0 8px var(--green)}
+    .status-dot.error{background:var(--red);box-shadow:0 0 8px var(--red)}
+    .status-dot.checking{animation:pulse-dot 1.2s ease-in-out infinite;background:var(--amber)}
+    @keyframes pulse-dot{0%,100%{opacity:1}50%{opacity:.3}}
+
+    /* ── Mode toggle ── */
+    .mode-toggle{display:flex;border:1px solid var(--border);border-radius:3px;overflow:hidden}
+    .mode-btn{padding:7px 18px;font-family:var(--mono);font-size:10px;letter-spacing:.15em;border:none;background:transparent;color:var(--text-dim);cursor:pointer;transition:background .15s,color .15s;white-space:nowrap}
+    .mode-btn:first-child{border-right:1px solid var(--border)}
+    .mode-btn.active{background:var(--cyan-glow);color:var(--cyan)}
+    .mode-btn:hover:not(.active){color:var(--text)}
+
+    /* ── Layout ── */
+    .main{max-width:1200px;margin:0 auto;padding:24px 32px 80px}
+
+    /* ── Panel base ── */
+    .panel{background:var(--surface);border:1px solid var(--border);border-radius:4px;margin-bottom:16px}
+    .panel-header{padding:11px 20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+    .panel-header.clickable{cursor:pointer;user-select:none;transition:background .15s}
+    .panel-header.clickable:hover{background:rgba(255,255,255,.02)}
+    .panel-label{font-size:10px;letter-spacing:.2em;color:var(--text-dim);text-transform:uppercase}
+    .panel-body{padding:18px 20px}
+    .collapse-arrow{font-size:10px;color:var(--text-dim);transition:transform .25s;display:inline-block;margin-left:8px}
+    .collapse-arrow.open{transform:rotate(180deg)}
+
+    /* ── Collapsible body ── */
+    .collapsible-body{max-height:0;overflow:hidden;transition:max-height .3s ease}
+    .collapsible-body.expanded{max-height:700px}
+
+    /* ── Config panel ── */
+    .config-status-row{display:flex;align-items:center;gap:8px;font-size:10px;letter-spacing:.12em;color:var(--text-dim)}
+    .config-row{display:flex;gap:10px;align-items:center}
+    .config-input{flex:1;background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:9px 14px;font-family:var(--mono);font-size:12px;color:var(--text-bright);outline:none;transition:border-color .2s}
+    .config-input:focus{border-color:var(--cyan-dim)}
+    .config-input::placeholder{color:var(--text-dim)}
+
+    /* ── Buttons ── */
+    .btn{font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.12em;border:1px solid;border-radius:3px;padding:9px 18px;cursor:pointer;transition:background .15s,color .15s,box-shadow .15s;white-space:nowrap}
+    .btn-ghost{background:transparent;border-color:var(--border-hi);color:var(--text-dim)}
+    .btn-ghost:hover{border-color:var(--cyan-dim);color:var(--cyan)}
+    .btn-primary{background:transparent;border-color:var(--cyan-dim);color:var(--cyan)}
+    .btn-primary:hover:not(:disabled){background:var(--cyan-glow);box-shadow:0 0 16px var(--cyan-glow)}
+    .btn-primary:disabled{opacity:.3;cursor:not-allowed}
+
+    /* ── Normal input panel ── */
+    .input-preview{font-size:11px;color:var(--text-dim);max-width:320px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .text-input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:14px 16px;font-family:var(--mono);font-size:12px;color:var(--text-bright);resize:vertical;min-height:150px;outline:none;line-height:1.7;transition:border-color .2s}
+    .text-input:focus{border-color:var(--border-hi)}
+    .text-input::placeholder{color:var(--text-dim)}
+    .input-footer{display:flex;align-items:center;justify-content:space-between;padding-top:12px}
+    .char-count{font-size:11px;color:var(--text-dim)}
+    .char-count.warn{color:var(--amber)}
+
+    /* ── Comparison mode inputs ── */
+    .compare-sources{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+    @media(max-width:800px){.compare-sources{grid-template-columns:1fr}}
+    .compare-source-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;overflow:hidden}
+    .compare-source-header{padding:10px 14px;display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--border)}
+    .source-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+    .source-name-input{flex:1;background:transparent;border:none;font-family:var(--mono);font-size:11px;font-weight:500;letter-spacing:.08em;color:var(--text-bright);outline:none}
+    .compare-textarea{width:100%;background:var(--bg);border:none;border-top:1px solid var(--border);padding:12px 14px;font-family:var(--mono);font-size:11px;color:var(--text-bright);resize:vertical;min-height:120px;outline:none;line-height:1.7}
+    .compare-textarea::placeholder{color:var(--text-dim)}
+    .compare-char-count{padding:6px 14px;font-size:10px;color:var(--text-dim);border-top:1px solid var(--border)}
+    .compare-run-bar{display:flex;align-items:center;justify-content:flex-end;gap:12px;margin-bottom:16px}
+    .compare-hint{font-size:10px;color:var(--text-dim)}
+
+    /* ── Loading ── */
+    .loading-panel{display:none;padding:36px 20px;text-align:center}
+    .loading-panel.active{display:block}
+    .scan-bar{width:100%;height:2px;background:var(--border);border-radius:1px;overflow:hidden;margin-bottom:24px;position:relative}
+    .scan-bar::after{content:'';position:absolute;left:-40%;top:0;width:40%;height:100%;background:linear-gradient(90deg,transparent,var(--cyan),transparent);animation:scan 2s ease-in-out infinite}
+    @keyframes scan{0%{left:-40%}100%{left:100%}}
+    .loading-title{font-size:11px;letter-spacing:.2em;color:var(--cyan);margin-bottom:8px}
+    .loading-sub{font-size:11px;color:var(--text-dim)}
+    .loading-steps{margin-top:18px;display:flex;flex-direction:column;gap:6px;align-items:center}
+    .step{font-size:10px;color:var(--text-dim);letter-spacing:.08em;padding:4px 12px;border:1px solid var(--border);border-radius:2px;opacity:0;transition:opacity .4s,color .4s,border-color .4s}
+    .step.active{opacity:1;color:var(--amber);border-color:var(--amber-dim)}
+    .step.done{opacity:1;color:var(--green);border-color:var(--green-dim)}
+
+    /* ── Results (shared) ── */
+    .results-wrap{display:none}
+    .results-wrap.active{display:block}
+    .warning-bar{background:var(--amber-glow);border:1px solid var(--amber-dim);border-radius:3px;padding:10px 16px;font-size:11px;color:var(--amber);margin-bottom:16px}
+
+    /* ── Normal results: primary card ── */
+    .primary-card{background:var(--surface-2);border:1px solid var(--border);border-top:2px solid var(--cyan);border-radius:4px;padding:24px 28px;margin-bottom:16px;display:flex;align-items:flex-start;justify-content:space-between;gap:32px}
+    .primary-eyebrow{font-size:10px;letter-spacing:.2em;color:var(--text-dim);margin-bottom:8px}
+    .primary-reaction{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--text-bright);line-height:1.2;margin-bottom:10px}
+    .primary-outcome{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--text-dim);max-width:480px;line-height:1.6}
+    .primary-right{flex-shrink:0;text-align:right}
+    .manip-eyebrow{font-size:10px;letter-spacing:.2em;color:var(--text-dim);margin-bottom:6px}
+    .manip-value{font-size:52px;font-weight:300;line-height:1;color:var(--cyan);letter-spacing:-2px}
+    .manip-value.warn{color:var(--amber)}
+    .manip-value.danger{color:var(--red)}
+    .manip-scale{font-size:11px;color:var(--text-dim);margin-top:4px}
+
+    /* ── Two col grid ── */
+    .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+    @media(max-width:760px){.two-col{grid-template-columns:1fr}.primary-card{flex-direction:column}.primary-right{text-align:left}}
+
+    /* ── Network bars ── */
+    .network-bars{display:flex;flex-direction:column;gap:10px}
+    .net-row{display:grid;grid-template-columns:52px 1fr 46px;align-items:center;gap:10px}
+    .net-abbr{font-size:10px;letter-spacing:.1em;color:var(--text-dim);text-align:right}
+    .net-bar-bg{height:6px;background:var(--border);border-radius:3px;overflow:hidden;position:relative}
+    .net-bar-fill{height:100%;border-radius:3px;transition:width .8s cubic-bezier(.16,1,.3,1)}
+    .net-value{font-size:11px;color:var(--text-dim);text-align:right}
+    .net-label-row{margin-bottom:4px;display:flex;align-items:center;justify-content:space-between}
+    .net-label{font-size:10px;letter-spacing:.06em}
+    .net-badge{font-size:9px;letter-spacing:.1em;padding:1px 6px;border-radius:2px}
+
+    /* ── ROI table ── */
+    .roi-table{width:100%;border-collapse:collapse}
+    .roi-table th{font-size:9px;letter-spacing:.15em;color:var(--text-dim);text-align:left;padding:0 0 10px;border-bottom:1px solid var(--border)}
+    .roi-table td{padding:7px 0;border-bottom:1px solid var(--border);vertical-align:top}
+    .roi-table tr:last-child td{border-bottom:none}
+    .roi-name{font-size:11px;color:var(--text-bright);margin-bottom:2px}
+    .roi-desc{font-size:10px;color:var(--text-dim);line-height:1.4}
+    .roi-score{font-size:12px;text-align:right;white-space:nowrap;padding-left:12px}
+    .roi-net{font-size:9px;letter-spacing:.1em;color:var(--text-dim);text-align:right;padding-left:8px}
+
+    /* ── Brain map ── */
+    .brain-map-wrap{display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap}
+    .brain-view-label{font-size:9px;letter-spacing:.15em;color:var(--text-dim);text-align:center;margin-bottom:6px}
+    .brain-svg-wrap{flex:1;min-width:180px}
+    .brain-legend{flex-shrink:0;display:flex;flex-direction:column;gap:8px;padding-top:24px}
+    .brain-legend-item{display:flex;align-items:center;gap:8px;font-size:10px;color:var(--text-dim)}
+    .legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+    .legend-pct{margin-left:auto;font-size:10px;min-width:28px;text-align:right}
+
+    /* ── Timeseries ── */
+    .ts-chart-svg{width:100%;overflow:visible}
+    .ts-legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:12px}
+    .ts-legend-item{display:flex;align-items:center;gap:6px;font-size:10px;color:var(--text-dim);cursor:pointer;user-select:none;transition:color .2s}
+    .ts-legend-item:hover{color:var(--text)}
+    .ts-legend-item.dimmed{opacity:.3}
+    .ts-legend-line{width:20px;height:2px;border-radius:1px;flex-shrink:0}
+
+    /* ── Segment breakdown ── */
+    .segments-wrap{display:flex;flex-direction:column;gap:12px}
+    .segment-row{display:flex;gap:14px;align-items:stretch}
+    .segment-bar{width:3px;border-radius:2px;flex-shrink:0;min-height:20px}
+    .segment-content{flex:1}
+    .segment-text{font-family:var(--serif);font-size:14px;color:var(--text);line-height:1.65;margin-bottom:6px}
+    .segment-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .segment-profile-badge{font-size:9px;letter-spacing:.12em;padding:2px 8px;border-radius:2px;border:1px solid}
+    .segment-ts{font-size:9px;color:var(--text-dim)}
+    .segment-scores{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+    .seg-score-chip{font-size:9px;color:var(--text-dim);background:var(--bg);border:1px solid var(--border);border-radius:2px;padding:1px 6px}
+
+    /* ── Profiles ── */
+    .profiles-grid{display:flex;flex-direction:column;gap:14px}
+    .profile-row{background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:14px 16px;transition:border-color .2s}
+    .profile-row.primary-profile{border-color:var(--border-hi)}
+    .profile-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+    .profile-label{font-size:12px;font-weight:500;color:var(--text-bright)}
+    .profile-score-wrap{display:flex;align-items:center;gap:10px}
+    .profile-score-bar{width:80px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}
+    .profile-score-fill{height:100%;border-radius:2px}
+    .profile-score-num{font-size:11px;width:36px;text-align:right}
+    .profile-mechanism{font-family:var(--serif);font-size:13px;color:var(--text-dim);line-height:1.65}
+    .profile-lit{margin-top:8px;font-size:10px;color:var(--text-dim);border-top:1px solid var(--border);padding-top:8px;font-style:italic}
+    .profile-networks{margin-bottom:8px;display:flex;gap:6px;flex-wrap:wrap}
+    .net-chip{font-size:9px;letter-spacing:.1em;padding:2px 7px;border-radius:2px;background:var(--surface-2);border:1px solid var(--border);color:var(--text-dim)}
+
+    /* ── Interpretation ── */
+    .interp-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px}
+    @media(max-width:760px){.interp-grid{grid-template-columns:1fr}}
+    .interp-eyebrow{font-size:9px;letter-spacing:.2em;color:var(--text-dim);margin-bottom:8px}
+    .interp-text{font-family:var(--serif);font-size:14px;color:var(--text);line-height:1.7}
+    .inoculation-block{background:var(--bg);border:1px solid var(--border);border-left:3px solid var(--cyan-dim);border-radius:0 3px 3px 0;padding:16px 18px;margin-top:20px}
+    .inoculation-label{font-size:9px;letter-spacing:.2em;color:var(--cyan-dim);margin-bottom:8px}
+    .inoculation-text{font-family:var(--serif);font-size:14px;color:var(--text);line-height:1.7}
+
+    /* ── Raw stats ── */
+    .raw-details{background:var(--surface);border:1px solid var(--border);border-radius:4px;margin-top:16px}
+    .raw-summary{padding:12px 20px;font-size:10px;letter-spacing:.15em;color:var(--text-dim);cursor:pointer;user-select:none}
+    .raw-summary:hover{color:var(--text)}
+    .raw-body{padding:0 20px 20px;display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+    .raw-stat{background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:10px 14px}
+    .raw-stat-label{font-size:9px;letter-spacing:.12em;color:var(--text-dim);margin-bottom:4px}
+    .raw-stat-value{font-size:14px;color:var(--text-bright)}
+
+    /* ── Error ── */
+    .error-panel{background:var(--red-dim);border:1px solid var(--red);border-radius:4px;padding:16px 20px;display:none;margin-bottom:16px}
+    .error-panel.active{display:block}
+    .error-title{font-size:11px;letter-spacing:.12em;color:var(--red);margin-bottom:6px}
+    .error-msg{font-size:12px;color:var(--text);font-family:var(--serif)}
+
+    /* ── Comparison results ── */
+    .compare-summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px}
+    @media(max-width:800px){.compare-summary{grid-template-columns:1fr}}
+    .compare-summary-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:14px 16px;border-top-width:2px}
+    .compare-card-source{font-size:10px;letter-spacing:.15em;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+    .compare-card-headline{font-family:var(--serif);font-size:12px;color:var(--text-dim);line-height:1.5;margin-bottom:10px;font-style:italic}
+    .compare-card-reaction{font-size:12px;font-weight:500;color:var(--text-bright);margin-bottom:6px}
+    .compare-card-manip{display:flex;align-items:baseline;gap:6px}
+    .compare-manip-num{font-size:28px;font-weight:300;letter-spacing:-1px}
+    .compare-manip-label{font-size:10px;color:var(--text-dim);letter-spacing:.1em}
+
+    /* Delta table */
+    .delta-table{width:100%;border-collapse:collapse}
+    .delta-table th{font-size:9px;letter-spacing:.15em;color:var(--text-dim);padding:0 8px 10px 0;border-bottom:1px solid var(--border);text-align:left}
+    .delta-table th:not(:first-child){text-align:right}
+    .delta-table td{padding:8px 8px 8px 0;border-bottom:1px solid var(--border);vertical-align:middle}
+    .delta-table tr:last-child td{border-bottom:none}
+    .delta-net-name{font-size:10px;font-weight:500;color:var(--text-bright);letter-spacing:.08em}
+    .delta-bar-cell{display:flex;align-items:center;gap:6px;justify-content:flex-end}
+    .delta-mini-bar{height:4px;border-radius:2px;min-width:4px}
+    .delta-pct{font-size:11px;min-width:32px;text-align:right}
+    .delta-diff{font-size:11px;font-weight:500;text-align:right;min-width:44px}
+
+    /* Framing diff */
+    .framing-header{display:grid;gap:12px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--border);font-size:9px;letter-spacing:.15em;color:var(--text-dim)}
+    .framing-row{padding:14px 0;border-bottom:1px solid var(--border);display:grid;gap:12px}
+    .framing-row:last-child{border-bottom:none}
+    .framing-sent{font-family:var(--serif);font-size:13px;color:var(--text-dim);line-height:1.5;grid-column:1/-1;margin-bottom:8px}
+    .framing-cell{}
+    .framing-badge{display:inline-flex;align-items:center;gap:5px;font-size:9px;padding:3px 8px;border-radius:2px;border:1px solid;margin-bottom:5px;letter-spacing:.08em}
+    .framing-mini-scores{display:flex;flex-wrap:wrap;gap:4px;margin-top:4px}
+    .framing-chip{font-size:9px;padding:1px 5px;background:var(--bg);border:1px solid var(--border);border-radius:2px;color:var(--text-dim)}
+
+    /* Brain compare */
+    .brain-compare-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+    @media(max-width:800px){.brain-compare-grid{grid-template-columns:1fr}}
+    .brain-compare-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:12px;text-align:center}
+    .brain-compare-label{font-size:9px;letter-spacing:.12em;margin-bottom:8px}
+
+    .hidden{display:none!important}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo-wrap">
+    <span class="logo-main">TRIBE DECODER</span>
+    <span class="logo-sub">Neural Reaction Analysis · Meta FAIR TRIBE v2 · Schaefer 2018 Atlas</span>
+  </div>
+
+  <div class="mode-toggle">
+    <button class="mode-btn active" id="modeNormal">NORMAL</button>
+    <button class="mode-btn" id="modeCompare">COMPARISON</button>
+  </div>
+
+  <div class="status-wrap">
+    <div class="status-dot" id="statusDot"></div>
+    <span id="statusText">NOT CONNECTED</span>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- Config panel — collapsed by default -->
+  <div class="panel">
+    <div class="panel-header clickable" id="configToggle">
+      <span class="panel-label">Colab Endpoint</span>
+      <div class="config-status-row">
+        <div class="status-dot" id="statusDot2"></div>
+        <span id="statusText2">NOT CONNECTED</span>
+        <span class="collapse-arrow" id="configArrow">▾</span>
+      </div>
+    </div>
+    <div class="collapsible-body" id="configBody">
+      <div class="panel-body">
+        <div class="config-row">
+          <input class="config-input" id="ngrokUrl" type="text" placeholder="https://xxxx-xx.ngrok-free.app" value="{{ ngrok_url }}" spellcheck="false" autocomplete="off"/>
+          <button class="btn btn-primary" id="saveConfigBtn">CONNECT</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ NORMAL MODE ══════════════════════════════════════════════════════════ -->
+  <div id="normalMode">
+
+    <!-- Input panel — expanded by default -->
+    <div class="panel">
+      <div class="panel-header clickable" id="inputToggle">
+        <span class="panel-label">Content to Analyze</span>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span class="input-preview" id="inputPreview">paste text to analyze...</span>
+          <span class="char-count" id="charCount">0 / 6,000</span>
+          <span class="collapse-arrow open" id="inputArrow">▾</span>
+        </div>
+      </div>
+      <div class="collapsible-body expanded" id="inputBody">
+        <div class="panel-body">
+          <textarea class="text-input" id="textInput" placeholder="Paste any text — news article, headline, ad copy, political speech, social media post..." spellcheck="false"></textarea>
+          <div class="input-footer">
+            <span style="font-size:10px;color:var(--text-dim);max-width:500px;line-height:1.5">Text is converted to speech internally by TRIBE v2 for word-timing alignment. Expect 30–120 sec per query.</span>
+            <button class="btn btn-primary" id="analyzeBtn" disabled>RUN TRIBE v2 ANALYSIS</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="error-panel" id="errorPanel"><div class="error-title">ERROR</div><div class="error-msg" id="errorMsg"></div></div>
+
+    <div class="panel" id="loadingPanel" style="display:none">
+      <div class="panel-body loading-panel active">
+        <div class="scan-bar"></div>
+        <div class="loading-title">RUNNING TRIBE V2 INFERENCE</div>
+        <div class="loading-sub">Predicted fMRI on fsaverage5 cortical mesh · 20,484 vertices</div>
+        <div class="loading-steps">
+          <div class="step" id="step1">1 — TEXT → TTS → WORD-LEVEL TIMING ALIGNMENT</div>
+          <div class="step" id="step2">2 — LLAMA 3.2 + WAV2VEC-BERT FEATURE EXTRACTION</div>
+          <div class="step" id="step3">3 — TRANSFORMER FORWARD PASS → BOLD PREDICTION</div>
+          <div class="step" id="step4">4 — SCHAEFER 200-PARCEL ATLAS MAPPING</div>
+          <div class="step" id="step5">5 — TIMESERIES + SEGMENT ANALYSIS</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Normal results -->
+    <div class="results-wrap" id="normalResults">
+      <div class="warning-bar hidden" id="warningBar"></div>
+      <div class="primary-card">
+        <div>
+          <div class="primary-eyebrow">TARGETED REACTION</div>
+          <div class="primary-reaction" id="primaryReaction">—</div>
+          <div class="primary-outcome" id="primaryOutcome"></div>
+        </div>
+        <div class="primary-right">
+          <div class="manip-eyebrow">MANIPULATION INDEX</div>
+          <div class="manip-value" id="manipIndex">—</div>
+          <div class="manip-scale">out of 10</div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div class="panel">
+          <div class="panel-header"><span class="panel-label">Yeo 7-Network Activations</span><span style="font-size:10px;color:var(--text-dim)">relative z-score</span></div>
+          <div class="panel-body"><div class="network-bars" id="networkBars"></div></div>
+        </div>
+        <div class="panel">
+          <div class="panel-header"><span class="panel-label">Top Activated Parcels</span><span style="font-size:10px;color:var(--text-dim)">Schaefer 200</span></div>
+          <div class="panel-body" style="padding-top:10px">
+            <table class="roi-table"><thead><tr><th>Region / Function</th><th style="text-align:right">NET</th><th style="text-align:right">Z</th></tr></thead><tbody id="roiBody"></tbody></table>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><span class="panel-label">Cortical Network Map</span><span style="font-size:10px;color:var(--text-dim)">schematic · Yeo 7-network anatomy · circle size = relative activation</span></div>
+        <div class="panel-body">
+          <div class="brain-map-wrap">
+            <div class="brain-svg-wrap">
+              <div class="brain-view-label">LATERAL (LEFT HEMISPHERE)</div>
+              <svg id="brainLateral" viewBox="0 0 280 195" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+                <path d="M 38,102 C 36,70 50,40 78,26 C 106,12 136,8 162,14 C 188,20 212,36 228,62 C 244,88 246,116 238,140 C 230,164 212,178 188,184 C 164,190 138,186 114,176 C 90,166 68,150 54,130 C 44,118 39,110 38,102 Z" fill="#0d0f1c" stroke="#2a3060" stroke-width="1.5"/>
+                <path d="M 62,138 C 95,118 132,118 168,132" fill="none" stroke="#1c2040" stroke-width="1.2"/>
+                <path d="M 144,12 C 148,55 150,95 146,138" fill="none" stroke="#1c2040" stroke-width="1" stroke-dasharray="3,3"/>
+                <g><circle id="lc-Vis" cx="218" cy="102" r="0" opacity="0.85"/><text id="lt-Vis" x="218" y="102" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#7a7af0;pointer-events:none">VIS</text></g>
+                <g><circle id="lc-SomMot" cx="148" cy="50" r="0" opacity="0.85"/><text id="lt-SomMot" x="148" y="50" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#f03aa0;pointer-events:none">SMN</text></g>
+                <g><circle id="lc-DorsAttn" cx="192" cy="46" r="0" opacity="0.85"/><text id="lt-DorsAttn" x="192" y="46" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#c03af0;pointer-events:none">DAN</text></g>
+                <g><circle id="lc-SalVentAttn" cx="110" cy="122" r="0" opacity="0.85"/><text id="lt-SalVentAttn" x="110" y="122" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#f0a83a;pointer-events:none">SAL</text></g>
+                <g><circle id="lc-Limbic" cx="66" cy="152" r="0" opacity="0.85"/><text id="lt-Limbic" x="66" y="152" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#f05a5a;pointer-events:none">LMB</text></g>
+                <g><circle id="lc-Cont" cx="78" cy="70" r="0" opacity="0.85"/><text id="lt-Cont" x="78" y="70" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#3af0c0;pointer-events:none">FPN</text></g>
+                <g><circle id="lc-Default" cx="182" cy="150" r="0" opacity="0.85"/><text id="lt-Default" x="182" y="150" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#3a80f0;pointer-events:none">DMN</text></g>
+              </svg>
+            </div>
+            <div class="brain-svg-wrap">
+              <div class="brain-view-label">MEDIAL (LEFT HEMISPHERE)</div>
+              <svg id="brainMedial" viewBox="0 0 280 195" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+                <path d="M 242,102 C 244,70 230,40 202,26 C 174,12 144,8 118,14 C 92,20 68,36 52,62 C 36,88 34,116 42,140 C 50,164 68,178 92,184 C 116,190 142,186 166,176 C 190,166 212,150 226,130 C 236,118 241,110 242,102 Z" fill="#0d0f1c" stroke="#2a3060" stroke-width="1.5"/>
+                <path d="M 100,102 C 120,94 160,94 180,102" fill="none" stroke="#1c2040" stroke-width="1" stroke-dasharray="2,3"/>
+                <path d="M 108,80 C 130,72 150,72 172,80" fill="none" stroke="#1c2040" stroke-width="1" stroke-dasharray="2,3"/>
+                <circle id="mc-Default-pfc" cx="118" cy="60" r="0" opacity="0.85" fill="#3a80f0"/>
+                <text x="118" y="60" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#3a80f0;pointer-events:none">DMN</text>
+                <circle id="mc-Default-pcc" cx="162" cy="120" r="0" opacity="0.7" fill="#3a80f0"/>
+                <circle id="mc-SalVentAttn" cx="118" cy="100" r="0" opacity="0.85" fill="#f0a83a"/>
+                <text x="118" y="100" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#f0a83a;pointer-events:none">SAL</text>
+                <circle id="mc-Vis" cx="202" cy="110" r="0" opacity="0.85" fill="#7a7af0"/>
+                <text x="202" y="110" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#7a7af0;pointer-events:none">VIS</text>
+                <circle id="mc-SomMot" cx="148" cy="38" r="0" opacity="0.85" fill="#f03aa0"/>
+                <text x="148" y="38" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#f03aa0;pointer-events:none">SMN</text>
+                <circle id="mc-Limbic" cx="162" cy="155" r="0" opacity="0.85" fill="#f05a5a"/>
+                <text x="162" y="155" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#f05a5a;pointer-events:none">LMB</text>
+              </svg>
+            </div>
+            <div class="brain-legend" id="brainLegend"></div>
+          </div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><span class="panel-label">Network Activation Timeseries</span><span style="font-size:10px;color:var(--text-dim)">1 TR = 1 second · normalized per network · click legend to toggle</span></div>
+        <div class="panel-body">
+          <svg id="tsSvg" style="width:100%;height:180px;overflow:visible"></svg>
+          <div class="ts-legend" id="tsLegend"></div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><span class="panel-label">Sentence-Level Analysis</span><span style="font-size:10px;color:var(--text-dim)">dominant reaction profile per sentence</span></div>
+        <div class="panel-body"><div class="segments-wrap" id="segmentsWrap"></div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><span class="panel-label">Reaction Profiles</span><span style="font-size:10px;color:var(--text-dim)">scored from activation pattern · rule-based · no LLM</span></div>
+        <div class="panel-body"><div class="profiles-grid" id="profilesGrid"></div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><span class="panel-label">Interpretation</span></div>
+        <div class="panel-body">
+          <div class="interp-grid">
+            <div><div class="interp-eyebrow">INTENDED BEHAVIORAL OUTCOME</div><div class="interp-text" id="interpOutcome"></div></div>
+            <div><div class="interp-eyebrow">WHO BENEFITS IF YOU REACT AS INTENDED</div><div class="interp-text" id="interpBenefits"></div></div>
+          </div>
+          <div class="inoculation-block">
+            <div class="inoculation-label">INOCULATION — HOW TO MENTALLY DEFEND AGAINST THIS</div>
+            <div class="inoculation-text" id="interpInoculation"></div>
+          </div>
+        </div>
+      </div>
+      <details class="raw-details">
+        <summary class="raw-summary">RAW TRIBE V2 OUTPUT STATS ▾</summary>
+        <div class="raw-body" id="rawBody"></div>
+      </details>
+    </div>
+  </div><!-- /normalMode -->
+
+  <!-- ══ COMPARISON MODE ═════════════════════════════════════════════════════ -->
+  <div id="compareMode" style="display:none">
+
+    <!-- 3 source input cards -->
+    <div class="compare-sources" id="compareSourcesGrid"></div>
+
+    <div class="compare-run-bar">
+      <span class="compare-hint">Each source is run through TRIBE v2 independently in parallel</span>
+      <button class="btn btn-primary" id="compareBtn" disabled>RUN COMPARISON</button>
+    </div>
+
+    <div class="error-panel" id="compareErrorPanel"><div class="error-title">ERROR</div><div class="error-msg" id="compareErrorMsg"></div></div>
+
+    <div class="panel" id="compareLoadingPanel" style="display:none">
+      <div class="panel-body loading-panel active">
+        <div class="scan-bar"></div>
+        <div class="loading-title">RUNNING PARALLEL TRIBE V2 INFERENCE</div>
+        <div class="loading-sub">Analyzing all sources simultaneously · results will appear together</div>
+        <div class="loading-steps">
+          <div class="step active" id="cstep1">SENDING ALL SOURCES TO COLAB</div>
+          <div class="step" id="cstep2">TRIBE V2 INFERENCE RUNNING IN PARALLEL</div>
+          <div class="step" id="cstep3">COMPUTING NETWORK DELTAS</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparison results -->
+    <div class="results-wrap" id="compareResults">
+      <div id="compareSummaryCards" class="compare-summary"></div>
+      <div class="panel">
+        <div class="panel-header"><span class="panel-label">Network Activation Delta</span><span style="font-size:10px;color:var(--text-dim)">Δ max = largest spread across sources for that network</span></div>
+        <div class="panel-body"><div id="deltaTableWrap"></div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><span class="panel-label">Sentence-Level Framing Diff</span><span style="font-size:10px;color:var(--text-dim)">dominant reaction profile per sentence per source</span></div>
+        <div class="panel-body"><div id="framingDiffWrap"></div></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header"><span class="panel-label">Brain Map Comparison</span><span style="font-size:10px;color:var(--text-dim)">circle size = relative activation · same scale across sources</span></div>
+        <div class="panel-body"><div class="brain-compare-grid" id="brainCompareGrid"></div></div>
+      </div>
+    </div>
+  </div><!-- /compareMode -->
+
+</div><!-- /main -->
+
+<script>
+const $ = id => document.getElementById(id);
+
+// ── Constants ─────────────────────────────────────────────────────────────────
+const NET_COLORS = {Default:'#3a80f0',Limbic:'#f05a5a',SalVentAttn:'#f0a83a',DorsAttn:'#c03af0',Cont:'#3af0c0',SomMot:'#f03aa0',Vis:'#7a7af0'};
+const NET_LABELS = {Default:'Default Mode',Limbic:'Limbic',SalVentAttn:'Salience / VentAttn',DorsAttn:'Dorsal Attention',Cont:'Frontoparietal ⓘ',SomMot:'Somatomotor',Vis:'Visual'};
+const NET_ABBR   = {Default:'DMN',Limbic:'LMB',SalVentAttn:'SAL',DorsAttn:'DAN',Cont:'FPN',SomMot:'SMN',Vis:'VIS'};
+const NET_ORDER  = ['Default','Limbic','SalVentAttn','DorsAttn','Cont','SomMot','Vis'];
+const PROFILE_COLORS = {fear_threat:'#f05a5a',self_relevance:'#3a80f0',social_tribal:'#f0a83a',reward_validation:'#3af08a',analytical_bypass:'#7a7af0',urgency_action:'#f03aa0'};
+const PROFILE_SHORT  = {fear_threat:'Fear',self_relevance:'Identity',social_tribal:'Social',reward_validation:'Reward',analytical_bypass:'Bypass',urgency_action:'Urgency'};
+const SOURCE_COLORS  = ['#3a80f0','#f05a5a','#3af08a'];
+const SOURCE_NAMES   = ['Source A','Source B','Source C'];
+
+// ── Mode state ────────────────────────────────────────────────────────────────
+let currentMode = 'normal';
+let connected = false;
+const tsHidden = {};
+
+// ── Mode toggle ───────────────────────────────────────────────────────────────
+$('modeNormal').addEventListener('click', () => switchMode('normal'));
+$('modeCompare').addEventListener('click', () => switchMode('compare'));
+
+function switchMode(mode) {
+  currentMode = mode;
+  $('modeNormal').classList.toggle('active', mode === 'normal');
+  $('modeCompare').classList.toggle('active', mode === 'compare');
+  $('normalMode').style.display = mode === 'normal' ? '' : 'none';
+  $('compareMode').style.display = mode === 'compare' ? '' : 'none';
+  if (mode === 'compare') buildCompareInputs();
+}
+
+// ── Collapsible panels ────────────────────────────────────────────────────────
+$('configToggle').addEventListener('click', () => {
+  const body = $('configBody'), arrow = $('configArrow');
+  const expanded = body.classList.toggle('expanded');
+  arrow.classList.toggle('open', expanded);
+});
+
+$('inputToggle').addEventListener('click', () => {
+  const body = $('inputBody'), arrow = $('inputArrow');
+  const expanded = body.classList.toggle('expanded');
+  arrow.classList.toggle('open', expanded);
+});
+
+// ── Status ────────────────────────────────────────────────────────────────────
+function setStatus(state, text) {
+  [$('statusDot'), $('statusDot2')].forEach(d => {
+    d.className = 'status-dot' + (state === 'connected' ? ' connected' : state === 'error' ? ' error' : state === 'checking' ? ' checking' : '');
+  });
+  [$('statusText'), $('statusText2')].forEach(el => el.textContent = text);
+  connected = state === 'connected';
+  updateAnalyzeBtn();
+  updateCompareBtn();
+}
+
+async function checkStatus() {
+  setStatus('checking', 'CHECKING...');
+  try {
+    const d = await (await fetch('/health')).json();
+    if (d.colab === 'connected')      setStatus('connected', 'COLAB CONNECTED');
+    else if (d.colab === 'not_configured') setStatus('', 'NOT CONFIGURED');
+    else                               setStatus('error', 'COLAB UNREACHABLE');
+  } catch { setStatus('error', 'LOCAL ERROR'); }
+}
+
+// ── Config ────────────────────────────────────────────────────────────────────
+$('saveConfigBtn').addEventListener('click', async () => {
+  await fetch('/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({ngrok_url:$('ngrokUrl').value.trim()})});
+  await checkStatus();
+  // Auto-collapse config after connecting
+  if (connected) {
+    $('configBody').classList.remove('expanded');
+    $('configArrow').classList.remove('open');
+  }
+});
+$('ngrokUrl').addEventListener('keydown', e => { if(e.key==='Enter') $('saveConfigBtn').click(); });
+
+// ── Normal input ──────────────────────────────────────────────────────────────
+$('textInput').addEventListener('input', () => {
+  const val = $('textInput').value;
+  const len = val.length;
+  $('charCount').textContent = `${len.toLocaleString()} / 6,000`;
+  $('charCount').className = 'char-count' + (len > 5500 ? ' warn' : '');
+  const preview = val.trim().slice(0, 60) + (val.trim().length > 60 ? '…' : '');
+  $('inputPreview').textContent = preview || 'paste text to analyze...';
+  updateAnalyzeBtn();
+});
+
+function updateAnalyzeBtn() {
+  $('analyzeBtn').disabled = !(connected && $('textInput').value.trim().length > 0);
+}
+
+// ── Loading steps (normal) ────────────────────────────────────────────────────
+let stepTimers = [];
+function animateSteps() {
+  ['step1','step2','step3','step4','step5'].forEach(s => { $(s).className = 'step'; });
+  stepTimers.forEach(clearTimeout); stepTimers = [];
+  [0,6000,15000,40000,60000].forEach((d,i) => {
+    stepTimers.push(setTimeout(() => {
+      if (i > 0) $('step'+i).className = 'step done';
+      $('step'+(i+1)).className = 'step active';
+    }, d));
+  });
+}
+function clearSteps() { stepTimers.forEach(clearTimeout); stepTimers = []; }
+
+// ── Normal mode analyze ───────────────────────────────────────────────────────
+$('analyzeBtn').addEventListener('click', async () => {
+  const text = $('textInput').value.trim(); if (!text) return;
+  $('errorPanel').className = 'error-panel';
+  $('normalResults').className = 'results-wrap';
+  $('loadingPanel').style.display = 'block';
+  $('analyzeBtn').disabled = true;
+  // Collapse input panel while running
+  $('inputBody').classList.remove('expanded');
+  $('inputArrow').classList.remove('open');
+  animateSteps();
+  try {
+    const resp = await fetch('/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});
+    const data = await resp.json();
+    $('loadingPanel').style.display = 'none'; clearSteps();
+    if (!data.success) { showError('errorPanel','errorMsg', data.error||'Unknown error'); return; }
+    renderNormal(data);
+  } catch(e) {
+    $('loadingPanel').style.display = 'none'; clearSteps();
+    showError('errorPanel','errorMsg', 'Network error: '+e.message);
+  }
+  updateAnalyzeBtn();
+});
+
+function showError(panelId, msgId, msg) {
+  $(panelId).className = 'error-panel active';
+  $(msgId).textContent = msg;
+}
+
+// ── Normal results renderer ───────────────────────────────────────────────────
+function renderNormal(data) {
+  const interp = data.interpretation || {}, manip = interp.manipulation_index ?? 0;
+  const wb = $('warningBar');
+  if (data.warning) { wb.textContent = '⚠ '+data.warning; wb.classList.remove('hidden'); } else wb.classList.add('hidden');
+  $('primaryReaction').textContent = interp.primary_target || '—';
+  $('primaryOutcome').textContent  = interp.intended_outcome || '';
+  const mi = $('manipIndex');
+  mi.textContent = manip.toFixed(1);
+  mi.className = 'manip-value'+(manip>=7.5?' danger':manip>=5?' warn':'');
+  renderNetworkBars(data.network_activations||{});
+  renderRoiTable(data.top_rois||[]);
+  renderBrainMap(data.network_activations||{});
+  renderTimeSeries(data.network_timeseries||{}, data.raw_stats?.n_timesteps||0);
+  renderSegments(data.segments_breakdown||[]);
+  renderProfiles(data.reaction_profiles||[]);
+  $('interpOutcome').textContent     = interp.intended_outcome||'';
+  $('interpBenefits').textContent    = interp.who_benefits||'';
+  $('interpInoculation').textContent = interp.inoculation||'';
+  renderRawStats(data.raw_stats||{});
+  $('normalResults').className = 'results-wrap active';
+  $('normalResults').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ── Network bars ──────────────────────────────────────────────────────────────
+function renderNetworkBars(act) {
+  const c = $('networkBars'); c.innerHTML = '';
+  NET_ORDER.filter(k=>k in act).sort((a,b)=>{if(a==='Cont')return 1;if(b==='Cont')return -1;return(act[b]||0)-(act[a]||0);}).forEach(net=>{
+    const val=act[net]??0,pct=Math.round(val*100),color=NET_COLORS[net],isP=net==='Cont';
+    const w=document.createElement('div');
+    const lr=document.createElement('div'); lr.className='net-label-row';
+    lr.innerHTML=`<span class="net-label" style="color:${color}">${NET_LABELS[net]}</span>${isP?'<span class="net-badge" style="border:1px solid var(--cyan-dim);color:var(--cyan-dim)">ANALYTICAL · HIGH IS PROTECTIVE</span>':''}`;
+    const r=document.createElement('div'); r.className='net-row';
+    r.innerHTML=`<span class="net-abbr">${NET_ABBR[net]}</span><div class="net-bar-bg"><div class="net-bar-fill" style="width:0%;background:${color}"></div></div><span class="net-value">${pct}%</span>`;
+    w.appendChild(lr); w.appendChild(r); c.appendChild(w);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{ r.querySelector('.net-bar-fill').style.width=pct+'%'; }));
+  });
+}
+
+// ── ROI table ─────────────────────────────────────────────────────────────────
+function renderRoiTable(rois) {
+  const b=$('roiBody'); b.innerHTML='';
+  rois.slice(0,8).forEach(roi=>{
+    const color=NET_COLORS[roi.network]||'#5a6080';
+    const zStr=roi.z_score>0?`+${roi.z_score.toFixed(2)}`:roi.z_score.toFixed(2);
+    const zColor=roi.z_score>1.5?'var(--amber)':roi.z_score>0.5?'var(--text-bright)':'var(--text-dim)';
+    const tr=document.createElement('tr');
+    tr.innerHTML=`<td><div class="roi-name">${roi.roi_name||roi.parcel}</div><div class="roi-desc">${roi.description||''}</div></td><td class="roi-net" style="color:${color}">${roi.network||''}</td><td class="roi-score" style="color:${zColor}">${zStr}σ</td>`;
+    b.appendChild(tr);
+  });
+}
+
+// ── Brain map ─────────────────────────────────────────────────────────────────
+function renderBrainMap(act, suffix='') {
+  const MIN_R=8, MAX_R=26;
+  const mapping = {Vis:{lat:'lc-Vis',med:'mc-Vis'},SomMot:{lat:'lc-SomMot',med:'mc-SomMot'},DorsAttn:{lat:'lc-DorsAttn',med:null},SalVentAttn:{lat:'lc-SalVentAttn',med:'mc-SalVentAttn'},Limbic:{lat:'lc-Limbic',med:'mc-Limbic'},Cont:{lat:'lc-Cont',med:null},Default:{lat:'lc-Default',med:'mc-Default-pfc'}};
+  Object.entries(mapping).forEach(([net,ids])=>{
+    const val=act[net]??0, r=Math.round(MIN_R+val*(MAX_R-MIN_R)), color=NET_COLORS[net];
+    const s = suffix ? suffix+'-' : '';
+    const lc=document.getElementById(s+ids.lat); if(lc){lc.setAttribute('r',r);lc.setAttribute('fill',color);}
+    if(ids.med){const mc=document.getElementById(s+ids.med); if(mc){mc.setAttribute('r',r);mc.setAttribute('fill',color);}}
+  });
+  const pcc=document.getElementById((suffix?suffix+'-':'')+'mc-Default-pcc');
+  if(pcc){const v=act['Default']??0;pcc.setAttribute('r',Math.round((MIN_R+v*(MAX_R-MIN_R))*0.7));}
+  if(!suffix) {
+    const leg=$('brainLegend'); leg.innerHTML='';
+    NET_ORDER.forEach(net=>{
+      const val=act[net]??0,pct=Math.round(val*100);
+      const item=document.createElement('div'); item.className='brain-legend-item';
+      item.innerHTML=`<div class="legend-dot" style="background:${NET_COLORS[net]};opacity:${(0.3+val*0.7).toFixed(2)}"></div><span>${NET_ABBR[net]}</span><span class="legend-pct" style="color:${NET_COLORS[net]}">${pct}%</span>`;
+      leg.appendChild(item);
+    });
+  }
+}
+
+// ── Timeseries ────────────────────────────────────────────────────────────────
+function renderTimeSeries(ts, nTR) {
+  const svg=$('tsSvg'); svg.innerHTML='';
+  const nets=Object.keys(ts).filter(n=>ts[n]&&ts[n].length>1);
+  if(!nets.length){const t=document.createElementNS('http://www.w3.org/2000/svg','text');t.setAttribute('x','50%');t.setAttribute('y','50%');t.setAttribute('text-anchor','middle');t.setAttribute('style','font-family:var(--mono);font-size:11px;fill:var(--text-dim)');t.textContent='No timeseries (text too short)';svg.appendChild(t);return;}
+  const W=860,H=160,ml=36,mt=10,mb=30,mr=20,cW=W-ml-mr,cH=H-mt-mb;
+  const ns='http://www.w3.org/2000/svg';
+  svg.setAttribute('viewBox',`0 0 ${W} ${H}`);
+  const g=document.createElementNS(ns,'g'); g.setAttribute('transform',`translate(${ml},${mt})`); svg.appendChild(g);
+  [0,0.25,0.5,0.75,1].forEach(v=>{
+    const y=cH*(1-v);
+    const line=document.createElementNS(ns,'line'); line.setAttribute('x1',0);line.setAttribute('x2',cW);line.setAttribute('y1',y);line.setAttribute('y2',y);line.setAttribute('stroke','#1c2040');line.setAttribute('stroke-width','1');g.appendChild(line);
+    const lbl=document.createElementNS(ns,'text');lbl.setAttribute('x',-6);lbl.setAttribute('y',y+3);lbl.setAttribute('text-anchor','end');lbl.setAttribute('style','font-family:var(--mono);font-size:9px;fill:var(--text-dim)');lbl.textContent=v.toFixed(2);g.appendChild(lbl);
+  });
+  const tickGap=Math.max(1,Math.floor(nTR/8));
+  for(let t=0;t<=nTR;t+=tickGap){
+    const x=(t/Math.max(nTR-1,1))*cW;
+    const line=document.createElementNS(ns,'line');line.setAttribute('x1',x);line.setAttribute('x2',x);line.setAttribute('y1',0);line.setAttribute('y2',cH);line.setAttribute('stroke','#1c2040');line.setAttribute('stroke-width','1');g.appendChild(line);
+    const lbl=document.createElementNS(ns,'text');lbl.setAttribute('x',x);lbl.setAttribute('y',cH+16);lbl.setAttribute('text-anchor','middle');lbl.setAttribute('style','font-family:var(--mono);font-size:9px;fill:var(--text-dim)');lbl.textContent=t+'s';g.appendChild(lbl);
+  }
+  nets.forEach(net=>{
+    const vals=ts[net],color=NET_COLORS[net]||'#5a6080',n=vals.length;
+    let d='';
+    vals.forEach((v,i)=>{const x=(i/Math.max(n-1,1))*cW,y=cH*(1-v);d+=(i===0?`M ${x.toFixed(1)},${y.toFixed(1)}`:`L ${x.toFixed(1)},${y.toFixed(1)}`);});
+    const path=document.createElementNS(ns,'path');path.setAttribute('d',d);path.setAttribute('stroke',color);path.setAttribute('stroke-width','1.5');path.setAttribute('fill','none');path.setAttribute('stroke-linecap','round');path.setAttribute('stroke-linejoin','round');path.setAttribute('opacity',tsHidden[net]?'0':'0.85');path.setAttribute('id','ts-path-'+net);g.appendChild(path);
+  });
+  const leg=$('tsLegend'); leg.innerHTML='';
+  nets.forEach(net=>{
+    const color=NET_COLORS[net];
+    const item=document.createElement('div'); item.className='ts-legend-item'+(tsHidden[net]?' dimmed':'');
+    item.innerHTML=`<div class="ts-legend-line" style="background:${color}"></div><span>${NET_LABELS[net]||net}</span>`;
+    item.addEventListener('click',()=>{tsHidden[net]=!tsHidden[net];item.classList.toggle('dimmed',tsHidden[net]);const p=document.getElementById('ts-path-'+net);if(p)p.setAttribute('opacity',tsHidden[net]?'0':'0.85');});
+    leg.appendChild(item);
+  });
+}
+
+// ── Segment breakdown ─────────────────────────────────────────────────────────
+function renderSegments(segs) {
+  const w=$('segmentsWrap'); w.innerHTML='';
+  if(!segs||!segs.length){w.innerHTML='<div style="font-size:11px;color:var(--text-dim)">No segment data — text may be too short.</div>';return;}
+  segs.forEach(seg=>{
+    const color=PROFILE_COLORS[seg.dominant_profile]||'var(--text-dim)';
+    const row=document.createElement('div'); row.className='segment-row';
+    const bar=document.createElement('div'); bar.className='segment-bar'; bar.style.background=color; bar.style.opacity='0.7';
+    const content=document.createElement('div'); content.className='segment-content';
+    const textEl=document.createElement('div'); textEl.className='segment-text'; textEl.textContent=seg.text;
+    const meta=document.createElement('div'); meta.className='segment-meta';
+    const badge=document.createElement('span'); badge.className='segment-profile-badge'; badge.style.color=color; badge.style.borderColor=color; badge.style.background=color+'18'; badge.textContent=seg.dominant_label;
+    const tsEl=document.createElement('span'); tsEl.className='segment-ts'; tsEl.textContent=`TR ${seg.ts_start}–${seg.ts_end} (${seg.ts_end-seg.ts_start}s)`;
+    meta.appendChild(badge); meta.appendChild(tsEl);
+    const scores=document.createElement('div'); scores.className='segment-scores';
+    if(seg.profile_scores){Object.entries(seg.profile_scores).sort(([,a],[,b])=>b-a).forEach(([id,score])=>{const chip=document.createElement('span');chip.className='seg-score-chip';chip.textContent=`${PROFILE_SHORT[id]||id} ${Math.round(score*100)}%`;if(id===seg.dominant_profile){chip.style.color=PROFILE_COLORS[id];chip.style.borderColor=PROFILE_COLORS[id];}scores.appendChild(chip);});}
+    content.appendChild(textEl); content.appendChild(meta); content.appendChild(scores);
+    row.appendChild(bar); row.appendChild(content); w.appendChild(row);
+  });
+}
+
+// ── Profiles ──────────────────────────────────────────────────────────────────
+function renderProfiles(profiles) {
+  const g=$('profilesGrid'); g.innerHTML='';
+  profiles.forEach((p,i)=>{
+    const pct=Math.round(p.score*100),inv=p.inverted,isPrim=i===0;
+    const barColor=inv?(p.score>0.65?'var(--red)':p.score>0.4?'var(--amber)':'var(--green)'):(p.score>0.7?'var(--amber)':p.score>0.45?'var(--text)':'var(--text-dim)');
+    const numColor=inv?(p.score>0.65?'var(--red)':'var(--text-dim)'):(p.score>0.7?'var(--amber)':'var(--text-dim)');
+    const nets=(p.networks_driving||[]).map(n=>`<span class="net-chip">${NET_ABBR[n]||n}</span>`).join('');
+    const row=document.createElement('div'); row.className='profile-row'+(isPrim?' primary-profile':'');
+    row.innerHTML=`<div class="profile-header"><span class="profile-label">${p.label}</span><div class="profile-score-wrap"><div class="profile-score-bar"><div class="profile-score-fill" style="width:0%;background:${barColor}"></div></div><span class="profile-score-num" style="color:${numColor}">${pct}%</span></div></div><div class="profile-networks">${nets}${p.key_roi?`<span class="net-chip" style="color:var(--amber);border-color:var(--amber-dim)">ROI: ${p.key_roi}</span>`:''}</div><div class="profile-mechanism">${p.mechanism}</div>${p.literature?`<div class="profile-lit">Lit: ${p.literature}</div>`:''}`;
+    g.appendChild(row);
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{ row.querySelector('.profile-score-fill').style.width=pct+'%'; }));
+  });
+}
+
+// ── Raw stats ─────────────────────────────────────────────────────────────────
+function renderRawStats(stats) {
+  const b=$('rawBody'); b.innerHTML='';
+  [['Timesteps',stats.n_timesteps],['Vertices',stats.n_vertices],['Parcels Mapped',stats.n_parcels_mapped],['Mean Predicted BOLD',stats.mean_predicted_bold],['Std Predicted BOLD',stats.std_predicted_bold],['Min Predicted BOLD',stats.min_predicted_bold],['Max Predicted BOLD',stats.max_predicted_bold]].forEach(([l,v])=>{
+    const el=document.createElement('div'); el.className='raw-stat';
+    el.innerHTML=`<div class="raw-stat-label">${l}</div><div class="raw-stat-value">${v??'—'}</div>`;
+    b.appendChild(el);
+  });
+}
+
+// ════════════════════════════════════════════════════════════════════════════════
+// COMPARISON MODE
+// ════════════════════════════════════════════════════════════════════════════════
+
+let activeSourceCount = 2;
+
+function buildCompareInputs() {
+  const grid = $('compareSourcesGrid');
+  if (grid.dataset.built) return;
+  grid.dataset.built = '1';
+  grid.innerHTML = '';
+  activeSourceCount = 2;
+
+  // Build 2 source cards to start
+  for (let i = 0; i < 2; i++) addSourceCard(i);
+
+  // Add third source button row
+  const addRow = document.createElement('div');
+  addRow.id = 'addSourceRow';
+  addRow.style.cssText = 'display:flex;align-items:center;justify-content:center;border:1px dashed var(--border);border-radius:4px;padding:20px;cursor:pointer;transition:border-color .2s';
+  addRow.innerHTML = `<span style="font-size:10px;letter-spacing:.15em;color:var(--text-dim)">+ ADD THIRD SOURCE</span>`;
+  addRow.addEventListener('click', () => {
+    addSourceCard(2);
+    addRow.style.display = 'none';
+    activeSourceCount = 3;
+    updateCompareBtn();
+  });
+  addRow.addEventListener('mouseenter', () => addRow.style.borderColor = 'var(--cyan-dim)');
+  addRow.addEventListener('mouseleave', () => addRow.style.borderColor = 'var(--border)');
+  grid.appendChild(addRow);
+}
+
+function addSourceCard(i) {
+  const grid = $('compareSourcesGrid');
+  const addRow = $('addSourceRow');
+  const color = SOURCE_COLORS[i];
+  const name = SOURCE_NAMES[i];
+  const card = document.createElement('div');
+  card.className = 'compare-source-card';
+  card.id = `srcCard${i}`;
+  card.style.borderTop = `2px solid ${color}`;
+  card.innerHTML = `
+    <div class="compare-source-header">
+      <div class="source-dot" style="background:${color}"></div>
+      <input class="source-name-input" id="srcName${i}" value="${name}" placeholder="Source name" style="color:${color}"/>
+    </div>
+    <textarea class="compare-textarea" id="srcText${i}" placeholder="Paste article or headline here..."></textarea>
+    <div class="compare-char-count" id="srcCount${i}">0 / 6,000</div>
+  `;
+  // Insert before the add row if it exists
+  if (addRow) grid.insertBefore(card, addRow);
+  else grid.appendChild(card);
+
+  const ta = card.querySelector('textarea');
+  const cc = card.querySelector('.compare-char-count');
+  ta.addEventListener('input', () => {
+    const l = ta.value.length;
+    cc.textContent = `${l.toLocaleString()} / 6,000`;
+    updateCompareBtn();
+  });
+}
+
+function updateCompareBtn() {
+  const hasEnough = [0,1].every(i => {
+    const ta = $('srcText'+i);
+    return ta && ta.value.trim().length > 0;
+  });
+  $('compareBtn').disabled = !(connected && hasEnough);
+}
+
+$('compareBtn')?.addEventListener('click', runComparison);
+
+async function runComparison() {
+  $('compareErrorPanel').className = 'error-panel';
+  $('compareResults').className = 'results-wrap';
+  $('compareLoadingPanel').style.display = 'block';
+  $('compareBtn').disabled = true;
+
+  // Animate compare steps
+  $('cstep1').className = 'step done';
+  $('cstep2').className = 'step active';
+
+  const sources = Array.from({length: activeSourceCount}, (_, i) => ({
+    name: $('srcName'+i)?.value?.trim() || SOURCE_NAMES[i],
+    text: $('srcText'+i)?.value?.trim() || '',
+    color: SOURCE_COLORS[i],
+  })).filter(s => s.text.length > 0);
+
+  try {
+    // Run sequentially to avoid VRAM collision on T4
+    const results = [];
+    for (let i = 0; i < sources.length; i++) {
+      const s = sources[i];
+      $('cstep2').textContent = `RUNNING TRIBE V2 — SOURCE ${i+1} OF ${sources.length}: ${s.name.toUpperCase()}`;
+      const resp = await fetch('/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:s.text})});
+      const data = await resp.json();
+      if (!data.success) throw new Error(`Source "${s.name}" failed: ${data.error}`);
+      results.push(data);
+    }
+
+    $('cstep2').className = 'step done';
+    $('cstep3').className = 'step active';
+
+    setTimeout(() => {
+      $('cstep3').className = 'step done';
+      $('compareLoadingPanel').style.display = 'none';
+      renderComparison(sources, results);
+    }, 600);
+
+  } catch(e) {
+    $('compareLoadingPanel').style.display = 'none';
+    showError('compareErrorPanel','compareErrorMsg','Error: '+e.message);
+    $('compareBtn').disabled = false;
+    updateCompareBtn();
+  }
+}
+
+function renderComparison(sources, results) {
+  renderCompareSummary(sources, results);
+  renderDeltaTable(sources, results);
+  renderFramingDiff(sources, results);
+  renderBrainCompare(sources, results);
+  $('compareResults').className = 'results-wrap active';
+  $('compareResults').scrollIntoView({behavior:'smooth',block:'start'});
+  $('compareBtn').disabled = false;
+  updateCompareBtn();
+}
+
+// ── Compare summary cards ─────────────────────────────────────────────────────
+function renderCompareSummary(sources, results) {
+  const wrap = $('compareSummaryCards'); wrap.innerHTML = '';
+  sources.forEach((src, i) => {
+    const r = results[i], interp = r.interpretation||{}, manip = interp.manipulation_index??0;
+    const color = src.color;
+    const card = document.createElement('div');
+    card.className = 'compare-summary-card';
+    card.style.borderTopColor = color;
+    const manipColor = manip>=7.5?'var(--red)':manip>=5?'var(--amber)':color;
+    card.innerHTML = `
+      <div class="compare-card-source" style="color:${color}">
+        <div class="source-dot" style="background:${color}"></div>
+        <span style="letter-spacing:.15em">${src.name.toUpperCase()}</span>
+      </div>
+      <div class="compare-card-headline">${src.text.trim().slice(0,120)}${src.text.trim().length>120?'…':''}</div>
+      <div class="compare-card-reaction">${interp.primary_target||'—'}</div>
+      <div class="compare-card-manip">
+        <span class="compare-manip-num" style="color:${manipColor}">${manip.toFixed(1)}</span>
+        <span class="compare-manip-label">/ 10</span>
+      </div>
+    `;
+    wrap.appendChild(card);
+  });
+}
+
+// ── Delta table ───────────────────────────────────────────────────────────────
+function renderDeltaTable(sources, results) {
+  const wrap = $('deltaTableWrap'); wrap.innerHTML = '';
+
+  const table = document.createElement('table');
+  table.className = 'delta-table';
+
+  // Header
+  const thead = document.createElement('thead');
+  let headerHtml = '<tr><th>Network</th>';
+  sources.forEach(s => headerHtml += `<th style="color:${s.color};text-align:right">${s.name.toUpperCase()}</th>`);
+  headerHtml += '<th style="text-align:right">Δ MAX</th></tr>';
+  thead.innerHTML = headerHtml;
+  table.appendChild(thead);
+
+  const tbody = document.createElement('tbody');
+  NET_ORDER.forEach(net => {
+    const vals = results.map(r => (r.network_activations||{})[net] ?? 0);
+    const pcts = vals.map(v => Math.round(v * 100));
+    const maxPct = Math.max(...pcts), minPct = Math.min(...pcts);
+    const delta = maxPct - minPct;
+    const maxIdx = pcts.indexOf(maxPct);
+    const deltaColor = delta > 40 ? sources[maxIdx].color : delta > 20 ? 'var(--amber)' : 'var(--text-dim)';
+
+    const tr = document.createElement('tr');
+    let tdHtml = `<td><span class="delta-net-name">${NET_ABBR[net]}</span><span style="font-size:9px;color:var(--text-dim);margin-left:6px">${net==='Cont'?'ⓘ protective':''}</span></td>`;
+    sources.forEach((src, i) => {
+      const pct = pcts[i], color = src.color;
+      const barW = Math.round(pct * 0.5); // max 50px for mini bar
+      const isMax = pct === maxPct && delta > 5;
+      tdHtml += `<td>
+        <div class="delta-bar-cell">
+          <div class="delta-mini-bar" style="width:${barW}px;background:${color};opacity:${isMax?1:0.45}"></div>
+          <span class="delta-pct" style="color:${isMax?color:'var(--text-dim)'}">${pct}%</span>
+        </div>
+      </td>`;
+    });
+    tdHtml += `<td class="delta-diff" style="color:${deltaColor}">${delta>0?'+':''}${delta}pt</td>`;
+    tr.innerHTML = tdHtml;
+    tbody.appendChild(tr);
+  });
+  table.appendChild(tbody);
+  wrap.appendChild(table);
+}
+
+// ── Framing diff ──────────────────────────────────────────────────────────────
+function renderFramingDiff(sources, results) {
+  const wrap = $('framingDiffWrap'); wrap.innerHTML = '';
+
+  // Get segments from each source
+  const allSegs = results.map(r => r.segments_breakdown || []);
+  const maxSents = Math.max(...allSegs.map(s => s.length), 1);
+  const showCount = Math.min(maxSents, 4);
+
+  if (showCount === 0) {
+    wrap.innerHTML = '<div style="font-size:11px;color:var(--text-dim)">No segment data available — try longer text inputs.</div>';
+    return;
+  }
+
+  // Header row
+  const headerDiv = document.createElement('div');
+  headerDiv.className = 'framing-header';
+  headerDiv.style.gridTemplateColumns = `1fr repeat(${sources.length}, 1fr)`;
+  headerDiv.innerHTML = '<span>SENTENCE</span>' + sources.map((s,i)=>`<span style="color:${s.color}">${s.name.toUpperCase()}</span>`).join('');
+  wrap.appendChild(headerDiv);
+
+  for (let si = 0; si < showCount; si++) {
+    const rowDiv = document.createElement('div');
+    rowDiv.className = 'framing-row';
+    rowDiv.style.gridTemplateColumns = `1fr repeat(${sources.length}, 1fr)`;
+
+    // Sentence label (use first source's sentence if available)
+    const sentLabel = allSegs[0]?.[si]?.text || `Sentence ${si+1}`;
+    const sentEl = document.createElement('div');
+    sentEl.className = 'framing-sent';
+    sentEl.textContent = sentLabel.length > 100 ? sentLabel.slice(0,100)+'…' : sentLabel;
+    rowDiv.appendChild(sentEl);
+
+    sources.forEach((src, i) => {
+      const seg = allSegs[i]?.[si];
+      const cell = document.createElement('div');
+      cell.className = 'framing-cell';
+      if (seg) {
+        const color = PROFILE_COLORS[seg.dominant_profile] || 'var(--text-dim)';
+        const chips = seg.profile_scores
+          ? Object.entries(seg.profile_scores).sort(([,a],[,b])=>b-a).slice(0,3)
+              .map(([id,score])=>{
+                const isSrc=id===seg.dominant_profile;
+                return `<span class="framing-chip" style="${isSrc?`color:${PROFILE_COLORS[id]};border-color:${PROFILE_COLORS[id]}`:''}">${PROFILE_SHORT[id]} ${Math.round(score*100)}%</span>`;
+              }).join('')
+          : '';
+        cell.innerHTML = `
+          <div class="framing-badge" style="color:${color};border-color:${color};background:${color}18">
+            ${src.name} · ${seg.dominant_label}
+          </div>
+          <div class="framing-mini-scores">${chips}</div>
+        `;
+      } else {
+        cell.innerHTML = `<span style="font-size:10px;color:var(--text-dim)">no data</span>`;
+      }
+      rowDiv.appendChild(cell);
+    });
+    wrap.appendChild(rowDiv);
+  }
+}
+
+// ── Brain compare ─────────────────────────────────────────────────────────────
+function renderBrainCompare(sources, results) {
+  const grid = $('brainCompareGrid'); grid.innerHTML = '';
+
+  // Find global max activation across all sources for consistent scaling
+  const globalMax = {};
+  NET_ORDER.forEach(net => {
+    globalMax[net] = Math.max(...results.map(r => (r.network_activations||{})[net]??0));
+  });
+
+  sources.forEach((src, si) => {
+    const act = results[si].network_activations || {};
+    const color = src.color;
+    const manip = results[si].interpretation?.manipulation_index ?? 0;
+
+    const card = document.createElement('div');
+    card.className = 'brain-compare-card';
+    card.style.borderTop = `2px solid ${color}`;
+
+    const label = document.createElement('div');
+    label.className = 'brain-compare-label';
+    label.style.color = color;
+    label.textContent = src.name.toUpperCase();
+    card.appendChild(label);
+
+    const svgNs = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(svgNs, 'svg');
+    svg.setAttribute('viewBox', '0 0 120 85');
+    svg.style.width = '100%';
+
+    // Brain outline
+    const outline = document.createElementNS(svgNs, 'ellipse');
+    outline.setAttribute('cx','60'); outline.setAttribute('cy','42');
+    outline.setAttribute('rx','52'); outline.setAttribute('ry','38');
+    outline.setAttribute('fill','#0d1421'); outline.setAttribute('stroke','#2a3060'); outline.setAttribute('stroke-width','1');
+    svg.appendChild(outline);
+
+    // Network blobs — fixed positions, radius scales with activation
+    const POSITIONS = {
+      Vis:{cx:95,cy:42},SomMot:{cx:62,cy:18},DorsAttn:{cx:82,cy:22},
+      SalVentAttn:{cx:46,cy:52},Limbic:{cx:27,cy:64},Cont:{cx:33,cy:30},Default:{cx:78,cy:62}
+    };
+    const MIN_R=4, MAX_R=20;
+
+    NET_ORDER.forEach(net => {
+      const val = act[net]??0;
+      const r = Math.round(MIN_R + val*(MAX_R-MIN_R));
+      const pos = POSITIONS[net];
+      const netColor = NET_COLORS[net];
+      const circle = document.createElementNS(svgNs,'circle');
+      circle.setAttribute('cx', pos.cx); circle.setAttribute('cy', pos.cy);
+      circle.setAttribute('r', r); circle.setAttribute('fill', netColor);
+      circle.setAttribute('opacity', (0.3+val*0.6).toFixed(2));
+      svg.appendChild(circle);
+    });
+
+    card.appendChild(svg);
+
+    const footer = document.createElement('div');
+    footer.style.cssText = 'font-size:10px;color:var(--text-dim);margin-top:6px;line-height:1.4';
+    const manipColor = manip>=7.5?'var(--red)':manip>=5?'var(--amber)':color;
+    footer.innerHTML = `Manip index: <span style="color:${manipColor};font-weight:500">${manip.toFixed(1)}</span>`;
+    card.appendChild(footer);
+
+    grid.appendChild(card);
+  });
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+checkStatus();
+setInterval(checkStatus, 30000);
+
+// Wire compare button (must happen after DOM ready — it's there)
+document.addEventListener('DOMContentLoaded', () => {
+  $('compareBtn')?.addEventListener('click', runComparison);
+});
+// Also wire immediately in case DOMContentLoaded already fired
+const cb = $('compareBtn');
+if (cb && !cb._wired) { cb.addEventListener('click', runComparison); cb._wired = true; }
+</script>
+</body>
+</html>
