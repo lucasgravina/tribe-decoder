@@ -975,7 +975,7 @@ $('analyzeBtn').addEventListener('click', async () => {
   animateSteps();
   startTimer();
   try {
-    const resp = await fetch('/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text})});
+    const resp = await fetch('/analyze',{method:'POST',headers:{'Content-Type':'application/json','X-Access-Key':'LUCAS'},body:JSON.stringify({text})});
     const data = await resp.json();
     $('loadingPanel').style.display = 'none'; clearSteps(); stopTimer();
     if (!data.success) { showError('errorPanel','errorMsg', data.error||'Unknown error'); return; }
@@ -1314,7 +1314,7 @@ async function runComparison() {
     for (let i = 0; i < sources.length; i++) {
       const s = sources[i];
       $('cstep2').textContent = `RUNNING TRIBE V2 — SOURCE ${i+1} OF ${sources.length}: ${s.name.toUpperCase()}`;
-      const resp = await fetch('/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({text:s.text})});
+      const resp = await fetch('/analyze',{method:'POST',headers:{'Content-Type':'application/json','X-Access-Key':'LUCAS'},body:JSON.stringify({text:s.text})});
       const data = await resp.json();
       if (!data.success) throw new Error(`Source "${s.name}" failed: ${data.error}`);
       results.push(data);
