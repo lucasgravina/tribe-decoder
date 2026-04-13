@@ -189,16 +189,16 @@
     .segment-row:hover{background:rgba(255,255,255,.025);border-radius:3px}
     .segment-row.active-popup .segment-text{color:var(--text-bright)}
 
-    /* ── Verdict box ── */
-    .verdict-box{background:var(--surface-2);border:1px solid var(--border-hi);border-left:3px solid var(--cyan);border-radius:4px;padding:20px 24px;margin-bottom:16px}
-    .verdict-eyebrow{font-size:9px;letter-spacing:.2em;color:var(--cyan-dim);margin-bottom:10px}
-    .verdict-summary{font-family:var(--serif);font-size:15px;color:var(--text-bright);line-height:1.75;margin-bottom:14px}
-    .verdict-divider{height:1px;background:var(--border);margin:0 0 14px}
-    .verdict-footer{display:flex;gap:16px;flex-wrap:wrap}
-    .verdict-caution-text{font-family:var(--serif);font-size:13px;color:var(--text);line-height:1.6;flex:1;min-width:160px}
-    .verdict-action-block{background:var(--bg);border:1px solid var(--border);border-radius:3px;padding:10px 14px;flex:1;min-width:160px}
-    .verdict-action-eyebrow{font-size:9px;letter-spacing:.16em;color:var(--cyan-dim);margin-bottom:5px}
-    .verdict-action-text{font-family:var(--serif);font-size:13px;color:var(--text-bright);line-height:1.6}
+    /* ── Timeseries tooltip ── */
+    .ts-tooltip{position:absolute;top:4px;background:var(--surface-2);border:1px solid var(--border-hi);border-radius:4px;padding:11px 14px;width:260px;pointer-events:none;z-index:10;box-shadow:0 4px 20px rgba(0,0,0,.5)}
+    .ts-tooltip.hidden{display:none}
+    .ts-tooltip-text{font-family:var(--serif);font-size:12px;line-height:1.6;color:var(--text-dim);margin-bottom:9px}
+    .ts-tooltip-text b{color:var(--text-bright);font-weight:normal;font-style:italic}
+    .ts-tooltip-net-row{display:flex;align-items:center;gap:8px;margin-bottom:3px}
+    .ts-tooltip-net-name{font-size:10px;color:var(--text-dim);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .ts-tooltip-net-bar-bg{width:50px;height:4px;background:var(--border);border-radius:2px;flex-shrink:0;overflow:hidden}
+    .ts-tooltip-net-bar-fill{height:100%;border-radius:2px}
+    .ts-tooltip-net-val{font-size:10px;font-weight:500;width:28px;text-align:right;flex-shrink:0}
 
     /* ── Segment popup ── */
     .seg-popup{position:fixed;inset:0;background:rgba(9,9,15,.7);z-index:500;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
@@ -725,24 +725,16 @@
         <button class="btn-sm" onclick="resetAnalysis()">NEW ANALYSIS</button>
       </div>
       <div class="warning-bar hidden" id="warningBar"></div>
-      <div class="verdict-box hidden" id="verdictBox">
-        <div class="verdict-eyebrow">PLAIN-ENGLISH SUMMARY</div>
-        <div class="verdict-summary" id="verdictSummary"></div>
-        <div class="verdict-divider"></div>
-        <div class="verdict-footer">
-          <div class="verdict-caution-text" id="verdictCaution"></div>
-          <div class="verdict-action-block">
-            <div class="verdict-action-eyebrow">RECOMMENDED ACTION</div>
-            <div class="verdict-action-text" id="verdictAction"></div>
-          </div>
-        </div>
-      </div>
       <div class="primary-card">
         <div>
           <div class="primary-eyebrow">PRIMARY INFLUENCE STYLE</div>
           <div class="primary-reaction" id="primaryReaction">—</div>
           <div class="primary-outcome" id="primaryOutcome"></div>
           <div id="cautionBadge" style="display:none;margin-top:12px"></div>
+          <div id="verdictActionRow" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+            <div style="font-size:9px;letter-spacing:.15em;color:var(--cyan-dim);margin-bottom:5px">WHAT TO DO</div>
+            <div id="verdictActionText" style="font-family:var(--serif);font-size:13px;color:var(--text);line-height:1.6;max-width:380px"></div>
+          </div>
         </div>
         <div class="primary-right">
           <div class="manip-eyebrow">EMOTIONAL ACTIVATION SCORE</div>
@@ -809,7 +801,10 @@
       <div class="panel">
         <div class="panel-header"><span class="panel-label">Network Activation Timeseries</span><span style="font-size:10px;color:var(--text-dim)">1 TR = 1 second · normalized per network · click legend to toggle · click chart to explore</span></div>
         <div class="panel-body">
-          <svg id="tsSvg" style="width:100%;height:180px;overflow:visible"></svg>
+          <div style="position:relative">
+            <svg id="tsSvg" style="width:100%;height:180px;overflow:visible"></svg>
+            <div id="tsTooltip" class="ts-tooltip hidden"></div>
+          </div>
           <div class="ts-legend" id="tsLegend"></div>
         </div>
       </div>
@@ -1242,16 +1237,6 @@ function renderNormal(data) {
   const interp = data.interpretation || {}, manip = interp.manipulation_index ?? 0;
   const wb = $('warningBar');
   if (data.warning) { wb.textContent = '⚠ '+data.warning; wb.classList.remove('hidden'); } else wb.classList.add('hidden');
-  // Verdict box
-  const verdict = generateVerdict(data);
-  const vb = $('verdictBox');
-  if (vb) {
-    const summaryParts = [verdict.s1, verdict.s2].filter(Boolean);
-    $('verdictSummary').textContent = summaryParts.join(' ');
-    $('verdictCaution').textContent = verdict.caution;
-    $('verdictAction').textContent = verdict.rec;
-    vb.classList.remove('hidden');
-  }
   $('primaryReaction').textContent = interp.primary_target || '—';
   $('primaryOutcome').textContent  = interp.intended_outcome || '';
   const mi = $('manipIndex');
@@ -1280,6 +1265,14 @@ function renderNormal(data) {
       : ['MINIMAL CONCERN — low emotional signal','var(--text-dim)','rgba(255,255,255,0.02)'];
     cautionBadge.style.display = 'inline-block';
     cautionBadge.innerHTML = `<span style="display:inline-block;padding:4px 10px;border-radius:3px;font-size:9px;letter-spacing:.14em;font-weight:500;border:1px solid ${cautionColor};color:${cautionColor};background:${cautionBg}">${cautionLabel}</span>`;
+  }
+  // Recommended action (unique — not repeated elsewhere in the output)
+  const profiles = data.reaction_profiles || [];
+  const primaryProfile = profiles[0];
+  const actionRow = $('verdictActionRow'), actionText = $('verdictActionText');
+  if (actionRow && actionText && primaryProfile) {
+    actionText.textContent = VERDICT_ACTIONS[primaryProfile.id] || 'Read critically and verify key claims before acting or sharing.';
+    actionRow.style.display = '';
   }
   // Signal quality + analytical ratio
   const nTR = data.raw_stats?.n_timesteps||0;
@@ -1444,57 +1437,110 @@ function renderTimeSeries(ts, nTR) {
     leg.appendChild(item);
   });
 
-  // ── Interactive overlay: hover cursor + click to open segment popup ──
+  // ── Interactive overlay: hover cursor + inline tooltip ──
   if (_segmentsData.length) {
-    // Segment bands (subtle background fills showing TR ranges)
+    // Segment bands
     const bandG = document.createElementNS(ns,'g'); bandG.setAttribute('clip-path','url(#ts-clip)'); g.insertBefore(bandG, lineG);
     _segmentsData.forEach((seg, i) => {
       const x1 = (seg.ts_start / Math.max(nTR-1,1)) * cW;
       const x2 = (Math.min(seg.ts_end, nTR) / Math.max(nTR-1,1)) * cW;
-      const bandColor = PROFILE_COLORS[seg.dominant_profile] || '#5a6080';
       const band = document.createElementNS(ns,'rect');
       band.setAttribute('x', x1); band.setAttribute('y', 0);
       band.setAttribute('width', Math.max(1, x2-x1)); band.setAttribute('height', cH);
-      band.setAttribute('fill', bandColor); band.setAttribute('opacity', i%2===0 ? '0.04' : '0.02');
+      band.setAttribute('fill', PROFILE_COLORS[seg.dominant_profile]||'#5a6080');
+      band.setAttribute('opacity', i%2===0 ? '0.05' : '0.02');
       bandG.appendChild(band);
     });
 
-    // Cursor line
+    // Cursor line (inside g, so coords are chart-relative 0..cW)
     const cursorLine = document.createElementNS(ns,'line');
     cursorLine.setAttribute('y1','0'); cursorLine.setAttribute('y2',String(cH));
-    cursorLine.setAttribute('stroke','rgba(58,240,192,0.5)'); cursorLine.setAttribute('stroke-width','1');
+    cursorLine.setAttribute('stroke','rgba(58,240,192,0.55)'); cursorLine.setAttribute('stroke-width','1');
     cursorLine.setAttribute('stroke-dasharray','3,2'); cursorLine.style.display='none';
     g.appendChild(cursorLine);
 
-    // Transparent overlay rect
+    // Transparent overlay rect (covers full chart area)
     const overlay = document.createElementNS(ns,'rect');
     overlay.setAttribute('x','0'); overlay.setAttribute('y','0');
     overlay.setAttribute('width',String(cW)); overlay.setAttribute('height',String(cH));
     overlay.setAttribute('fill','transparent'); overlay.style.cursor='crosshair';
     g.appendChild(overlay);
 
-    function xToTr(clientX) {
-      const rect = svg.getBoundingClientRect();
-      const scaleX = W / rect.width;
-      const xInChart = (clientX - rect.left) * scaleX - ml;
+    const tooltip = document.getElementById('tsTooltip');
+
+    // Use getScreenCTM for accurate SVG coordinate mapping
+    function clientXtoChart(clientX) {
+      const pt = svg.createSVGPoint();
+      pt.x = clientX; pt.y = 0;
+      const svgX = pt.matrixTransform(svg.getScreenCTM().inverse()).x;
+      return svgX - ml; // chart-relative x (0..cW)
+    }
+    function chartXtoTr(xInChart) {
       return Math.min(nTR-1, Math.max(0, Math.round((xInChart / cW) * nTR)));
     }
     function segForTr(tr) {
       return _segmentsData.findIndex(s => tr >= s.ts_start && tr < s.ts_end);
     }
+
     overlay.addEventListener('mousemove', e => {
-      const rect = svg.getBoundingClientRect();
-      const scaleX = W / rect.width;
-      const xInChart = (e.clientX - rect.left) * scaleX - ml;
-      if (xInChart < 0 || xInChart > cW) { cursorLine.style.display='none'; return; }
+      const xInChart = clientXtoChart(e.clientX);
+      if (xInChart < 0 || xInChart > cW) {
+        cursorLine.style.display = 'none';
+        if (tooltip) tooltip.classList.add('hidden');
+        return;
+      }
+
+      // Move cursor line
       cursorLine.setAttribute('x1', String(xInChart)); cursorLine.setAttribute('x2', String(xInChart));
       cursorLine.style.display = '';
+
+      if (!tooltip) return;
+      const tr = chartXtoTr(xInChart);
+      const segIdx = segForTr(tr);
+      if (segIdx < 0) { tooltip.classList.add('hidden'); return; }
+
+      const seg = _segmentsData[segIdx];
+      const prev = segIdx > 0 ? _segmentsData[segIdx-1] : null;
+      const next = segIdx < _segmentsData.length-1 ? _segmentsData[segIdx+1] : null;
+
+      // Text block: prev + current (bold/italic) + next as one paragraph
+      const parts = [];
+      if (prev) parts.push(`<span>${prev.text}</span>`);
+      parts.push(`<b>${seg.text}</b>`);
+      if (next) parts.push(`<span>${next.text}</span>`);
+
+      // Network rows with full descriptive names
+      const act = seg.network_activations || {};
+      const netRows = NET_ORDER.filter(k => k in act)
+        .sort((a,b) => { if(a==='Cont') return 1; if(b==='Cont') return -1; return (act[b]||0)-(act[a]||0); })
+        .map(net => {
+          const pct = Math.round((act[net]??0)*100);
+          const fullName = NET_HUMAN[net] || NET_LABELS[net] || net;
+          return `<div class="ts-tooltip-net-row">
+            <span class="ts-tooltip-net-name" style="color:${NET_COLORS[net]}">${fullName}</span>
+            <div class="ts-tooltip-net-bar-bg"><div class="ts-tooltip-net-bar-fill" style="width:${pct}%;background:${NET_COLORS[net]}"></div></div>
+            <span class="ts-tooltip-net-val" style="color:${NET_COLORS[net]}">${pct}%</span>
+          </div>`;
+        }).join('');
+
+      tooltip.innerHTML = `
+        <div style="font-size:9px;letter-spacing:.12em;color:var(--text-dim);margin-bottom:6px">TR ${seg.ts_start}–${seg.ts_end} · ${seg.dominant_label}</div>
+        <div class="ts-tooltip-text">${parts.join(' ')}</div>
+        ${netRows}
+      `;
+
+      // Position: follow cursor x in CSS pixels, stay at top of chart area
+      const svgRect = svg.getBoundingClientRect();
+      const cssCursorX = e.clientX - svgRect.left;
+      const ttW = 260;
+      const maxLeft = svgRect.width - ttW - 2;
+      tooltip.style.left = Math.min(Math.max(0, cssCursorX - ttW / 2), maxLeft) + 'px';
+      tooltip.classList.remove('hidden');
     });
-    overlay.addEventListener('mouseleave', () => { cursorLine.style.display = 'none'; });
-    overlay.addEventListener('click', e => {
-      const tr = xToTr(e.clientX);
-      const idx = segForTr(tr);
-      if (idx >= 0) openSegPopup(idx);
+
+    overlay.addEventListener('mouseleave', () => {
+      cursorLine.style.display = 'none';
+      if (tooltip) tooltip.classList.add('hidden');
     });
   }
 }
@@ -2484,7 +2530,7 @@ function exportRawData() {
 function resetAnalysis() {
   $('normalResults').className='results-wrap';
   $('errorPanel').className='error-panel';
-  const vb=$('verdictBox'); if(vb) vb.classList.add('hidden');
+  const ar=$('verdictActionRow'); if(ar) ar.style.display='none';
   closeSegPopup();
   const es=$('emptyState'); if(es) es.style.display='';
   $('inputBody').classList.add('expanded');
