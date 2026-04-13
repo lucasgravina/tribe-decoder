@@ -1509,17 +1509,26 @@ function renderTimeSeries(ts, nTR) {
       parts.push(`<b>${seg.text}</b>`);
       if (next) parts.push(`<span>${next.text}</span>`);
 
-      // Network rows with full descriptive names
+      // Network rows: z-scores averaged over this segment's TR window (matches chart axis)
       const act = seg.network_activations || {};
+      const tsData = window._lastResult?.network_timeseries || {};
       const netRows = NET_ORDER.filter(k => k in act)
         .sort((a,b) => { if(a==='Cont') return 1; if(b==='Cont') return -1; return (act[b]||0)-(act[a]||0); })
         .map(net => {
-          const pct = Math.round((act[net]??0)*100);
+          // Mean z-score for this segment's TR window from the timeseries
+          const arr = tsData[net];
+          let zLabel = '';
+          if (arr && arr.length > 0) {
+            const slice = arr.slice(seg.ts_start, Math.min(seg.ts_end, arr.length));
+            const zMean = slice.length ? slice.reduce((s,v) => s+v, 0) / slice.length : 0;
+            zLabel = (zMean >= 0 ? '+' : '') + zMean.toFixed(2) + 'σ';
+          }
+          const barPct = Math.round((act[net]??0)*100); // still use normalized value for bar width
           const fullName = NET_HUMAN[net] || NET_LABELS[net] || net;
           return `<div class="ts-tooltip-net-row">
             <span class="ts-tooltip-net-name" style="color:${NET_COLORS[net]}">${fullName}</span>
-            <div class="ts-tooltip-net-bar-bg"><div class="ts-tooltip-net-bar-fill" style="width:${pct}%;background:${NET_COLORS[net]}"></div></div>
-            <span class="ts-tooltip-net-val" style="color:${NET_COLORS[net]}">${pct}%</span>
+            <div class="ts-tooltip-net-bar-bg"><div class="ts-tooltip-net-bar-fill" style="width:${barPct}%;background:${NET_COLORS[net]}"></div></div>
+            <span class="ts-tooltip-net-val" style="color:${NET_COLORS[net]}">${zLabel || barPct+'%'}</span>
           </div>`;
         }).join('');
 
@@ -1529,12 +1538,13 @@ function renderTimeSeries(ts, nTR) {
         ${netRows}
       `;
 
-      // Position: follow cursor x in CSS pixels, stay at top of chart area
+      // Position: to the right of cursor (flip left if near right edge)
       const svgRect = svg.getBoundingClientRect();
       const cssCursorX = e.clientX - svgRect.left;
-      const ttW = 260;
-      const maxLeft = svgRect.width - ttW - 2;
-      tooltip.style.left = Math.min(Math.max(0, cssCursorX - ttW / 2), maxLeft) + 'px';
+      const ttW = 260, gap = 14;
+      let ttLeft = cssCursorX + gap;
+      if (ttLeft + ttW > svgRect.width - 2) ttLeft = cssCursorX - ttW - gap;
+      tooltip.style.left = Math.max(0, ttLeft) + 'px';
       tooltip.classList.remove('hidden');
     });
 
