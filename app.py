@@ -47,7 +47,7 @@ def health():
     if not modal_url:
         return jsonify({"local": "ok", "modal": "not_configured"})
     try:
-        resp = requests.get(f"{modal_url}/health", timeout=10)
+        resp = requests.get(f"{modal_url}/health", timeout=60)
         resp.raise_for_status()
         return jsonify({"local": "ok", "modal": "connected", **resp.json()})
     except requests.exceptions.ConnectionError:
