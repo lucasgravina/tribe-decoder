@@ -123,12 +123,24 @@
     .results-wrap.active{display:block}
     .warning-bar{background:var(--amber-glow);border:1px solid var(--amber-dim);border-radius:3px;padding:10px 16px;font-size:11px;color:var(--amber);margin-bottom:16px}
 
+    /* ── Back bar ── */
+    .back-bar{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+    .back-btn{font-family:var(--mono);font-size:10px;letter-spacing:.14em;padding:6px 14px;border:1px solid var(--border-hi);border-radius:2px;background:transparent;color:var(--text-dim);cursor:pointer;transition:color .15s,border-color .15s}
+    .back-btn:hover{color:var(--cyan);border-color:var(--cyan-dim)}
+    .back-bar-title{font-size:10px;letter-spacing:.18em;color:var(--text-dim)}
+
     /* ── Normal results: primary card ── */
-    .primary-card{background:var(--surface-2);border:1px solid var(--border);border-top:2px solid var(--cyan);border-radius:4px;padding:24px 28px;margin-bottom:16px;display:flex;align-items:flex-start;justify-content:space-between;gap:32px}
+    .primary-card{background:var(--surface-2);border:1px solid var(--border);border-top:2px solid var(--cyan);border-radius:4px;padding:24px 28px;margin-bottom:16px;display:flex;flex-direction:column;gap:20px}
+    .overview-header{border-bottom:1px solid var(--border);padding-bottom:18px}
+    .overview-eyebrow{font-size:10px;letter-spacing:.22em;color:var(--cyan-dim);margin-bottom:10px}
+    .overview-title{font-family:var(--serif);font-size:17px;font-weight:600;color:var(--text-bright);margin-bottom:10px}
+    .overview-summary{font-family:var(--serif);font-size:14px;color:var(--text);line-height:1.75;max-width:760px}
+    .overview-cols{display:flex;align-items:flex-start;justify-content:space-between;gap:32px}
+    .overview-left{flex:1;min-width:0}
     .primary-eyebrow{font-size:10px;letter-spacing:.2em;color:var(--text-dim);margin-bottom:8px}
     .primary-reaction{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--text-bright);line-height:1.2;margin-bottom:10px}
     .primary-outcome{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--text-dim);max-width:480px;line-height:1.6}
-    .primary-right{flex-shrink:0;text-align:right}
+    .primary-right{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;text-align:right;min-width:180px}
     .manip-eyebrow{font-size:10px;letter-spacing:.2em;color:var(--text-dim);margin-bottom:6px}
     .manip-value{font-size:52px;font-weight:300;line-height:1;color:var(--cyan);letter-spacing:-2px}
     .manip-value.warn{color:var(--amber)}
@@ -137,7 +149,7 @@
 
     /* ── Two col grid ── */
     .two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
-    @media(max-width:760px){.two-col{grid-template-columns:1fr}.primary-card{flex-direction:column}.primary-right{text-align:left}}
+    @media(max-width:760px){.two-col{grid-template-columns:1fr}.overview-cols{flex-direction:column}.primary-right{align-items:flex-start;text-align:left}}
 
     /* ── Network bars ── */
     .network-bars{display:flex;flex-direction:column;gap:10px}
@@ -376,8 +388,8 @@
     /* ── Hero ── */
     .hero{background:var(--surface);border:1px solid var(--border);border-top:2px solid var(--cyan);border-radius:4px;padding:72px 56px 80px;margin-bottom:16px;display:flex;align-items:center;gap:64px;min-height:calc(100vh - 80px)}
     .hero-text{flex:1;min-width:0}
-    .hero-brain{flex-shrink:0;width:320px;opacity:.9}
-    @media(max-width:860px){.hero{flex-direction:column;gap:32px;padding:48px 24px 56px;min-height:unset}.hero-brain{width:100%;max-width:320px;margin:0 auto}}
+    .hero-brain{flex-shrink:0;width:400px;opacity:.9}
+    @media(max-width:860px){.hero{flex-direction:column;gap:32px;padding:48px 24px 56px;min-height:unset}.hero-brain{width:100%;max-width:380px;margin:0 auto}}
     .hero-eyebrow{font-size:9px;letter-spacing:.28em;color:var(--cyan-dim);margin-bottom:18px}
     .hero-headline{font-family:var(--serif);font-size:46px;font-weight:600;color:var(--text-bright);line-height:1.12;margin-bottom:22px}
     .hero-sub{font-family:var(--serif);font-size:15px;color:var(--text);line-height:1.8;margin-bottom:14px;max-width:580px}
@@ -610,6 +622,8 @@
 
 <div class="main">
 
+  <!-- ══ COVER PAGE ══════════════════════════════════════════════════════════ -->
+  <div id="coverPage">
   <!-- ── Hero ── -->
   <div class="hero" id="heroSection">
     <div class="hero-text">
@@ -626,7 +640,7 @@
       </div>
       <div class="hero-actions">
         <button class="btn btn-primary" onclick="openMethodModal()" style="font-size:10px">HOW DOES THIS WORK?</button>
-        <button class="btn btn-primary hero-cta-btn" onclick="scrollToAnalysis()" style="font-size:10px">TRY AN EXAMPLE OR PASTE YOUR OWN TEXT →</button>
+        <button class="btn btn-primary hero-cta-btn" onclick="showAnalysisPage()" style="font-size:10px">TRY AN EXAMPLE OR PASTE YOUR OWN TEXT →</button>
       </div>
     </div>
     <div class="hero-brain">
@@ -698,6 +712,15 @@
       </svg>
     </div>
   </div>
+
+  </div><!-- /coverPage -->
+
+  <!-- ══ ANALYSIS PAGE ══════════════════════════════════════════════════════ -->
+  <div id="analysisPage" style="display:none">
+    <div class="back-bar">
+      <button class="back-btn" onclick="showCoverPage()">← HOME</button>
+      <span class="back-bar-title">TRIBE DECODER — NEURAL ANALYSIS</span>
+    </div>
 
   <!-- ══ NORMAL MODE ══════════════════════════════════════════════════════════ -->
   <div id="normalMode">
@@ -782,22 +805,30 @@
       </div>
       <div class="warning-bar hidden" id="warningBar"></div>
       <div class="primary-card">
-        <div>
-          <div class="primary-eyebrow">PRIMARY INFLUENCE STYLE</div>
-          <div class="primary-reaction" id="primaryReaction">—</div>
-          <div class="primary-outcome" id="primaryOutcome"></div>
-          <div id="cautionBadge" style="display:none;margin-top:12px"></div>
-          <div id="verdictActionRow" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
-            <div style="font-size:9px;letter-spacing:.15em;color:var(--cyan-dim);margin-bottom:5px">WHAT TO DO</div>
-            <div id="verdictActionText" style="font-family:var(--serif);font-size:13px;color:var(--text);line-height:1.6;max-width:380px"></div>
-          </div>
+        <!-- Full-width overview header -->
+        <div class="overview-header">
+          <div class="overview-eyebrow">OVERVIEW OF RESULTS</div>
+          <div class="overview-summary" id="overviewSummary"></div>
         </div>
-        <div class="primary-right">
-          <div class="manip-eyebrow">EMOTIONAL ACTIVATION SCORE</div>
-          <div class="manip-value" id="manipIndex">—</div>
-          <div class="manip-scale">out of 10</div>
-          <div id="easBand" style="font-size:10px;letter-spacing:.1em;margin-top:6px;font-weight:500"></div>
-          <div style="font-size:9px;color:var(--text-dim);margin-top:8px;max-width:160px;line-height:1.5;font-family:var(--serif)">Reflects predicted neural activation patterns — not evidence of intent.</div>
+        <!-- Two-column detail row -->
+        <div class="overview-cols">
+          <div class="overview-left">
+            <div class="primary-eyebrow">PRIMARY INFLUENCE STYLE</div>
+            <div class="primary-reaction" id="primaryReaction">—</div>
+            <div class="primary-outcome" id="primaryOutcome"></div>
+            <div id="cautionBadge" style="display:none;margin-top:12px"></div>
+            <div id="verdictActionRow" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
+              <div style="font-size:9px;letter-spacing:.15em;color:var(--cyan-dim);margin-bottom:5px">WHAT TO DO</div>
+              <div id="verdictActionText" style="font-family:var(--serif);font-size:13px;color:var(--text);line-height:1.6;max-width:380px"></div>
+            </div>
+          </div>
+          <div class="primary-right">
+            <div class="manip-eyebrow">EMOTIONAL ACTIVATION SCORE</div>
+            <div class="manip-value" id="manipIndex">—</div>
+            <div class="manip-scale">out of 10</div>
+            <div id="easBand" style="font-size:10px;letter-spacing:.1em;margin-top:6px;font-weight:500"></div>
+            <div style="font-size:9px;color:var(--text-dim);margin-top:8px;max-width:175px;line-height:1.5;font-family:var(--serif)">Reflects predicted neural activation patterns — not evidence of intent.</div>
+          </div>
         </div>
       </div>
       <div class="two-col">
@@ -963,6 +994,8 @@
 
     </div>
   </div><!-- /compareMode -->
+
+  </div><!-- /analysisPage -->
 
 </div><!-- /main -->
 
@@ -1288,6 +1321,48 @@ function showError(panelId, msgId, msg) {
   $(msgId).textContent = msg;
 }
 
+// ── Overview summary generator ────────────────────────────────────────────────
+function generateOverviewSummary(calibProfiles, manip, act, interp) {
+  const top = calibProfiles[0];
+  const second = calibProfiles[1];
+  const bypass = calibProfiles.find(p => p.id === 'analytical_bypass');
+  const topPct = Math.round((top?.score || 0) * 100);
+  const secPct = Math.round((second?.score || 0) * 100);
+
+  // Top 2 non-bypass networks
+  const topNets = Object.entries(act||{})
+    .filter(([k]) => k !== 'Cont')
+    .sort(([,a],[,b]) => b - a)
+    .slice(0, 2)
+    .map(([k]) => NET_LABELS[k] || k);
+
+  const band = manip >= 7.5 ? 'high emotional activation'
+    : manip >= 5   ? 'elevated emotional activation'
+    : manip >= 2.5 ? 'moderate emotional activation'
+    :                'low emotional activation';
+
+  const analyticalNote = (act?.Cont || 0) > 0.5
+    ? ' Analytical reasoning circuits are notably active, suggesting the content also engages deliberate evaluation.'
+    : (bypass && bypass.score > 0.65)
+    ? ' Analytical engagement is reduced — emotional responses tend to arrive ahead of careful evaluation.'
+    : '';
+
+  const s1 = top
+    ? `The dominant influence pattern is <strong>${top.label}</strong> (${topPct}%)`
+      + (second && secPct > 35 && second.id !== 'analytical_bypass'
+          ? `, with <strong>${second.label}</strong> (${secPct}%) as a secondary signal`
+          : '') + '.'
+    : '';
+
+  const s2 = `The Emotional Activation Score is <strong>${manip.toFixed(1)} / 10</strong> — ${band}${analyticalNote}`;
+
+  const s3 = topNets.length
+    ? ` The strongest predicted activations are in the ${topNets.join(' and ')} networks.`
+    : '';
+
+  return (s1 + ' ' + s2 + s3).trim();
+}
+
 // ── Normal results renderer ───────────────────────────────────────────────────
 function renderNormal(data) {
   const interp = data.interpretation || {};
@@ -1308,6 +1383,11 @@ function renderNormal(data) {
 
   const wb = $('warningBar');
   if (data.warning) { wb.textContent = '⚠ '+data.warning; wb.classList.remove('hidden'); } else wb.classList.add('hidden');
+
+  // Overview summary
+  const overviewEl = $('overviewSummary');
+  if (overviewEl) overviewEl.innerHTML = generateOverviewSummary(calibProfiles, manip, data.network_activations||{}, interp);
+
   $('primaryReaction').textContent = topProfile?.label || interp.primary_target || '—';
   $('primaryOutcome').textContent  = interp.intended_outcome || '';
   const mi = $('manipIndex');
@@ -2543,11 +2623,11 @@ const EXAMPLES = [
 
 function loadExample(idx) {
   const ex = EXAMPLES[idx]; if(!ex) return;
+  showAnalysisPage();
   $('textInput').value = ex.text;
   $('textInput').dispatchEvent(new Event('input'));
   $('inputBody').classList.add('expanded');
   $('inputArrow').classList.add('open');
-  $('textInput').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
 // ── Elapsed timer ─────────────────────────────────────────────────────────────
@@ -2709,13 +2789,20 @@ function setSurveyFamiliarity(btn) {
   btn.classList.add('active');
 }
 
-function scrollToAnalysis() {
-  document.getElementById('normalMode').scrollIntoView({behavior:'smooth', block:'start'});
+function showAnalysisPage() {
+  document.getElementById('coverPage').style.display = 'none';
+  document.getElementById('analysisPage').style.display = 'block';
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+function showCoverPage() {
+  document.getElementById('analysisPage').style.display = 'none';
+  document.getElementById('coverPage').style.display = 'block';
+  window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
 function setResultsMode(mode) {
-  const profile = getProfile();
-  if (mode === 'personalized' && !profile) { openSurvey(); return; }
+  if (mode === 'personalized') { openSurvey(); return; }
   _resultsMode = mode;
   document.querySelectorAll('.cal-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
   updateCalibrationBar();
