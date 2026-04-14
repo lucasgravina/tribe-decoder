@@ -111,9 +111,12 @@
     .loading-title{font-size:11px;letter-spacing:.2em;color:var(--cyan);margin-bottom:8px}
     .loading-sub{font-size:11px;color:var(--text-dim)}
     .loading-steps{margin-top:18px;display:flex;flex-direction:column;gap:6px;align-items:center}
-    .step{font-size:10px;color:var(--text-dim);letter-spacing:.08em;padding:4px 12px;border:1px solid var(--border);border-radius:2px;opacity:0;transition:opacity .4s,color .4s,border-color .4s}
+    .step{font-size:10px;color:var(--text-dim);letter-spacing:.08em;padding:7px 16px;border:1px solid var(--border);border-radius:2px;opacity:0;transition:opacity .4s,color .4s,border-color .4s;display:flex;flex-direction:column;gap:3px;text-align:left;min-width:340px}
     .step.active{opacity:1;color:var(--amber);border-color:var(--amber-dim)}
     .step.done{opacity:1;color:var(--green);border-color:var(--green-dim)}
+    .step-t{font-size:10px;letter-spacing:.08em}
+    .step-h{font-size:9px;letter-spacing:.03em;font-family:var(--serif);display:none;line-height:1.4;margin-top:1px;font-style:italic}
+    .step.active .step-h,.step.done .step-h{display:block}
 
     /* ── Results (shared) ── */
     .results-wrap{display:none}
@@ -512,6 +515,63 @@
     .results-wrap.active .primary-card{animation:fadeInUp .3s ease .0s both}
     .results-wrap.active .two-col{animation:fadeInUp .3s ease .08s both}
 
+    /* ── Manip reference bar ── */
+    .manip-ref{margin-top:14px;width:175px}
+    .manip-ref-track{height:3px;border-radius:2px;background:linear-gradient(to right,#1a5040,#1a5560,#705020,#601c1c);position:relative;margin-bottom:7px}
+    .manip-ref-marker{position:absolute;top:-5px;width:2px;height:13px;border-radius:1px;transform:translateX(-50%);transition:left .8s cubic-bezier(.16,1,.3,1),background .4s,box-shadow .4s}
+    .manip-ref-zones{display:flex;justify-content:space-between;font-size:8px;letter-spacing:.05em;color:var(--text-dim)}
+    .manip-ref-ctx{font-size:10px;color:var(--text-dim);margin-top:10px;font-family:var(--serif);font-style:italic;line-height:1.5;max-width:175px}
+
+    /* ── Calibration toggle bar ── */
+    .calibration-bar{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px;padding:8px 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
+    .cal-left{display:flex;align-items:center;gap:10px;min-width:0}
+    .cal-status{font-size:10px;color:var(--text-dim);font-family:var(--serif);font-style:italic}
+    .cal-edit-btn{font-family:var(--mono);font-size:9px;letter-spacing:.1em;padding:3px 8px;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;border-radius:2px;transition:all .15s;white-space:nowrap}
+    .cal-edit-btn:hover{color:var(--cyan);border-color:var(--cyan-dim)}
+    .cal-toggle{display:flex;border:1px solid var(--border);border-radius:3px;overflow:hidden;flex-shrink:0}
+    .cal-btn{padding:5px 14px;font-family:var(--mono);font-size:9px;letter-spacing:.14em;border:none;background:transparent;color:var(--text-dim);cursor:pointer;transition:background .15s,color .15s;white-space:nowrap}
+    .cal-btn:first-child{border-right:1px solid var(--border)}
+    .cal-btn.active{background:var(--cyan-glow);color:var(--cyan)}
+    .cal-btn:hover:not(.active):not(:disabled){color:var(--text)}
+    .cal-btn:disabled{opacity:.3;cursor:not-allowed}
+
+    /* ── Topic familiarity ── */
+    .familiarity-row{display:flex;align-items:center;gap:10px;margin-top:10px;flex-wrap:wrap}
+    .fam-label{font-size:9px;letter-spacing:.15em;color:var(--text-dim);white-space:nowrap;flex-shrink:0}
+    .fam-btns{display:flex;gap:4px}
+    .fam-btn{font-family:var(--mono);font-size:9px;letter-spacing:.1em;padding:3px 10px;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;border-radius:2px;transition:all .15s}
+    .fam-btn.active{border-color:var(--cyan-dim);color:var(--cyan);background:var(--cyan-glow)}
+    .fam-btn:hover:not(.active){color:var(--text);border-color:var(--border-hi)}
+
+    /* ── Survey modal ── */
+    .survey-overlay{position:fixed;inset:0;background:rgba(9,9,15,.96);z-index:10002;display:none;align-items:center;justify-content:center;overflow-y:auto;padding:40px 16px 60px}
+    .survey-overlay.open{display:flex}
+    .survey-box{background:var(--surface);border:1px solid var(--border-hi);border-radius:6px;max-width:660px;width:100%;padding:38px 44px;position:relative;flex-shrink:0}
+    @media(max-width:600px){.survey-box{padding:24px 20px}}
+    .survey-close{position:absolute;top:14px;right:16px;background:none;border:1px solid var(--border);border-radius:2px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;color:var(--text-dim);cursor:pointer;padding:4px 10px;transition:color .15s,border-color .15s}
+    .survey-close:hover{color:var(--text);border-color:var(--border-hi)}
+    .survey-eyebrow{font-size:9px;letter-spacing:.25em;color:var(--cyan-dim);margin-bottom:8px}
+    .survey-title{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--text-bright);margin-bottom:8px}
+    .survey-sub{font-family:var(--serif);font-size:13px;color:var(--text-dim);line-height:1.65;margin-bottom:28px;padding-bottom:22px;border-bottom:1px solid var(--border)}
+    .survey-q{margin-bottom:26px}
+    .survey-q-label{font-size:9px;letter-spacing:.22em;color:var(--text-bright);margin-bottom:4px;font-weight:500}
+    .survey-q-sub{font-family:var(--serif);font-size:12px;color:var(--text-dim);margin-bottom:14px;line-height:1.55}
+    .survey-slider-wrap{display:grid;grid-template-columns:1fr 200px 1fr;align-items:center;gap:14px;margin-bottom:7px}
+    @media(max-width:500px){.survey-slider-wrap{grid-template-columns:1fr;gap:6px}}
+    .survey-pole{font-family:var(--serif);font-size:11px;color:var(--text-dim);line-height:1.3}
+    .survey-pole.right{text-align:right}
+    input[type=range].survey-slider{-webkit-appearance:none;width:100%;height:2px;border-radius:1px;outline:none;cursor:pointer;background:var(--border)}
+    input[type=range].survey-slider::-webkit-slider-thumb{-webkit-appearance:none;width:15px;height:15px;border-radius:50%;background:var(--cyan);cursor:pointer;box-shadow:0 0 8px rgba(58,240,192,.35);transition:box-shadow .15s,transform .15s}
+    input[type=range].survey-slider::-webkit-slider-thumb:hover{box-shadow:0 0 16px rgba(58,240,192,.55);transform:scale(1.12)}
+    input[type=range].survey-slider::-moz-range-thumb{width:15px;height:15px;border-radius:50%;background:var(--cyan);cursor:pointer;border:none;box-shadow:0 0 8px rgba(58,240,192,.35)}
+    .survey-cite{font-family:var(--serif);font-size:9px;color:var(--text-dim);font-style:italic;opacity:.55;line-height:1.5;margin-top:3px}
+    .survey-age-btns{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:7px}
+    .survey-age-btn{font-family:var(--mono);font-size:10px;letter-spacing:.12em;padding:7px 18px;border:1px solid var(--border);background:transparent;color:var(--text-dim);cursor:pointer;border-radius:2px;transition:all .15s;min-width:64px;text-align:center}
+    .survey-age-btn.active{border-color:var(--cyan-dim);color:var(--cyan);background:var(--cyan-glow)}
+    .survey-age-btn:hover:not(.active){color:var(--text);border-color:var(--border-hi)}
+    .survey-actions{display:flex;align-items:center;gap:14px;padding-top:22px;border-top:1px solid var(--border)}
+    .survey-disclaimer{font-family:var(--serif);font-size:10px;color:var(--text-dim);font-style:italic;flex:1;line-height:1.5}
+
     /* ── Mobile improvements ── */
     @media(max-width:600px){
       .hero{padding:20px 16px}
@@ -681,6 +741,14 @@
             </div>
           </div>
           <textarea class="text-input" id="textInput" placeholder="Paste any text — news article, headline, ad copy, political speech, social media post..." spellcheck="false"></textarea>
+          <div class="familiarity-row">
+            <span class="fam-label">TOPIC FAMILIARITY</span>
+            <div class="fam-btns">
+              <button class="fam-btn" data-fam="unfamiliar" onclick="setFamiliarity(this)">Unfamiliar</button>
+              <button class="fam-btn active" data-fam="somewhat" onclick="setFamiliarity(this)">Somewhat familiar</button>
+              <button class="fam-btn" data-fam="expert" onclick="setFamiliarity(this)">Expert</button>
+            </div>
+          </div>
           <div class="input-footer">
             <span style="font-size:10px;color:var(--text-dim);max-width:500px;line-height:1.5">Text is converted to speech internally by TRIBE v2 for word-timing alignment. Expect 30–120 sec per query.</span>
             <button class="btn btn-primary" id="analyzeBtn" disabled>RUN TRIBE v2 ANALYSIS</button>
@@ -706,11 +774,11 @@
         <div class="loading-title">RUNNING TRIBE V2 INFERENCE</div>
         <div class="loading-sub">Predicted fMRI on fsaverage5 cortical mesh · 20,484 vertices</div>
         <div class="loading-steps">
-          <div class="step" id="step1">1 — TEXT → TTS → WORD-LEVEL TIMING ALIGNMENT</div>
-          <div class="step" id="step2">2 — LLAMA 3.2 + WAV2VEC-BERT FEATURE EXTRACTION</div>
-          <div class="step" id="step3">3 — TRANSFORMER FORWARD PASS → BOLD PREDICTION</div>
-          <div class="step" id="step4">4 — SCHAEFER 200-PARCEL ATLAS MAPPING</div>
-          <div class="step" id="step5">5 — TIMESERIES + SEGMENT ANALYSIS</div>
+          <div class="step" id="step1"><span class="step-t">Text → speech synthesis · word-level timing alignment</span><span class="step-h">TRIBE v2 converts text to synthesized audio so the model can process language as it unfolds in time</span></div>
+          <div class="step" id="step2"><span class="step-t">LLaMA 3.2-3B + Wav2Vec-BERT feature extraction</span><span class="step-h">Semantic meaning and acoustic patterns extracted in parallel — both streams feed a multimodal transformer</span></div>
+          <div class="step" id="step3"><span class="step-t">Transformer forward pass → BOLD signal prediction</span><span class="step-h">Predicting fMRI activation across 20,484 cortical surface vertices at 1-second resolution</span></div>
+          <div class="step" id="step4"><span class="step-t">Schaefer 2018 atlas mapping · parcel z-scoring</span><span class="step-h">200 named brain regions identified · each parcel z-scored relative to full cortical distribution</span></div>
+          <div class="step" id="step5"><span class="step-t">Yeo 7-network aggregation · reaction profile scoring</span><span class="step-h">Building timeseries · scoring emotional profiles from activation patterns · generating interpretation</span></div>
         </div>
         <div class="elapsed-wrap">Elapsed: <span id="elapsedTimer">0s</span></div>
       </div>
@@ -723,6 +791,19 @@
         <button class="btn-sm" id="copySummaryBtn" onclick="copySummary()">COPY SUMMARY</button>
         <button class="btn-sm" onclick="exportRawData()">EXPORT JSON</button>
         <button class="btn-sm" onclick="resetAnalysis()">NEW ANALYSIS</button>
+      </div>
+      <div class="calibration-bar">
+        <div class="cal-left">
+          <span class="cal-status" id="calStatus">Population-average baselines · no profile saved</span>
+          <button class="cal-edit-btn" id="calEditBtn" onclick="openSurvey()" style="display:none">EDIT PROFILE</button>
+        </div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <button class="cal-edit-btn" onclick="openSurvey()" id="calSetupBtn" style="display:none">SET UP PROFILE →</button>
+          <div class="cal-toggle">
+            <button class="cal-btn active" data-mode="generalized" onclick="setResultsMode('generalized')">GENERALIZED</button>
+            <button class="cal-btn" data-mode="personalized" onclick="setResultsMode('personalized')">PERSONALIZED</button>
+          </div>
+        </div>
       </div>
       <div class="warning-bar hidden" id="warningBar"></div>
       <div class="primary-card">
@@ -1234,10 +1315,25 @@ function showError(panelId, msgId, msg) {
 
 // ── Normal results renderer ───────────────────────────────────────────────────
 function renderNormal(data) {
-  const interp = data.interpretation || {}, manip = interp.manipulation_index ?? 0;
+  const interp = data.interpretation || {};
+
+  // Apply calibration if personalized mode
+  const calibProfiles = applyCalibration(data.reaction_profiles || []);
+  const topProfile = calibProfiles[0];
+
+  // Recompute manip index from calibrated profiles when personalized
+  let manip;
+  if (_resultsMode === 'personalized' && getCalibrationMultipliers()) {
+    const topEmo = Math.max(...calibProfiles.filter(p => !p.inverted).map(p => p.score), 0);
+    const bypassP = calibProfiles.find(p => p.id === 'analytical_bypass');
+    manip = Math.round(Math.min(10.0, topEmo * 5 + (bypassP?.score ?? 0.5) * 5) * 10) / 10;
+  } else {
+    manip = interp.manipulation_index ?? 0;
+  }
+
   const wb = $('warningBar');
   if (data.warning) { wb.textContent = '⚠ '+data.warning; wb.classList.remove('hidden'); } else wb.classList.add('hidden');
-  $('primaryReaction').textContent = interp.primary_target || '—';
+  $('primaryReaction').textContent = topProfile?.label || interp.primary_target || '—';
   $('primaryOutcome').textContent  = interp.intended_outcome || '';
   const mi = $('manipIndex');
   mi.textContent = manip.toFixed(1);
@@ -1266,12 +1362,11 @@ function renderNormal(data) {
     cautionBadge.style.display = 'inline-block';
     cautionBadge.innerHTML = `<span style="display:inline-block;padding:4px 10px;border-radius:3px;font-size:9px;letter-spacing:.14em;font-weight:500;border:1px solid ${cautionColor};color:${cautionColor};background:${cautionBg}">${cautionLabel}</span>`;
   }
-  // Recommended action (unique — not repeated elsewhere in the output)
-  const profiles = data.reaction_profiles || [];
-  const primaryProfile = profiles[0];
+  renderManipRef(manip);
+  // Recommended action
   const actionRow = $('verdictActionRow'), actionText = $('verdictActionText');
-  if (actionRow && actionText && primaryProfile) {
-    actionText.textContent = VERDICT_ACTIONS[primaryProfile.id] || 'Read critically and verify key claims before acting or sharing.';
+  if (actionRow && actionText && topProfile) {
+    actionText.textContent = VERDICT_ACTIONS[topProfile.id] || 'Read critically and verify key claims before acting or sharing.';
     actionRow.style.display = '';
   }
   // Signal quality + analytical ratio
@@ -1294,7 +1389,7 @@ function renderNormal(data) {
   _segmentsData = data.segments_breakdown || [];  // must be set before renderTimeSeries builds overlay
   renderTimeSeries(data.network_timeseries||{}, data.raw_stats?.n_timesteps||0);
   renderSegments(data.segments_breakdown||[]);
-  renderProfiles(data.reaction_profiles||[]);
+  renderProfiles(calibProfiles);
   $('interpOutcome').textContent     = interp.intended_outcome||'';
   $('interpBenefits').textContent    = interp.who_benefits||'';
   $('interpInoculation').textContent = interp.inoculation||'';
@@ -1302,6 +1397,7 @@ function renderNormal(data) {
   // Update results bar label
   const rbl=$('resultsBarLabel'); if(rbl){const nTR=data.raw_stats?.n_timesteps||0;rbl.textContent=`${nTR} TR · ${nTR}s of content · ${new Date().toLocaleTimeString()}`;}
   $('normalResults').className = 'results-wrap active';
+  updateCalibrationBar();
   $('normalResults').scrollIntoView({behavior:'smooth',block:'start'});
 }
 
@@ -2566,6 +2662,172 @@ document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeMethodModal()
   });
 });
 
+// ── Survey / Calibration System ───────────────────────────────────────────────
+// Research basis:
+//   NFC → FPN: Cacioppo & Petty (1982); Haddock et al. (2008)
+//   Trait anxiety → Limbic: Etkin & Wager (2007); Bishop et al. (2007)
+//   Habituation → SAL: Rolls (2015); Prior (2007)
+//   Inoculation → bypass: van der Linden et al. (2017); Roozenbeek et al. (2020)
+//   Age → Limbic/reward: Williams et al. (2006); Mather & Carstensen (2005)
+
+let _resultsMode = 'generalized';
+let _topicFamiliarity = 'somewhat';
+
+function getProfile() {
+  try { return JSON.parse(localStorage.getItem('tribe_profile') || 'null'); } catch { return null; }
+}
+function _saveProfile(p) { localStorage.setItem('tribe_profile', JSON.stringify(p)); }
+
+function openSurvey() {
+  const p = getProfile();
+  if (p) {
+    ['decisionStyle','emotionalReactivity','mediaConsumption','criticalTraining'].forEach(k => {
+      const el = document.getElementById('sq-'+k);
+      if (el) { el.value = p[k] ?? 50; _updateSliderFill(el); }
+    });
+    document.querySelectorAll('#surveyAgeBtns .survey-age-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.age === (p.ageRange || '26-40'));
+    });
+  }
+  $('surveyModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeSurvey() {
+  $('surveyModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+function handleSurveyBgClick(e) { if (e.target === $('surveyModal')) closeSurvey(); }
+
+function saveSurvey() {
+  const activeAge = document.querySelector('#surveyAgeBtns .survey-age-btn.active');
+  _saveProfile({
+    decisionStyle:       parseInt($('sq-decisionStyle').value),
+    emotionalReactivity: parseInt($('sq-emotionalReactivity').value),
+    mediaConsumption:    parseInt($('sq-mediaConsumption').value),
+    criticalTraining:    parseInt($('sq-criticalTraining').value),
+    ageRange: activeAge ? activeAge.dataset.age : '26-40',
+  });
+  closeSurvey();
+  // Auto-switch to personalized after first save
+  _resultsMode = 'personalized';
+  document.querySelectorAll('.cal-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === 'personalized'));
+  updateCalibrationBar();
+  if (window._lastResult) renderNormal(window._lastResult);
+}
+
+function _updateSliderFill(el) {
+  const pct = ((+el.value - +el.min) / (+el.max - +el.min)) * 100;
+  el.style.background = `linear-gradient(to right,var(--cyan-dim) ${pct}%,var(--border-hi) ${pct}%)`;
+}
+
+function setFamiliarity(btn) {
+  document.querySelectorAll('.fam-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  _topicFamiliarity = btn.dataset.fam;
+}
+
+function setResultsMode(mode) {
+  const profile = getProfile();
+  if (mode === 'personalized' && !profile) { openSurvey(); return; }
+  _resultsMode = mode;
+  document.querySelectorAll('.cal-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+  updateCalibrationBar();
+  if (window._lastResult) renderNormal(window._lastResult);
+}
+
+function updateCalibrationBar() {
+  const profile = getProfile();
+  const status = $('calStatus');
+  const editBtn = $('calEditBtn');
+  const setupBtn = $('calSetupBtn');
+  const persBtn = document.querySelector('.cal-btn[data-mode="personalized"]');
+  if (!status) return;
+  if (_resultsMode === 'personalized' && profile) {
+    status.textContent = 'Personalized — scores adjusted for your profile';
+    status.style.color = 'var(--cyan)';
+  } else if (profile) {
+    status.textContent = 'Profile saved · switch to Personalized to apply';
+    status.style.color = '';
+  } else {
+    status.textContent = 'Population-average baselines · no profile saved';
+    status.style.color = '';
+  }
+  if (editBtn) editBtn.style.display = profile ? '' : 'none';
+  if (setupBtn) setupBtn.style.display = (!profile && window._lastResult) ? '' : 'none';
+  if (persBtn) { persBtn.disabled = !profile; persBtn.title = profile ? '' : 'Save a calibration profile to enable'; }
+}
+
+// ── Calibration math ──────────────────────────────────────────────────────────
+// Max single-dimension adjustment: ±30% (sliders), ±15% (age). Clamped to [0.4, 1.6].
+function getCalibrationMultipliers() {
+  const p = getProfile(); if (!p) return null;
+  const d = v => ((+v) - 50) / 50;  // normalize [0,100] → [-1,+1]
+  return {
+    fearMult:      Math.max(0.55, Math.min(1.55, 1.0 + d(p.emotionalReactivity) * 0.30)),
+    bypassMult:    Math.max(0.42, Math.min(1.52, 1.0 - d(p.decisionStyle) * 0.22 - d(p.criticalTraining) * 0.18)),
+    salMult:       Math.max(0.65, Math.min(1.35, 1.0 - d(p.mediaConsumption)   * 0.18)),
+    ageLimbicMult: {'18-25':1.15,'26-40':1.00,'41-60':0.90,'60+':0.80}[p.ageRange] || 1.0,
+    ageRewardMult: {'18-25':0.90,'26-40':1.00,'41-60':1.05,'60+':1.15}[p.ageRange] || 1.0,
+    famBypassMult: _topicFamiliarity==='expert' ? 0.82 : _topicFamiliarity==='unfamiliar' ? 1.10 : 1.0,
+  };
+}
+
+function applyCalibration(profiles) {
+  if (_resultsMode !== 'personalized') return [...profiles].sort((a,b) => b.score - a.score);
+  const cal = getCalibrationMultipliers(); if (!cal) return [...profiles].sort((a,b) => b.score - a.score);
+  return profiles.map(p => {
+    let s = p.score;
+    if (p.id === 'fear_threat')       s = Math.min(1.0, s * cal.fearMult * cal.ageLimbicMult);
+    if (p.id === 'analytical_bypass') s = Math.min(1.0, s * cal.bypassMult * cal.famBypassMult);
+    if (p.id === 'urgency_action')    s = Math.min(1.0, s * cal.salMult);
+    if (p.id === 'social_tribal')     s = Math.min(1.0, s * cal.salMult * cal.ageLimbicMult);
+    if (p.id === 'reward_validation') s = Math.min(1.0, s * cal.ageRewardMult);
+    return {...p, score: Math.round(s * 1000) / 1000};
+  }).sort((a,b) => b.score - a.score);
+}
+
+// ── Manipulation reference bar ────────────────────────────────────────────────
+function renderManipRef(score) {
+  let bar = document.getElementById('manipRefBar');
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'manipRefBar';
+    bar.className = 'manip-ref';
+    bar.innerHTML = `<div class="manip-ref-track"><div class="manip-ref-marker" id="manipRefMarker"></div></div><div class="manip-ref-zones"><span>0</span><span>2.5</span><span>5</span><span>7.5</span><span>10</span></div><div class="manip-ref-ctx" id="manipRefCtx"></div>`;
+    const scaleEl = document.querySelector('.manip-scale');
+    if (scaleEl) scaleEl.insertAdjacentElement('afterend', bar);
+  }
+  const pct = Math.min(100, score / 10 * 100);
+  const marker = $('manipRefMarker');
+  if (marker) {
+    marker.style.left = pct + '%';
+    const c = score>=7.5?'var(--red)':score>=5?'var(--amber)':score>=2.5?'var(--text-bright)':'var(--green)';
+    marker.style.background = c; marker.style.boxShadow = `0 0 8px ${c}`;
+  }
+  const ctx = $('manipRefCtx');
+  if (ctx) ctx.textContent =
+    score >= 7.5 ? 'Typical range of crisis rhetoric and high-emotion political advertising.' :
+    score >= 5   ? 'Typical range of political opinion content and persuasive advertising.' :
+    score >= 2.5 ? 'Typical range of news coverage and editorial writing.' :
+                   'Typical range of academic, informational, or neutral text.';
+}
+
+// ── Survey slider init ────────────────────────────────────────────────────────
+document.querySelectorAll('.survey-slider').forEach(sl => {
+  _updateSliderFill(sl);
+  sl.addEventListener('input', () => _updateSliderFill(sl));
+});
+document.querySelectorAll('#surveyAgeBtns .survey-age-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('#surveyAgeBtns .survey-age-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+updateCalibrationBar();
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('surveyModal')?.classList.contains('open')) closeSurvey(); });
+
 // ── Init ──────────────────────────────────────────────────────────────────────
 checkStatus();
 setInterval(checkStatus, 30000);
@@ -2578,6 +2840,77 @@ document.addEventListener('DOMContentLoaded', () => {
 const cb = $('compareBtn');
 if (cb && !cb._wired) { cb.addEventListener('click', runComparison); cb._wired = true; }
 </script>
+
+<!-- ── Survey / Calibration Modal ── -->
+<div id="surveyModal" class="survey-overlay" onclick="handleSurveyBgClick(event)">
+  <div class="survey-box">
+    <button class="survey-close" onclick="closeSurvey()">SKIP ×</button>
+    <div class="survey-eyebrow">CONTEXTUAL CALIBRATION</div>
+    <div class="survey-title">Personalize your results</div>
+    <div class="survey-sub">TRIBE's neural predictions use population-average fMRI responses from 700+ subjects. These questions apply published individual-difference adjustments to the downstream scoring weights — your profile re-weights thresholds, it does not re-run the model. Results remain directional estimates, not clinical measurements.</div>
+
+    <div class="survey-q">
+      <div class="survey-q-label">DECISION-MAKING STYLE</div>
+      <div class="survey-q-sub">When forming opinions on new information, how do you typically approach it?</div>
+      <div class="survey-slider-wrap">
+        <span class="survey-pole">Trust instincts first</span>
+        <input type="range" class="survey-slider" id="sq-decisionStyle" min="0" max="100" value="50">
+        <span class="survey-pole right">Research before deciding</span>
+      </div>
+      <div class="survey-cite">Cacioppo & Petty (1982) Need for Cognition · Haddock et al. (2008) — high NFC predicts stronger dorsolateral PFC engagement during persuasive message processing</div>
+    </div>
+
+    <div class="survey-q">
+      <div class="survey-q-label">EMOTIONAL REACTIVITY</div>
+      <div class="survey-q-sub">When you encounter alarming or threatening content, how strongly does it tend to affect you?</div>
+      <div class="survey-slider-wrap">
+        <span class="survey-pole">Rarely affects me</span>
+        <input type="range" class="survey-slider" id="sq-emotionalReactivity" min="0" max="100" value="50">
+        <span class="survey-pole right">Genuinely affects me</span>
+      </div>
+      <div class="survey-cite">Etkin & Wager (2007) meta-analysis — trait anxiety amplifies amygdala and anterior insula activation to threat stimuli (effect size d ≈ 0.6) · Bishop et al. (2007) prefrontal regulation of threat</div>
+    </div>
+
+    <div class="survey-q">
+      <div class="survey-q-label">MEDIA CONSUMPTION</div>
+      <div class="survey-q-sub">How much political news and opinion content do you consume on a regular basis?</div>
+      <div class="survey-slider-wrap">
+        <span class="survey-pole">Rarely follow news</span>
+        <input type="range" class="survey-slider" id="sq-mediaConsumption" min="0" max="100" value="50">
+        <span class="survey-pole right">Heavy daily consumer</span>
+      </div>
+      <div class="survey-cite">Rolls (2015) Limbic Systems for Emotion — repeated genre exposure attenuates salience network responses via neural adaptation · Prior (2007) habituated consumers show reduced threat reactivity</div>
+    </div>
+
+    <div class="survey-q">
+      <div class="survey-q-label">ANALYTICAL TRAINING</div>
+      <div class="survey-q-sub">Do you have formal background in critical thinking, logic, rhetoric, media literacy, or research methods?</div>
+      <div class="survey-slider-wrap">
+        <span class="survey-pole">No formal training</span>
+        <input type="range" class="survey-slider" id="sq-criticalTraining" min="0" max="100" value="50">
+        <span class="survey-pole right">Extensive formal training</span>
+      </div>
+      <div class="survey-cite">van der Linden et al. (2017) inoculation theory · Roozenbeek et al. (2020) — analytical training produces measurable PFC recruitment when evaluating emotionally charged content</div>
+    </div>
+
+    <div class="survey-q" style="margin-bottom:24px">
+      <div class="survey-q-label">AGE RANGE</div>
+      <div class="survey-q-sub">Neural reactivity shifts measurably across adult decades — amygdala response peaks early and attenuates over time</div>
+      <div class="survey-age-btns" id="surveyAgeBtns">
+        <button class="survey-age-btn" data-age="18-25">18–25</button>
+        <button class="survey-age-btn active" data-age="26-40">26–40</button>
+        <button class="survey-age-btn" data-age="41-60">41–60</button>
+        <button class="survey-age-btn" data-age="60+">60+</button>
+      </div>
+      <div class="survey-cite">Mather & Carstensen (2005) — positivity effect: older adults show attenuated Limbic and enhanced OFC (reward) engagement · Williams et al. (2006) amygdala attenuation across adult decades</div>
+    </div>
+
+    <div class="survey-actions">
+      <div class="survey-disclaimer">Adjustments apply to scoring weights only — TRIBE's neural predictions are unchanged. Population-average mode remains available at any time via the toggle above results.</div>
+      <button class="btn btn-primary" onclick="saveSurvey()" style="white-space:nowrap;flex-shrink:0">SAVE PROFILE</button>
+    </div>
+  </div>
+</div>
 
 <!-- ── Segment popup ── -->
 <div id="segPopup" class="seg-popup hidden" onclick="handlePopupBgClick(event)">
