@@ -386,7 +386,7 @@
     .ts-axis-label{font-family:var(--mono);font-size:9px;fill:var(--text-dim)}
 
     /* ── Hero ── */
-    .hero{background:var(--surface);border:1px solid var(--border);border-top:2px solid var(--cyan);border-radius:4px;padding:72px 56px 80px;margin-bottom:16px;display:flex;align-items:center;gap:64px;min-height:calc(100vh - 80px)}
+    .hero{background:var(--surface);border:1px solid var(--border);border-top:2px solid var(--cyan);border-radius:4px;padding:56px 56px 52px;margin-bottom:16px;display:flex;align-items:center;gap:64px;min-height:calc(100vh - 210px)}
     .hero-text{flex:1;min-width:0}
     .hero-brain{flex-shrink:0;width:400px;opacity:.9}
     @media(max-width:860px){.hero{flex-direction:column;gap:32px;padding:48px 24px 56px;min-height:unset}.hero-brain{width:100%;max-width:380px;margin:0 auto}}
@@ -587,6 +587,23 @@
     .survey-actions{display:flex;align-items:center;gap:14px;padding-top:22px;border-top:1px solid var(--border)}
     .survey-disclaimer{font-family:var(--serif);font-size:10px;color:var(--text-dim);font-style:italic;flex:1;line-height:1.5}
 
+    /* ── Personalize nudge ── */
+    @keyframes nudgeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+    .personalize-nudge{display:flex;align-items:center;gap:12px;padding:10px 14px;background:var(--cyan-glow);border:1px solid var(--cyan-dim);border-radius:3px;margin-top:10px;animation:nudgeIn .4s ease .6s both}
+    .nudge-text{font-family:var(--serif);font-size:12px;color:var(--cyan);flex:1;line-height:1.5}
+    .nudge-text strong{font-family:var(--mono);font-size:9px;letter-spacing:.12em;font-style:normal}
+    .nudge-dismiss{font-size:9px;color:var(--cyan-dim);cursor:pointer;padding:3px 8px;border:1px solid var(--cyan-dim);border-radius:2px;background:transparent;font-family:var(--mono);letter-spacing:.1em;transition:all .15s;flex-shrink:0}
+    .nudge-dismiss:hover{color:var(--cyan);border-color:var(--cyan)}
+
+    /* ── Technical details collapsible ── */
+    .tech-details{margin-bottom:16px}
+    .tech-details-toggle{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:11px 20px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;transition:background .15s}
+    .tech-details-toggle:hover{background:rgba(255,255,255,.02)}
+    .tech-details-label{font-size:10px;letter-spacing:.15em;color:var(--text-dim)}
+    .tech-details-hint{font-size:10px;color:var(--text-dim);font-style:italic;font-family:var(--serif)}
+    .tech-details-body{display:none;padding-top:12px}
+    .tech-details-body.open{display:block}
+
     /* ── Mobile improvements ── */
     @media(max-width:600px){
       .hero{padding:32px 16px 40px}
@@ -747,6 +764,10 @@
             </div>
           </div>
           <textarea class="text-input" id="textInput" placeholder="Paste any text — news article, headline, ad copy, political speech, social media post..." spellcheck="false"></textarea>
+          <div class="personalize-nudge" id="personalizeNudge" style="display:none">
+            <span class="nudge-text">✦ Results are currently <strong>POPULATION-AVERAGE</strong> — switch to <strong>PERSONALIZED</strong> to adjust weights for your emotional reactivity, media habits, and age. Takes 2 minutes.</span>
+            <button class="nudge-dismiss" onclick="dismissPersonalizeNudge()">DISMISS</button>
+          </div>
           <div class="input-footer">
             <span style="font-size:10px;color:var(--text-dim);max-width:400px;line-height:1.5">Text is converted to speech internally by TRIBE v2 for word-timing alignment. Expect 30–120 sec per query.</span>
             <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
@@ -831,78 +852,17 @@
           </div>
         </div>
       </div>
-      <div class="two-col">
-        <div class="panel">
-          <div class="panel-header"><span class="panel-label">Yeo 7-Network Activations</span><span style="font-size:10px;color:var(--text-dim)">relative z-score</span></div>
-          <div class="panel-body"><div class="network-bars" id="networkBars"></div></div>
-        </div>
-        <div class="panel">
-          <div class="panel-header"><span class="panel-label">Top Activated Parcels</span><span style="font-size:10px;color:var(--text-dim)">Schaefer 200</span></div>
-          <div class="panel-body" style="padding-top:10px">
-            <table class="roi-table"><thead><tr><th>Region / Function</th><th style="text-align:right">NET</th><th style="text-align:right">Z</th></tr></thead><tbody id="roiBody"></tbody></table>
-          </div>
-        </div>
-      </div>
+      <!-- Influence Profiles (most interpretable — first) -->
       <div class="panel">
-        <div class="panel-header"><span class="panel-label">Cortical Network Map</span><span style="font-size:10px;color:var(--text-dim)">schematic · Yeo 7-network anatomy · circle size = relative activation</span></div>
-        <div class="panel-body">
-          <div class="brain-map-wrap">
-            <div class="brain-svg-wrap">
-              <div class="brain-view-label">LATERAL (LEFT HEMISPHERE)</div>
-              <svg id="brainLateral" viewBox="0 0 280 195" xmlns="http://www.w3.org/2000/svg" style="width:100%">
-                <path d="M 38,102 C 36,70 50,40 78,26 C 106,12 136,8 162,14 C 188,20 212,36 228,62 C 244,88 246,116 238,140 C 230,164 212,178 188,184 C 164,190 138,186 114,176 C 90,166 68,150 54,130 C 44,118 39,110 38,102 Z" fill="#0d0f1c" stroke="#2a3060" stroke-width="1.5"/>
-                <path d="M 62,138 C 95,118 132,118 168,132" fill="none" stroke="#1c2040" stroke-width="1.2"/>
-                <path d="M 144,12 C 148,55 150,95 146,138" fill="none" stroke="#1c2040" stroke-width="1" stroke-dasharray="3,3"/>
-                <g><circle id="lc-Vis" cx="218" cy="102" r="0" opacity="0.85"/><text id="lt-Vis" x="218" y="102" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#7a7af0;pointer-events:none">VIS</text></g>
-                <g><circle id="lc-SomMot" cx="148" cy="50" r="0" opacity="0.85"/><text id="lt-SomMot" x="148" y="50" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#f03aa0;pointer-events:none">SMN</text></g>
-                <g><circle id="lc-DorsAttn" cx="192" cy="46" r="0" opacity="0.85"/><text id="lt-DorsAttn" x="192" y="46" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#c03af0;pointer-events:none">DAN</text></g>
-                <g><circle id="lc-SalVentAttn" cx="110" cy="122" r="0" opacity="0.85"/><text id="lt-SalVentAttn" x="110" y="122" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#f0a83a;pointer-events:none">SAL</text></g>
-                <g><circle id="lc-Limbic" cx="66" cy="152" r="0" opacity="0.85"/><text id="lt-Limbic" x="66" y="152" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#f05a5a;pointer-events:none">LMB</text></g>
-                <g><circle id="lc-Cont" cx="78" cy="70" r="0" opacity="0.85"/><text id="lt-Cont" x="78" y="70" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#3af0c0;pointer-events:none">FPN</text></g>
-                <g><circle id="lc-Default" cx="182" cy="150" r="0" opacity="0.85"/><text id="lt-Default" x="182" y="150" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#3a80f0;pointer-events:none">DMN</text></g>
-              </svg>
-            </div>
-            <div class="brain-svg-wrap">
-              <div class="brain-view-label">MEDIAL (LEFT HEMISPHERE)</div>
-              <svg id="brainMedial" viewBox="0 0 280 195" xmlns="http://www.w3.org/2000/svg" style="width:100%">
-                <path d="M 242,102 C 244,70 230,40 202,26 C 174,12 144,8 118,14 C 92,20 68,36 52,62 C 36,88 34,116 42,140 C 50,164 68,178 92,184 C 116,190 142,186 166,176 C 190,166 212,150 226,130 C 236,118 241,110 242,102 Z" fill="#0d0f1c" stroke="#2a3060" stroke-width="1.5"/>
-                <path d="M 100,102 C 120,94 160,94 180,102" fill="none" stroke="#1c2040" stroke-width="1" stroke-dasharray="2,3"/>
-                <path d="M 108,80 C 130,72 150,72 172,80" fill="none" stroke="#1c2040" stroke-width="1" stroke-dasharray="2,3"/>
-                <circle id="mc-Default-pfc" cx="118" cy="60" r="0" opacity="0.85" fill="#3a80f0"/>
-                <text x="118" y="60" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#3a80f0;pointer-events:none">DMN</text>
-                <circle id="mc-Default-pcc" cx="162" cy="120" r="0" opacity="0.7" fill="#3a80f0"/>
-                <circle id="mc-SalVentAttn" cx="118" cy="100" r="0" opacity="0.85" fill="#f0a83a"/>
-                <text x="118" y="100" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#f0a83a;pointer-events:none">SAL</text>
-                <circle id="mc-Vis" cx="202" cy="110" r="0" opacity="0.85" fill="#7a7af0"/>
-                <text x="202" y="110" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#7a7af0;pointer-events:none">VIS</text>
-                <circle id="mc-SomMot" cx="148" cy="38" r="0" opacity="0.85" fill="#f03aa0"/>
-                <text x="148" y="38" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#f03aa0;pointer-events:none">SMN</text>
-                <circle id="mc-Limbic" cx="162" cy="155" r="0" opacity="0.85" fill="#f05a5a"/>
-                <text x="162" y="155" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#f05a5a;pointer-events:none">LMB</text>
-              </svg>
-            </div>
-            <div class="brain-legend" id="brainLegend"></div>
-          </div>
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-header"><span class="panel-label">Network Activation Timeseries</span><span style="font-size:10px;color:var(--text-dim)">1 TR = 1 second · normalized per network · click legend to toggle · click chart to explore</span></div>
-        <div class="panel-body">
-          <div style="position:relative">
-            <svg id="tsSvg" style="width:100%;height:180px;overflow:visible"></svg>
-            <div id="tsTooltip" class="ts-tooltip hidden"></div>
-          </div>
-          <div class="ts-legend" id="tsLegend"></div>
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-header"><span class="panel-label">Sentence-Level Analysis</span><span style="font-size:10px;color:var(--text-dim)">dominant reaction profile per sentence · click any row to explore</span></div>
-        <div class="panel-body"><div class="segments-wrap" id="segmentsWrap"></div></div>
-      </div>
-      <div class="panel">
-        <div class="panel-header"><span class="panel-label">Influence Profiles</span><span style="font-size:10px;color:var(--text-dim)">scored from activation pattern · rule-based · no LLM</span></div>
+        <div class="panel-header"><span class="panel-label">Influence Profiles</span><span style="font-size:10px;color:var(--text-dim)">scored from neural activation pattern · rule-based · no LLM</span></div>
         <div class="panel-body"><div class="profiles-grid" id="profilesGrid"></div></div>
       </div>
+      <!-- Sentence-Level Analysis -->
+      <div class="panel">
+        <div class="panel-header"><span class="panel-label">Sentence-Level Breakdown</span><span style="font-size:10px;color:var(--text-dim)">dominant profile per sentence · click any row to explore</span></div>
+        <div class="panel-body"><div class="segments-wrap" id="segmentsWrap"></div></div>
+      </div>
+      <!-- Interpretation -->
       <div class="panel">
         <div class="panel-header"><span class="panel-label">Interpretation</span></div>
         <div class="panel-body">
@@ -913,6 +873,82 @@
           <div class="inoculation-block">
             <div class="inoculation-label">INOCULATION — HOW TO MENTALLY DEFEND AGAINST THIS</div>
             <div class="inoculation-text" id="interpInoculation"></div>
+          </div>
+        </div>
+      </div>
+      <!-- Technical Details (collapsed by default) -->
+      <div class="tech-details">
+        <div class="tech-details-toggle" id="techDetailsToggle" onclick="toggleTechDetails()">
+          <div>
+            <div class="tech-details-label">TECHNICAL DETAILS</div>
+            <div class="tech-details-hint">Network activations · brain map · activation timeseries · parcel data</div>
+          </div>
+          <span class="collapse-arrow" id="techArrow">▾</span>
+        </div>
+        <div class="tech-details-body" id="techDetailsBody">
+          <div class="two-col">
+            <div class="panel">
+              <div class="panel-header"><span class="panel-label">Yeo 7-Network Activations</span><span style="font-size:10px;color:var(--text-dim)">relative z-score</span></div>
+              <div class="panel-body"><div class="network-bars" id="networkBars"></div></div>
+            </div>
+            <div class="panel">
+              <div class="panel-header"><span class="panel-label">Top Activated Parcels</span><span style="font-size:10px;color:var(--text-dim)">Schaefer 200</span></div>
+              <div class="panel-body" style="padding-top:10px">
+                <table class="roi-table"><thead><tr><th>Region / Function</th><th style="text-align:right">NET</th><th style="text-align:right">Z</th></tr></thead><tbody id="roiBody"></tbody></table>
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><span class="panel-label">Cortical Network Map</span><span style="font-size:10px;color:var(--text-dim)">schematic · Yeo 7-network anatomy · circle size = relative activation</span></div>
+            <div class="panel-body">
+              <div class="brain-map-wrap">
+                <div class="brain-svg-wrap">
+                  <div class="brain-view-label">LATERAL (LEFT HEMISPHERE)</div>
+                  <svg id="brainLateral" viewBox="0 0 280 195" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+                    <path d="M 38,102 C 36,70 50,40 78,26 C 106,12 136,8 162,14 C 188,20 212,36 228,62 C 244,88 246,116 238,140 C 230,164 212,178 188,184 C 164,190 138,186 114,176 C 90,166 68,150 54,130 C 44,118 39,110 38,102 Z" fill="#0d0f1c" stroke="#2a3060" stroke-width="1.5"/>
+                    <path d="M 62,138 C 95,118 132,118 168,132" fill="none" stroke="#1c2040" stroke-width="1.2"/>
+                    <path d="M 144,12 C 148,55 150,95 146,138" fill="none" stroke="#1c2040" stroke-width="1" stroke-dasharray="3,3"/>
+                    <g><circle id="lc-Vis" cx="218" cy="102" r="0" opacity="0.85"/><text id="lt-Vis" x="218" y="102" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#7a7af0;pointer-events:none">VIS</text></g>
+                    <g><circle id="lc-SomMot" cx="148" cy="50" r="0" opacity="0.85"/><text id="lt-SomMot" x="148" y="50" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#f03aa0;pointer-events:none">SMN</text></g>
+                    <g><circle id="lc-DorsAttn" cx="192" cy="46" r="0" opacity="0.85"/><text id="lt-DorsAttn" x="192" y="46" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#c03af0;pointer-events:none">DAN</text></g>
+                    <g><circle id="lc-SalVentAttn" cx="110" cy="122" r="0" opacity="0.85"/><text id="lt-SalVentAttn" x="110" y="122" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#f0a83a;pointer-events:none">SAL</text></g>
+                    <g><circle id="lc-Limbic" cx="66" cy="152" r="0" opacity="0.85"/><text id="lt-Limbic" x="66" y="152" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#f05a5a;pointer-events:none">LMB</text></g>
+                    <g><circle id="lc-Cont" cx="78" cy="70" r="0" opacity="0.85"/><text id="lt-Cont" x="78" y="70" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#3af0c0;pointer-events:none">FPN</text></g>
+                    <g><circle id="lc-Default" cx="182" cy="150" r="0" opacity="0.85"/><text id="lt-Default" x="182" y="150" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#3a80f0;pointer-events:none">DMN</text></g>
+                  </svg>
+                </div>
+                <div class="brain-svg-wrap">
+                  <div class="brain-view-label">MEDIAL (LEFT HEMISPHERE)</div>
+                  <svg id="brainMedial" viewBox="0 0 280 195" xmlns="http://www.w3.org/2000/svg" style="width:100%">
+                    <path d="M 242,102 C 244,70 230,40 202,26 C 174,12 144,8 118,14 C 92,20 68,36 52,62 C 36,88 34,116 42,140 C 50,164 68,178 92,184 C 116,190 142,186 166,176 C 190,166 212,150 226,130 C 236,118 241,110 242,102 Z" fill="#0d0f1c" stroke="#2a3060" stroke-width="1.5"/>
+                    <path d="M 100,102 C 120,94 160,94 180,102" fill="none" stroke="#1c2040" stroke-width="1" stroke-dasharray="2,3"/>
+                    <path d="M 108,80 C 130,72 150,72 172,80" fill="none" stroke="#1c2040" stroke-width="1" stroke-dasharray="2,3"/>
+                    <circle id="mc-Default-pfc" cx="118" cy="60" r="0" opacity="0.85" fill="#3a80f0"/>
+                    <text x="118" y="60" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#3a80f0;pointer-events:none">DMN</text>
+                    <circle id="mc-Default-pcc" cx="162" cy="120" r="0" opacity="0.7" fill="#3a80f0"/>
+                    <circle id="mc-SalVentAttn" cx="118" cy="100" r="0" opacity="0.85" fill="#f0a83a"/>
+                    <text x="118" y="100" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#f0a83a;pointer-events:none">SAL</text>
+                    <circle id="mc-Vis" cx="202" cy="110" r="0" opacity="0.85" fill="#7a7af0"/>
+                    <text x="202" y="110" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#7a7af0;pointer-events:none">VIS</text>
+                    <circle id="mc-SomMot" cx="148" cy="38" r="0" opacity="0.85" fill="#f03aa0"/>
+                    <text x="148" y="38" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#f03aa0;pointer-events:none">SMN</text>
+                    <circle id="mc-Limbic" cx="162" cy="155" r="0" opacity="0.85" fill="#f05a5a"/>
+                    <text x="162" y="155" text-anchor="middle" dominant-baseline="middle" style="font-family:var(--mono);font-size:8px;fill:#f05a5a;pointer-events:none">LMB</text>
+                  </svg>
+                </div>
+                <div class="brain-legend" id="brainLegend"></div>
+              </div>
+            </div>
+          </div>
+          <div class="panel">
+            <div class="panel-header"><span class="panel-label">Network Activation Timeseries</span><span style="font-size:10px;color:var(--text-dim)">1 TR = 1 second · normalized per network · click legend to toggle · click chart to explore</span></div>
+            <div class="panel-body">
+              <div style="position:relative">
+                <svg id="tsSvg" style="width:100%;height:180px;overflow:visible"></svg>
+                <div id="tsTooltip" class="ts-tooltip hidden"></div>
+              </div>
+              <div class="ts-legend" id="tsLegend"></div>
+            </div>
           </div>
         </div>
       </div>
@@ -1322,45 +1358,71 @@ function showError(panelId, msgId, msg) {
 }
 
 // ── Overview summary generator ────────────────────────────────────────────────
+const PROFILE_MECHANISM_PLAIN = {
+  fear_threat:       'activate fear and threat-detection circuits, priming the reader for rapid, reactive responses rather than deliberate evaluation',
+  self_relevance:    'make the content feel personally relevant, drawing on autobiographical memory and identity circuits to create a sense of direct implication',
+  social_tribal:     'activate in-group/out-group framing, engaging the social alarm circuits that evolved to flag group-level threats and moral violations',
+  reward_validation: 'deliver validation of existing beliefs, triggering reward circuits associated with feeling understood and correct',
+  analytical_bypass: 'reduce deliberate evaluation — emotional responses are likely to arrive before critical scrutiny, reducing the chance of skeptical re-reading',
+  urgency_action:    'create a felt sense that something must be done immediately, engaging motor-preparation circuits that push toward action before analysis completes',
+};
+
 function generateOverviewSummary(calibProfiles, manip, act, interp) {
   const top = calibProfiles[0];
   const second = calibProfiles[1];
   const bypass = calibProfiles.find(p => p.id === 'analytical_bypass');
+  const fpn = act?.Cont || 0;
   const topPct = Math.round((top?.score || 0) * 100);
   const secPct = Math.round((second?.score || 0) * 100);
 
-  // Top 2 non-bypass networks
-  const topNets = Object.entries(act||{})
-    .filter(([k]) => k !== 'Cont')
-    .sort(([,a],[,b]) => b - a)
-    .slice(0, 2)
-    .map(([k]) => NET_LABELS[k] || k);
+  const mechText = top ? (PROFILE_MECHANISM_PLAIN[top.id] || top.label) : '';
+  const sec2Text = (second && second.id !== 'analytical_bypass') ? (PROFILE_MECHANISM_PLAIN[second.id] || second.label) : null;
 
-  const band = manip >= 7.5 ? 'high emotional activation'
-    : manip >= 5   ? 'elevated emotional activation'
-    : manip >= 2.5 ? 'moderate emotional activation'
-    :                'low emotional activation';
+  const bandDesc = manip >= 7.5
+    ? `<strong>high</strong> — consistent with crisis rhetoric and high-emotion political advertising`
+    : manip >= 5
+    ? `<strong>elevated</strong> — in the range of persuasive political content and advertising`
+    : manip >= 2.5
+    ? `<strong>moderate</strong> — typical of editorial and opinion writing`
+    : `<strong>low</strong> — consistent with informational or neutral text`;
 
-  const analyticalNote = (act?.Cont || 0) > 0.5
-    ? ' Analytical reasoning circuits are notably active, suggesting the content also engages deliberate evaluation.'
+  const analyticalNote = fpn > 0.55
+    ? 'Analytical reasoning circuits (FPN) are notably active alongside the emotional pattern, meaning readers may still engage critically despite the emotional framing.'
     : (bypass && bypass.score > 0.65)
-    ? ' Analytical engagement is reduced — emotional responses tend to arrive ahead of careful evaluation.'
+    ? 'Analytical reasoning (FPN) is relatively suppressed — the emotional activation pattern is likely to land before critical evaluation kicks in.'
     : '';
 
-  const s1 = top
-    ? `The dominant influence pattern is <strong>${top.label}</strong> (${topPct}%)`
-      + (second && secPct > 35 && second.id !== 'analytical_bypass'
-          ? `, with <strong>${second.label}</strong> (${secPct}%) as a secondary signal`
-          : '') + '.'
+  const s1 = top && mechText
+    ? `This content is predicted to primarily <strong>${mechText}</strong> (${topPct}% match)`
+      + (sec2Text && secPct > 38
+         ? `, with a secondary pull to <strong>${sec2Text}</strong> (${secPct}%)`
+         : '') + '.'
     : '';
 
-  const s2 = `The Emotional Activation Score is <strong>${manip.toFixed(1)} / 10</strong> — ${band}${analyticalNote}`;
+  const s2 = `At <strong>${manip.toFixed(1)} / 10</strong> emotional activation — ${bandDesc}.`;
 
-  const s3 = topNets.length
-    ? ` The strongest predicted activations are in the ${topNets.join(' and ')} networks.`
-    : '';
+  return [s1, s2, analyticalNote].filter(Boolean).join(' ');
+}
 
-  return (s1 + ' ' + s2 + s3).trim();
+// ── Personalize nudge ─────────────────────────────────────────────────────────
+function showPersonalizeNudge() {
+  if (sessionStorage.getItem('nudge_dismissed') || getProfile()) return;
+  const el = document.getElementById('personalizeNudge');
+  if (el) el.style.display = 'flex';
+}
+function dismissPersonalizeNudge() {
+  sessionStorage.setItem('nudge_dismissed', '1');
+  const el = document.getElementById('personalizeNudge');
+  if (el) { el.style.opacity = '0'; el.style.transition = 'opacity .3s'; setTimeout(() => el.style.display = 'none', 300); }
+}
+
+// ── Technical details toggle ──────────────────────────────────────────────────
+function toggleTechDetails() {
+  const body = document.getElementById('techDetailsBody');
+  const arrow = document.getElementById('techArrow');
+  if (!body) return;
+  const open = body.classList.toggle('open');
+  if (arrow) arrow.classList.toggle('open', open);
 }
 
 // ── Normal results renderer ───────────────────────────────────────────────────
@@ -2793,6 +2855,7 @@ function showAnalysisPage() {
   document.getElementById('coverPage').style.display = 'none';
   document.getElementById('analysisPage').style.display = 'block';
   window.scrollTo({top: 0, behavior: 'smooth'});
+  setTimeout(showPersonalizeNudge, 800);
 }
 
 function showCoverPage() {
