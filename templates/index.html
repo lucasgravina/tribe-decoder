@@ -374,16 +374,19 @@
     .ts-axis-label{font-family:var(--mono);font-size:9px;fill:var(--text-dim)}
 
     /* ── Hero ── */
-    .hero{background:var(--surface);border:1px solid var(--border);border-top:2px solid var(--cyan);border-radius:4px;padding:32px 36px;margin-bottom:16px;display:flex;align-items:center;gap:40px}
+    .hero{background:var(--surface);border:1px solid var(--border);border-top:2px solid var(--cyan);border-radius:4px;padding:72px 56px 80px;margin-bottom:16px;display:flex;align-items:center;gap:64px;min-height:calc(100vh - 80px)}
     .hero-text{flex:1;min-width:0}
-    .hero-brain{flex-shrink:0;width:260px;opacity:.88}
-    @media(max-width:860px){.hero{flex-direction:column;gap:24px}.hero-brain{width:100%;max-width:300px;margin:0 auto}}
-    .hero-eyebrow{font-size:9px;letter-spacing:.25em;color:var(--cyan-dim);margin-bottom:12px}
-    .hero-headline{font-family:var(--serif);font-size:24px;font-weight:600;color:var(--text-bright);line-height:1.25;margin-bottom:12px}
-    .hero-sub{font-family:var(--serif);font-size:14px;color:var(--text-dim);line-height:1.7;margin-bottom:16px}
-    .hero-badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+    .hero-brain{flex-shrink:0;width:320px;opacity:.9}
+    @media(max-width:860px){.hero{flex-direction:column;gap:32px;padding:48px 24px 56px;min-height:unset}.hero-brain{width:100%;max-width:320px;margin:0 auto}}
+    .hero-eyebrow{font-size:9px;letter-spacing:.28em;color:var(--cyan-dim);margin-bottom:18px}
+    .hero-headline{font-family:var(--serif);font-size:46px;font-weight:600;color:var(--text-bright);line-height:1.12;margin-bottom:22px}
+    .hero-sub{font-family:var(--serif);font-size:15px;color:var(--text);line-height:1.8;margin-bottom:14px;max-width:580px}
+    .hero-detail{font-family:var(--serif);font-size:13px;color:var(--text-dim);line-height:1.8;margin-bottom:28px;max-width:560px}
+    .hero-badges{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px}
     .hero-badge{font-size:9px;letter-spacing:.12em;padding:3px 10px;border:1px solid var(--border-hi);border-radius:2px;color:var(--text-dim)}
-    .hero-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding-top:14px;border-top:1px solid var(--border)}
+    .hero-actions{display:flex;gap:10px;flex-wrap:wrap;align-items:center;padding-top:22px;border-top:1px solid var(--border)}
+    .hero-cta-btn{background:var(--cyan-glow);border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 20px rgba(58,240,192,.12)}
+    .hero-cta-btn:hover{background:rgba(58,240,192,.2)!important;box-shadow:0 0 28px rgba(58,240,192,.22)!important}
 
     /* ── Example buttons ── */
     .example-section{margin-bottom:14px;padding-bottom:14px;border-bottom:1px solid var(--border)}
@@ -544,7 +547,7 @@
     .fam-btn:hover:not(.active){color:var(--text);border-color:var(--border-hi)}
 
     /* ── Survey modal ── */
-    .survey-overlay{position:fixed;inset:0;background:rgba(9,9,15,.96);z-index:10002;display:none;align-items:center;justify-content:center;overflow-y:auto;padding:40px 16px 60px}
+    .survey-overlay{position:fixed;inset:0;background:rgba(9,9,15,.96);z-index:10002;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 16px 60px}
     .survey-overlay.open{display:flex}
     .survey-box{background:var(--surface);border:1px solid var(--border-hi);border-radius:6px;max-width:660px;width:100%;padding:38px 44px;position:relative;flex-shrink:0}
     @media(max-width:600px){.survey-box{padding:24px 20px}}
@@ -574,8 +577,8 @@
 
     /* ── Mobile improvements ── */
     @media(max-width:600px){
-      .hero{padding:20px 16px}
-      .hero-headline{font-size:18px}
+      .hero{padding:32px 16px 40px}
+      .hero-headline{font-size:28px}
       header{padding:10px 16px;flex-wrap:wrap;gap:10px}
       .main{padding:16px 16px 60px}
       .primary-card{padding:18px 20px;flex-direction:column}
@@ -608,11 +611,12 @@
 <div class="main">
 
   <!-- ── Hero ── -->
-  <div class="hero">
+  <div class="hero" id="heroSection">
     <div class="hero-text">
       <div class="hero-eyebrow">Open-Source · No LLM Interpretation · Rule-Based Neuroscience</div>
-      <div class="hero-headline">Decode the neural target of any piece of news.</div>
-      <div class="hero-sub">Feed any text into Meta FAIR's TRIBE v2 model, trained on 500+ hours of fMRI data from 700+ subjects, and get back a predicted cortical activation map. This program then uses a rule-based interpretation layer citing published neuroscience to link brain activation to corresponding effects on readers. See "How Does This Work?" for more information.</div>
+      <div class="hero-headline">Decode the neural target<br>of any piece of news.</div>
+      <div class="hero-sub">Feed any text into Meta FAIR's TRIBE v2 — a brain encoding model trained on 500+ hours of real fMRI data from 700+ subjects. TRIBE predicts which cortical circuits would activate when someone reads your text, mapped down to the second and the brain region.</div>
+      <div class="hero-detail">The decoder maps those activations onto seven functional networks and scores six emotional influence profiles using rule-based neuroscience — identifying whether content targets fear circuits, social identity, urgency, reward, or analytical bypass. No LLM generates interpretations. Every score cites a published paper.</div>
       <div class="hero-badges">
         <span class="hero-badge">Meta FAIR TRIBE v2</span>
         <span class="hero-badge">Schaefer 2018 · 200 parcels</span>
@@ -621,8 +625,8 @@
         <span class="hero-badge">700+ fMRI subjects</span>
       </div>
       <div class="hero-actions">
-        <button class="btn btn-ghost" onclick="openMethodModal()" style="font-size:10px">HOW DOES THIS WORK?</button>
-        <span style="font-size:10px;color:var(--text-dim)">↓ try an example or paste your own text</span>
+        <button class="btn btn-primary" onclick="openMethodModal()" style="font-size:10px">HOW DOES THIS WORK?</button>
+        <button class="btn btn-primary hero-cta-btn" onclick="scrollToAnalysis()" style="font-size:10px">TRY AN EXAMPLE OR PASTE YOUR OWN TEXT →</button>
       </div>
     </div>
     <div class="hero-brain">
@@ -695,27 +699,6 @@
     </div>
   </div>
 
-  <!-- ── Methodology accordion ── -->
-  <div class="method-accordion">
-    <div class="method-header" id="methodAccordionHeader">
-      <span class="panel-label">Pipeline Overview</span>
-      <span class="collapse-arrow" id="methodArrow">▾</span>
-    </div>
-    <div class="method-body" id="methodBody">
-      <div class="method-inner">
-        <div class="method-steps">
-          <div class="method-step"><div class="method-step-num">1</div><div class="method-step-content"><span class="method-step-label">TEXT → SPEECH → WORD TIMING</span>TRIBE v2 converts your text to synthesized audio, then uses WhisperX for word-level timing alignment. Each word maps to a TR (1 second) of predicted brain activity.</div></div>
-          <div class="method-step"><div class="method-step-num">2</div><div class="method-step-content"><span class="method-step-label">LLAMA 3.2 + WAV2VEC-BERT FEATURE EXTRACTION</span>A LLaMA 3.2-3B model extracts semantic context; Wav2Vec-BERT extracts acoustic features from the synthesized speech. Both streams feed a multimodal transformer.</div></div>
-          <div class="method-step"><div class="method-step-num">3</div><div class="method-step-content"><span class="method-step-label">BOLD SIGNAL PREDICTION</span>The TRIBE v2 transformer outputs a predicted fMRI BOLD time series across all 20,484 vertices of the fsaverage5 cortical surface — one prediction per vertex per second.</div></div>
-          <div class="method-step"><div class="method-step-num">4</div><div class="method-step-content"><span class="method-step-label">SCHAEFER 2018 ATLAS MAPPING + Z-SCORING</span>Vertices are grouped into 200 named brain parcels (Schaefer 2018). Each parcel's temporal mean is z-scored relative to the full distribution.</div></div>
-          <div class="method-step"><div class="method-step-num">5</div><div class="method-step-content"><span class="method-step-label">YEO 7-NETWORK AGGREGATION</span>The 200 parcels are grouped into 7 functional networks following the Yeo 2011 atlas: DMN, Limbic, SAL, DAN, FPN (analytical/protective), SMN, VIS.</div></div>
-          <div class="method-step"><div class="method-step-num">6</div><div class="method-step-content"><span class="method-step-label">RULE-BASED REACTION PROFILE SCORING</span>Six emotional reaction profiles are scored from network activations using weighted rules grounded in published neuroscience. No LLM is involved in interpretation.</div></div>
-        </div>
-        <div class="method-disclaimer"><strong>⚠ IMPORTANT LIMITATIONS</strong>This tool predicts population-average neural responses — not individual reactions. A high manipulation index reflects a predicted activation pattern, not proof of deceptive intent. Limbic (LMB) is consistently underestimated due to limited coverage in Schaefer 200. Results below 6 TRs are directionally informative but not robust. Research tool only.</div>
-      </div>
-    </div>
-  </div>
-
   <!-- ══ NORMAL MODE ══════════════════════════════════════════════════════════ -->
   <div id="normalMode">
 
@@ -741,17 +724,15 @@
             </div>
           </div>
           <textarea class="text-input" id="textInput" placeholder="Paste any text — news article, headline, ad copy, political speech, social media post..." spellcheck="false"></textarea>
-          <div class="familiarity-row">
-            <span class="fam-label">TOPIC FAMILIARITY</span>
-            <div class="fam-btns">
-              <button class="fam-btn" data-fam="unfamiliar" onclick="setFamiliarity(this)">Unfamiliar</button>
-              <button class="fam-btn active" data-fam="somewhat" onclick="setFamiliarity(this)">Somewhat familiar</button>
-              <button class="fam-btn" data-fam="expert" onclick="setFamiliarity(this)">Expert</button>
-            </div>
-          </div>
           <div class="input-footer">
-            <span style="font-size:10px;color:var(--text-dim);max-width:500px;line-height:1.5">Text is converted to speech internally by TRIBE v2 for word-timing alignment. Expect 30–120 sec per query.</span>
-            <button class="btn btn-primary" id="analyzeBtn" disabled>RUN TRIBE v2 ANALYSIS</button>
+            <span style="font-size:10px;color:var(--text-dim);max-width:400px;line-height:1.5">Text is converted to speech internally by TRIBE v2 for word-timing alignment. Expect 30–120 sec per query.</span>
+            <div style="display:flex;align-items:center;gap:10px;flex-shrink:0">
+              <div class="cal-toggle">
+                <button class="cal-btn active" data-mode="generalized" onclick="setResultsMode('generalized')">GENERALIZED</button>
+                <button class="cal-btn" data-mode="personalized" onclick="setResultsMode('personalized')">PERSONALIZED</button>
+              </div>
+              <button class="btn btn-primary" id="analyzeBtn" disabled>RUN TRIBE v2 ANALYSIS</button>
+            </div>
           </div>
         </div>
       </div>
@@ -796,13 +777,7 @@
         <div class="cal-left">
           <span class="cal-status" id="calStatus">Population-average baselines · no profile saved</span>
           <button class="cal-edit-btn" id="calEditBtn" onclick="openSurvey()" style="display:none">EDIT PROFILE</button>
-        </div>
-        <div style="display:flex;align-items:center;gap:8px">
           <button class="cal-edit-btn" onclick="openSurvey()" id="calSetupBtn" style="display:none">SET UP PROFILE →</button>
-          <div class="cal-toggle">
-            <button class="cal-btn active" data-mode="generalized" onclick="setResultsMode('generalized')">GENERALIZED</button>
-            <button class="cal-btn" data-mode="personalized" onclick="setResultsMode('personalized')">PERSONALIZED</button>
-          </div>
         </div>
       </div>
       <div class="warning-bar hidden" id="warningBar"></div>
@@ -2688,6 +2663,9 @@ function openSurvey() {
     document.querySelectorAll('#surveyAgeBtns .survey-age-btn').forEach(b => {
       b.classList.toggle('active', b.dataset.age === (p.ageRange || '26-40'));
     });
+    document.querySelectorAll('#surveyFamBtns .fam-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.fam === (p.familiarity || 'somewhat'));
+    });
   }
   $('surveyModal').classList.add('open');
   document.body.style.overflow = 'hidden';
@@ -2702,12 +2680,16 @@ function handleSurveyBgClick(e) { if (e.target === $('surveyModal')) closeSurvey
 
 function saveSurvey() {
   const activeAge = document.querySelector('#surveyAgeBtns .survey-age-btn.active');
+  const activeFam = document.querySelector('#surveyFamBtns .fam-btn.active');
+  const fam = activeFam ? activeFam.dataset.fam : 'somewhat';
+  _topicFamiliarity = fam;
   _saveProfile({
     decisionStyle:       parseInt($('sq-decisionStyle').value),
     emotionalReactivity: parseInt($('sq-emotionalReactivity').value),
     mediaConsumption:    parseInt($('sq-mediaConsumption').value),
     criticalTraining:    parseInt($('sq-criticalTraining').value),
-    ageRange: activeAge ? activeAge.dataset.age : '26-40',
+    ageRange:    activeAge ? activeAge.dataset.age : '26-40',
+    familiarity: fam,
   });
   closeSurvey();
   // Auto-switch to personalized after first save
@@ -2722,10 +2704,13 @@ function _updateSliderFill(el) {
   el.style.background = `linear-gradient(to right,var(--cyan-dim) ${pct}%,var(--border-hi) ${pct}%)`;
 }
 
-function setFamiliarity(btn) {
-  document.querySelectorAll('.fam-btn').forEach(b => b.classList.remove('active'));
+function setSurveyFamiliarity(btn) {
+  document.querySelectorAll('#surveyFamBtns .fam-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
-  _topicFamiliarity = btn.dataset.fam;
+}
+
+function scrollToAnalysis() {
+  document.getElementById('normalMode').scrollIntoView({behavior:'smooth', block:'start'});
 }
 
 function setResultsMode(mode) {
@@ -2770,7 +2755,7 @@ function getCalibrationMultipliers() {
     salMult:       Math.max(0.65, Math.min(1.35, 1.0 - d(p.mediaConsumption)   * 0.18)),
     ageLimbicMult: {'18-25':1.15,'26-40':1.00,'41-60':0.90,'60+':0.80}[p.ageRange] || 1.0,
     ageRewardMult: {'18-25':0.90,'26-40':1.00,'41-60':1.05,'60+':1.15}[p.ageRange] || 1.0,
-    famBypassMult: _topicFamiliarity==='expert' ? 0.82 : _topicFamiliarity==='unfamiliar' ? 1.10 : 1.0,
+    famBypassMult: (p.familiarity||_topicFamiliarity)==='expert' ? 0.82 : (p.familiarity||_topicFamiliarity)==='unfamiliar' ? 1.10 : 1.0,
   };
 }
 
@@ -2819,12 +2804,10 @@ document.querySelectorAll('.survey-slider').forEach(sl => {
   _updateSliderFill(sl);
   sl.addEventListener('input', () => _updateSliderFill(sl));
 });
-document.querySelectorAll('#surveyAgeBtns .survey-age-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('#surveyAgeBtns .survey-age-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-  });
-});
+function setSurveyAge(btn) {
+  document.querySelectorAll('#surveyAgeBtns .survey-age-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
 updateCalibrationBar();
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('surveyModal')?.classList.contains('open')) closeSurvey(); });
 
@@ -2897,12 +2880,23 @@ if (cb && !cb._wired) { cb.addEventListener('click', runComparison); cb._wired =
       <div class="survey-q-label">AGE RANGE</div>
       <div class="survey-q-sub">Neural reactivity shifts measurably across adult decades — amygdala response peaks early and attenuates over time</div>
       <div class="survey-age-btns" id="surveyAgeBtns">
-        <button class="survey-age-btn" data-age="18-25">18–25</button>
-        <button class="survey-age-btn active" data-age="26-40">26–40</button>
-        <button class="survey-age-btn" data-age="41-60">41–60</button>
-        <button class="survey-age-btn" data-age="60+">60+</button>
+        <button class="survey-age-btn" data-age="18-25" onclick="setSurveyAge(this)">18–25</button>
+        <button class="survey-age-btn active" data-age="26-40" onclick="setSurveyAge(this)">26–40</button>
+        <button class="survey-age-btn" data-age="41-60" onclick="setSurveyAge(this)">41–60</button>
+        <button class="survey-age-btn" data-age="60+" onclick="setSurveyAge(this)">60+</button>
       </div>
       <div class="survey-cite">Mather & Carstensen (2005) — positivity effect: older adults show attenuated Limbic and enhanced OFC (reward) engagement · Williams et al. (2006) amygdala attenuation across adult decades</div>
+    </div>
+
+    <div class="survey-q" style="margin-bottom:24px">
+      <div class="survey-q-label">TOPIC FAMILIARITY</div>
+      <div class="survey-q-sub">How familiar are you generally with the type of content you analyze here? Prior expertise attenuates novelty-driven salience responses.</div>
+      <div class="fam-btns" id="surveyFamBtns" style="margin-top:10px">
+        <button class="fam-btn" data-fam="unfamiliar" onclick="setSurveyFamiliarity(this)">Unfamiliar with topic</button>
+        <button class="fam-btn active" data-fam="somewhat" onclick="setSurveyFamiliarity(this)">Somewhat familiar</button>
+        <button class="fam-btn" data-fam="expert" onclick="setSurveyFamiliarity(this)">Expert / regular consumer</button>
+      </div>
+      <div class="survey-cite">Rolls (2015) — habituation reduces salience network responses to familiar content · inoculation research (Roozenbeek et al. 2020) shows expert familiarity reduces analytical bypass scores</div>
     </div>
 
     <div class="survey-actions">

@@ -734,7 +734,7 @@ def _score_reaction_profiles(network_mean_z: dict, network_display: dict, parcel
     # SAL flags urgency; SomMot prepares embodied motor action.
     # Together = felt sense that 'something must be done now'.
     # Ref: Seeley et al. (2007) J Neurosci; Pessoa (2017) Trends Cogn Sci
-    urgency_score = net("SalVentAttn") * 0.5 + net("SomMot") * 0.5
+    urgency_score = net("SalVentAttn") * 0.45 + net("SomMot") * 0.45
     profiles.append({
         "id": "urgency_action",
         "label": "Urgency / Action Mobilization",
