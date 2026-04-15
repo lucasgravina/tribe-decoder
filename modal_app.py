@@ -599,7 +599,11 @@ def _score_reaction_profiles(network_mean_z: dict, network_display: dict, parcel
     import numpy as np
 
     def net(name):
-        return network_display.get(name, 0.0)
+        # Use z-score normalized to [0,1]: z=2.0 → 1.0, z=0 → 0.0, z<0 → 0.0
+        # This means neutral text (all z-scores near 0) scores near 0,
+        # while strongly activated networks (z≥2) reach 1.0.
+        z = network_mean_z.get(name, 0.0)
+        return min(1.0, max(0.0, z / 2.0))
 
     def net_z(name):
         return network_mean_z.get(name, 0.0)
