@@ -599,11 +599,11 @@ def _score_reaction_profiles(network_mean_z: dict, network_display: dict, parcel
     import numpy as np
 
     def net(name):
-        # Use z-score normalized to [0,1]: z=2.0 → 1.0, z=0 → 0.0, z<0 → 0.0
-        # This means neutral text (all z-scores near 0) scores near 0,
-        # while strongly activated networks (z≥2) reach 1.0.
+        # Normalize network_mean_z to [0,1] using empirically calibrated cap.
+        # By CLT, averaging ~30 parcel z-scores gives network_mean_z in ±0.3–0.5 typically.
+        # Cap at 0.5 so a moderately activated network reaches 1.0; neutral text stays near 0.
         z = network_mean_z.get(name, 0.0)
-        return min(1.0, max(0.0, z / 2.0))
+        return min(1.0, max(0.0, z / 0.5))
 
     def net_z(name):
         return network_mean_z.get(name, 0.0)
@@ -615,10 +615,11 @@ def _score_reaction_profiles(network_mean_z: dict, network_display: dict, parcel
     profiles = []
 
     # ── 1. Fear / Threat Response ──────────────────────────────────────────────
-    # Limbic + SalVentAttn co-activation = threat detection circuit.
-    # TempPole (emotional memory familiarity) and OFC (threat value) as ROI boosters.
+    # SalVentAttn (anterior insula + ACC) is the primary threat detection hub in Yeo 7.
+    # Yeo "Limbic" is a small OFC/temporal region — it does NOT contain amygdala.
+    # SAL carries most of the threat signal; Limbic contributes when OFC encodes threat value.
     # Ref: LeDoux (1996) The Emotional Brain; Seeley et al. (2007) J Neurosci
-    fear_base  = net("Limbic") * 0.45 + net("SalVentAttn") * 0.45
+    fear_base  = net("SalVentAttn") * 0.65 + net("Limbic") * 0.25
     fear_score = min(1.0, fear_base
                      + max(0, roi_mean_z("TempPole")) * 0.05
                      + max(0, roi_mean_z("OFC")) * 0.05)
@@ -713,8 +714,13 @@ def _score_reaction_profiles(network_mean_z: dict, network_display: dict, parcel
     # with FPN for processing resources (dual-process theory, Bechara et al.).
     # Ref: Bechara et al. (2000) Cognition; Kahneman (2011) Thinking Fast and Slow
     fpn_activation  = net("Cont")
-    emotional_load  = (net("Limbic") + net("SalVentAttn")) / 2
-    bypass_score    = min(1.0, (1.0 - fpn_activation) * 0.5 + emotional_load * 0.5)
+    # SAL (anterior insula/ACC) is the primary affective driver in Yeo 7; Limbic is secondary.
+    emotional_load  = net("SalVentAttn") * 0.7 + net("Limbic") * 0.3
+    # Ratio formula: how much does emotional load dominate over analytical control?
+    # Near 0 when FPN is strong relative to emotional load (critical reading).
+    # Near 1 when emotional load dominates FPN (hot cognition, reduced scrutiny).
+    # Small epsilon prevents 0/0 when both are near zero (truly neutral/flat text).
+    bypass_score    = min(1.0, emotional_load / (fpn_activation + emotional_load + 0.01))
     profiles.append({
         "id": "analytical_bypass",
         "label": "Critical Thinking Bypass",
