@@ -629,10 +629,10 @@ def _score_reaction_profiles(network_mean_z: dict, network_display: dict, parcel
         "score": round(fear_score, 3),
         "networks_driving": ["Limbic", "SalVentAttn"],
         "mechanism": (
-            "Limbic network + salience network co-activation is the neurological signature "
+            "Salience network co-activation with limbic regions is the neurological signature "
             "of threat detection. The same circuitry that evolved to detect predators is "
             "being engaged by symbolic content. Temporal pole activation suggests emotional "
-            "memory familiarity is being leveraged — the threat feels 'known' and real."
+            "memory familiarity is being leveraged, making the threat feel familiar and real."
         ),
         "literature": "LeDoux (1996) The Emotional Brain; Seeley et al. (2007) J Neurosci",
     })
@@ -649,10 +649,10 @@ def _score_reaction_profiles(network_mean_z: dict, network_display: dict, parcel
         "score": round(identity_score, 3),
         "networks_driving": ["Default"],
         "mechanism": (
-            "Default Mode Network is the brain's 'self-referential' system — it activates "
+            "Default Mode Network is the brain's self-referential system. It activates "
             "when you think about yourself, your beliefs, your social identity, your future. "
             "High DMN activation means content has triggered self-referential processing: "
-            "you are reading this as being *about you* or *relevant to who you are*. "
+            "you are reading this as personally relevant or directly about you. "
             "mPFC and PCC (posterior cingulate) specifically index personal relevance and "
             "autobiographical memory integration."
         ),
@@ -676,11 +676,11 @@ def _score_reaction_profiles(network_mean_z: dict, network_display: dict, parcel
         "key_roi": "TPJ",
         "mechanism": (
             "The temporoparietal junction (TPJ) is the brain's dedicated circuit for "
-            "thinking about other people's mental states — their beliefs, intentions, "
-            "group membership. High TPJ activation means content is activating "
+            "thinking about other people's mental states, their beliefs, intentions, and "
+            "group membership. High TPJ activation means content is triggering "
             "social categorization: 'us vs. them', moral judgment of out-groups, "
             "or concern about social standing. Superior temporal sulcus supports "
-            "biological motion and agency detection — perceiving groups as agents."
+            "biological motion and agency detection, perceiving groups as active agents."
         ),
         "literature": "Saxe & Kanwisher (2003) NeuroImage; Greene et al. (2001) Science",
     })
@@ -728,14 +728,13 @@ def _score_reaction_profiles(network_mean_z: dict, network_display: dict, parcel
         "networks_driving": ["Cont"],  # inverted: low Cont = high bypass
         "inverted": True,
         "mechanism": (
-            "Frontoparietal control network governs deliberate, analytical evaluation — "
+            "Frontoparietal control network governs deliberate, analytical evaluation: "
             "the slow, effortful reasoning of System 2 cognition. Emotionally loaded "
             "content suppresses this network as emotional processing competes for "
-            "prefrontal resources (Bechara et al.). Low Cont activation + high Limbic/SAL "
-            "is a pattern consistent with 'hot cognition' — where emotional processing "
-            "tends to precede analytical evaluation, leaving less capacity for deliberate "
-            "scrutiny. This does not mean the content is dishonest, but it is worth "
-            "slowing down before acting or sharing."
+            "prefrontal resources (Bechara et al.). Low FPN activation relative to "
+            "salience and limbic activity is a pattern consistent with hot cognition, "
+            "where emotional responses tend to precede analytical evaluation and leave "
+            "less capacity for deliberate scrutiny. Worth slowing down before acting or sharing."
         ),
         "literature": "Bechara et al. (2000) Cognition; Kahneman (2011) Thinking Fast and Slow",
     })
@@ -752,9 +751,9 @@ def _score_reaction_profiles(network_mean_z: dict, network_display: dict, parcel
         "networks_driving": ["SalVentAttn", "SomMot"],
         "mechanism": (
             "Salience network flags urgency while somatomotor regions prepare for motor "
-            "action — together they create the felt sense that 'something must be done "
-            "now.' This is the neurological correlate of mobilization rhetoric. The body "
-            "prepares to act even before the content has been analytically evaluated. "
+            "action, together creating the felt sense that something must be done now. "
+            "This is the neurological correlate of mobilization rhetoric. The body "
+            "prepares to act before the content has been analytically evaluated. "
             "Time-pressure framing, countdown language, and crisis narratives specifically "
             "target this circuit."
         ),
@@ -825,13 +824,13 @@ def _build_interpretation(profiles: list, network_display: dict) -> dict:
 
     # ── Who benefits ───────────────────────────────────────────────────────────
     if manip_index >= 7.5:
-        who_benefits = "Most likely the content source. High emotional activation combined with reduced analytical engagement — worth examining who benefits from your reaction before acting or sharing."
+        who_benefits = "Most likely the content source. High emotional activation combined with reduced analytical engagement. Worth examining who benefits from your reaction before acting or sharing."
     elif manip_index >= 5.0:
-        who_benefits = "Possibly the source. Moderate emotional framing that may or may not be intentional — legitimate reporting can produce similar patterns. Worth a second read."
+        who_benefits = "Possibly the source. Moderate emotional framing that may or may not be intentional; legitimate reporting can produce similar patterns. Worth a second read."
     elif manip_index >= 2.5:
-        who_benefits = "Unclear. Low-to-moderate emotional activation with analytical engagement still present — no strong signal of one-sided framing."
+        who_benefits = "Unclear. Low-to-moderate emotional activation with analytical engagement still present. No strong signal of one-sided framing."
     else:
-        who_benefits = "Likely you, the reader. Low emotional activation signature — content appears primarily informational."
+        who_benefits = "Likely you, the reader. Low emotional activation signature. Content appears primarily informational."
 
     # ── Inoculation ────────────────────────────────────────────────────────────
     # Based on inoculation theory (McGuire 1964) and prebunking research

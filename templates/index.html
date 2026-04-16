@@ -132,13 +132,13 @@
     /* ── Normal results: primary card ── */
     .primary-card{background:var(--surface-2);border:1px solid var(--border);border-top:2px solid var(--cyan);border-radius:4px;padding:24px 28px;margin-bottom:16px;display:flex;flex-direction:column;gap:20px}
     .overview-header{border-bottom:1px solid var(--border);padding-bottom:18px}
-    .overview-eyebrow{font-size:10px;letter-spacing:.22em;color:var(--cyan-dim);margin-bottom:10px}
+    .overview-eyebrow{font-size:13px;letter-spacing:.18em;color:var(--cyan);margin-bottom:12px;font-weight:500}
     .overview-title{font-family:var(--serif);font-size:17px;font-weight:600;color:var(--text-bright);margin-bottom:10px}
     .overview-summary{font-family:var(--serif);font-size:14px;color:var(--text);line-height:1.75;max-width:760px}
     .overview-cols{display:flex;align-items:flex-start;justify-content:space-between;gap:32px}
     .overview-left{flex:1;min-width:0}
     .primary-eyebrow{font-size:10px;letter-spacing:.2em;color:var(--text-dim);margin-bottom:8px}
-    .primary-reaction{font-family:var(--serif);font-size:26px;font-weight:600;color:var(--text-bright);line-height:1.2;margin-bottom:10px}
+    .primary-reaction{font-family:var(--serif);font-size:18px;font-weight:600;color:var(--text-bright);line-height:1.2;margin-bottom:10px}
     .primary-outcome{font-family:var(--serif);font-style:italic;font-size:14px;color:var(--text-dim);max-width:480px;line-height:1.6}
     .primary-right{flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;text-align:right;min-width:180px}
     .manip-eyebrow{font-size:10px;letter-spacing:.2em;color:var(--text-dim);margin-bottom:6px}
@@ -274,7 +274,7 @@
     .error-msg{font-size:12px;color:var(--text);font-family:var(--serif)}
 
     /* ── Comparison results ── */
-    .compare-summary{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:16px}
+    .compare-summary{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
     @media(max-width:800px){.compare-summary{grid-template-columns:1fr}}
     .compare-summary-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:14px 16px;border-top-width:2px}
     .compare-card-source{font-size:10px;letter-spacing:.15em;margin-bottom:8px;display:flex;align-items:center;gap:6px}
@@ -307,7 +307,7 @@
     .framing-chip{font-size:9px;padding:1px 5px;background:var(--bg);border:1px solid var(--border);border-radius:2px;color:var(--text-dim)}
 
     /* Brain compare */
-    .brain-compare-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+    .brain-compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     @media(max-width:800px){.brain-compare-grid{grid-template-columns:1fr}}
     .brain-compare-card{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:12px;text-align:center}
     .brain-compare-label{font-size:9px;letter-spacing:.12em;margin-bottom:8px}
@@ -595,6 +595,15 @@
     .nudge-dismiss{font-size:9px;color:var(--cyan-dim);cursor:pointer;padding:3px 8px;border:1px solid var(--cyan-dim);border-radius:2px;background:transparent;font-family:var(--mono);letter-spacing:.1em;transition:all .15s;flex-shrink:0}
     .nudge-dismiss:hover{color:var(--cyan);border-color:var(--cyan)}
 
+    /* ── Personalize toast (top-right) ── */
+    .personalize-toast{position:fixed;top:68px;right:20px;background:var(--surface-2);border:1px solid var(--cyan-dim);border-radius:4px;padding:12px 16px;z-index:400;max-width:220px;display:none;box-shadow:0 4px 20px rgba(0,0,0,.5);animation:nudgeIn .3s ease}
+    .personalize-toast.visible{display:block}
+    .personalize-toast-title{font-size:10px;letter-spacing:.15em;color:var(--cyan);margin-bottom:6px;font-weight:500}
+    .personalize-toast-body{font-family:var(--serif);font-size:12px;color:var(--text-dim);line-height:1.5;margin-bottom:10px}
+    .personalize-toast-btn{font-family:var(--mono);font-size:9px;letter-spacing:.12em;padding:4px 10px;border:1px solid var(--cyan-dim);border-radius:2px;background:transparent;color:var(--cyan);cursor:pointer;transition:all .15s;display:block;width:100%;text-align:center}
+    .personalize-toast-btn:hover{background:var(--cyan-glow)}
+    .personalize-toast-close{position:absolute;top:6px;right:8px;font-size:10px;color:var(--text-dim);cursor:pointer;background:none;border:none;padding:2px 4px}
+
     /* ── Technical details collapsible ── */
     .tech-details{margin-bottom:16px}
     .tech-details-toggle{background:var(--surface);border:1px solid var(--border);border-radius:4px;padding:11px 20px;display:flex;align-items:center;justify-content:space-between;cursor:pointer;user-select:none;transition:background .15s}
@@ -622,7 +631,7 @@
 
 <header>
   <div class="logo-wrap">
-    <span class="logo-main">TRIBE DECODER</span>
+    <span class="logo-main">TRIBE V2 NEWS DECODER</span>
     <span class="logo-sub">Neural Reaction Analysis · Meta FAIR TRIBE v2 · Schaefer 2018 Atlas</span>
   </div>
 
@@ -646,8 +655,8 @@
     <div class="hero-text">
       <div class="hero-eyebrow">Open-Source · No LLM Interpretation · Rule-Based Neuroscience</div>
       <div class="hero-headline">Decode the neural target<br>of any piece of news.</div>
-      <div class="hero-sub">Feed any text into Meta FAIR's TRIBE v2 — a brain encoding model trained on 500+ hours of real fMRI data from 700+ subjects. TRIBE predicts which cortical circuits would activate when someone reads your text, mapped down to the second and the brain region.</div>
-      <div class="hero-detail">The decoder maps those activations onto seven functional networks and scores six emotional influence profiles using rule-based neuroscience — identifying whether content targets fear circuits, social identity, urgency, reward, or analytical bypass. No LLM generates interpretations. Every score cites a published paper.</div>
+      <div class="hero-sub">Feed any text into Meta FAIR's TRIBE v2, a brain encoding model trained on 500+ hours of real fMRI data from 700+ subjects. TRIBE predicts which cortical circuits would activate when someone reads your text, mapped down to the second and the brain region.</div>
+      <div class="hero-detail">The decoder maps those activations onto seven functional networks and scores six emotional influence profiles using rule-based neuroscience: identifying whether content targets fear circuits, social identity, urgency, reward, or analytical bypass. No LLM generates interpretations. Every score cites a published paper.</div>
       <div class="hero-badges">
         <span class="hero-badge">Meta FAIR TRIBE v2</span>
         <span class="hero-badge">Schaefer 2018 · 200 parcels</span>
@@ -736,7 +745,7 @@
   <div id="analysisPage" style="display:none">
     <div class="back-bar">
       <button class="back-btn" onclick="showCoverPage()">← HOME</button>
-      <span class="back-bar-title">TRIBE DECODER — NEURAL ANALYSIS</span>
+      <span class="back-bar-title">TRIBE V2 NEWS DECODER — NEURAL ANALYSIS</span>
     </div>
 
   <!-- ══ NORMAL MODE ══════════════════════════════════════════════════════════ -->
@@ -839,8 +848,8 @@
             <div class="primary-outcome" id="primaryOutcome"></div>
             <div id="cautionBadge" style="display:none;margin-top:12px"></div>
             <div id="verdictActionRow" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
-              <div style="font-size:9px;letter-spacing:.15em;color:var(--cyan-dim);margin-bottom:5px">WHAT TO DO</div>
-              <div id="verdictActionText" style="font-family:var(--serif);font-size:13px;color:var(--text);line-height:1.6;max-width:380px"></div>
+              <div style="font-size:9px;letter-spacing:.15em;color:var(--cyan-dim);margin-bottom:5px">HOW TO MENTALLY DEFEND AGAINST THIS</div>
+              <div id="verdictActionText" style="font-family:var(--serif);font-size:13px;color:var(--text);line-height:1.65;max-width:440px"></div>
             </div>
           </div>
           <div class="primary-right">
@@ -848,58 +857,24 @@
             <div class="manip-value" id="manipIndex">—</div>
             <div class="manip-scale">out of 10</div>
             <div id="easBand" style="font-size:10px;letter-spacing:.1em;margin-top:6px;font-weight:500"></div>
-            <div style="font-size:9px;color:var(--text-dim);margin-top:8px;max-width:175px;line-height:1.5;font-family:var(--serif)">Reflects predicted neural activation patterns — not evidence of intent.</div>
+            <div style="font-size:9px;color:var(--text-dim);margin-top:8px;max-width:175px;line-height:1.5;font-family:var(--serif)">Reflects predicted neural activation patterns, not evidence of intent.</div>
           </div>
         </div>
       </div>
       <!-- Influence Profiles (most interpretable — first) -->
       <div class="panel">
-        <div class="panel-header"><span class="panel-label">Influence Profiles</span><span style="font-size:10px;color:var(--text-dim)">scored from neural activation pattern · rule-based · no LLM</span></div>
+        <div class="panel-header" style="justify-content:space-between">
+          <span class="panel-label">Top Influence Profiles</span>
+          <div style="display:flex;align-items:center;gap:12px">
+            <span style="font-size:10px;color:var(--text-dim)">scored from neural activation · rule-based · no LLM</span>
+            <button id="seeAllProfilesBtn" onclick="toggleAllProfiles()" style="font-family:var(--mono);font-size:9px;letter-spacing:.1em;padding:3px 9px;border:1px solid var(--border-hi);border-radius:2px;background:transparent;color:var(--text-dim);cursor:pointer;transition:all .15s">SEE ALL</button>
+          </div>
+        </div>
         <div class="panel-body"><div class="profiles-grid" id="profilesGrid"></div></div>
       </div>
-      <!-- Sentence-Level Analysis -->
+      <!-- Cortical Network Map (visible, above segment breakdown) -->
       <div class="panel">
-        <div class="panel-header"><span class="panel-label">Sentence-Level Breakdown</span><span style="font-size:10px;color:var(--text-dim)">dominant profile per sentence · click any row to explore</span></div>
-        <div class="panel-body"><div class="segments-wrap" id="segmentsWrap"></div></div>
-      </div>
-      <!-- Interpretation -->
-      <div class="panel">
-        <div class="panel-header"><span class="panel-label">Interpretation</span></div>
-        <div class="panel-body">
-          <div class="interp-grid">
-            <div><div class="interp-eyebrow">LIKELY BEHAVIORAL EFFECT</div><div class="interp-text" id="interpOutcome"></div></div>
-            <div><div class="interp-eyebrow">WHO BENEFITS FROM THIS REACTION</div><div class="interp-text" id="interpBenefits"></div></div>
-          </div>
-          <div class="inoculation-block">
-            <div class="inoculation-label">INOCULATION — HOW TO MENTALLY DEFEND AGAINST THIS</div>
-            <div class="inoculation-text" id="interpInoculation"></div>
-          </div>
-        </div>
-      </div>
-      <!-- Technical Details (collapsed by default) -->
-      <div class="tech-details">
-        <div class="tech-details-toggle" id="techDetailsToggle" onclick="toggleTechDetails()">
-          <div>
-            <div class="tech-details-label">TECHNICAL DETAILS</div>
-            <div class="tech-details-hint">Network activations · brain map · activation timeseries · parcel data</div>
-          </div>
-          <span class="collapse-arrow" id="techArrow">▾</span>
-        </div>
-        <div class="tech-details-body" id="techDetailsBody">
-          <div class="two-col">
-            <div class="panel">
-              <div class="panel-header"><span class="panel-label">Yeo 7-Network Activations</span><span style="font-size:10px;color:var(--text-dim)">relative z-score</span></div>
-              <div class="panel-body"><div class="network-bars" id="networkBars"></div></div>
-            </div>
-            <div class="panel">
-              <div class="panel-header"><span class="panel-label">Top Activated Parcels</span><span style="font-size:10px;color:var(--text-dim)">Schaefer 200</span></div>
-              <div class="panel-body" style="padding-top:10px">
-                <table class="roi-table"><thead><tr><th>Region / Function</th><th style="text-align:right">NET</th><th style="text-align:right">Z</th></tr></thead><tbody id="roiBody"></tbody></table>
-              </div>
-            </div>
-          </div>
-          <div class="panel">
-            <div class="panel-header"><span class="panel-label">Cortical Network Map</span><span style="font-size:10px;color:var(--text-dim)">schematic · Yeo 7-network anatomy · circle size = relative activation</span></div>
+        <div class="panel-header"><span class="panel-label">Cortical Network Map</span><span style="font-size:10px;color:var(--text-dim)">schematic · Yeo 7-network anatomy · circle size = relative activation</span></div>
             <div class="panel-body">
               <div class="brain-map-wrap">
                 <div class="brain-svg-wrap">
@@ -939,23 +914,50 @@
                 <div class="brain-legend" id="brainLegend"></div>
               </div>
             </div>
+      <!-- Network Activation Timeseries (visible, above segment breakdown) -->
+      <div class="panel">
+        <div class="panel-header"><span class="panel-label">Network Activation Timeseries</span><span style="font-size:10px;color:var(--text-dim)">1 TR = 1 second · hover to explore · click chart to open sentence</span></div>
+        <div class="panel-body">
+          <div style="position:relative">
+            <svg id="tsSvg" style="width:100%;height:180px;overflow:visible"></svg>
+            <div id="tsTooltip" class="ts-tooltip hidden"></div>
           </div>
-          <div class="panel">
-            <div class="panel-header"><span class="panel-label">Network Activation Timeseries</span><span style="font-size:10px;color:var(--text-dim)">1 TR = 1 second · normalized per network · click legend to toggle · click chart to explore</span></div>
-            <div class="panel-body">
-              <div style="position:relative">
-                <svg id="tsSvg" style="width:100%;height:180px;overflow:visible"></svg>
-                <div id="tsTooltip" class="ts-tooltip hidden"></div>
-              </div>
-              <div class="ts-legend" id="tsLegend"></div>
-            </div>
-          </div>
+          <div class="ts-legend" id="tsLegend"></div>
         </div>
       </div>
-      <details class="raw-details">
-        <summary class="raw-summary">RAW TRIBE V2 OUTPUT STATS ▾</summary>
-        <div class="raw-body" id="rawBody"></div>
-      </details>
+      <!-- Sentence-Level Breakdown -->
+      <div class="panel">
+        <div class="panel-header"><span class="panel-label">Sentence-Level Breakdown</span><span style="font-size:10px;color:var(--text-dim)">dominant profile per sentence (click to explore)</span></div>
+        <div class="panel-body"><div class="segments-wrap" id="segmentsWrap"></div></div>
+      </div>
+      <!-- Technical Details (collapsed) -->
+      <div class="tech-details">
+        <div class="tech-details-toggle" id="techDetailsToggle" onclick="toggleTechDetails()">
+          <div>
+            <div class="tech-details-label">TECHNICAL DETAILS</div>
+            <div class="tech-details-hint">Network activations · parcel data · raw stats</div>
+          </div>
+          <span class="collapse-arrow" id="techArrow">▾</span>
+        </div>
+        <div class="tech-details-body" id="techDetailsBody">
+          <div class="two-col">
+            <div class="panel">
+              <div class="panel-header"><span class="panel-label">Yeo 7-Network Activations</span><span style="font-size:10px;color:var(--text-dim)">relative z-score</span></div>
+              <div class="panel-body"><div class="network-bars" id="networkBars"></div></div>
+            </div>
+            <div class="panel">
+              <div class="panel-header"><span class="panel-label">Top Activated Parcels</span><span style="font-size:10px;color:var(--text-dim)">Schaefer 200</span></div>
+              <div class="panel-body" style="padding-top:10px">
+                <table class="roi-table"><thead><tr><th>Parcel (Network)</th><th style="text-align:right">NET</th><th style="text-align:right">Z</th></tr></thead><tbody id="roiBody"></tbody></table>
+              </div>
+            </div>
+          </div>
+          <details class="raw-details">
+            <summary class="raw-summary">RAW TRIBE V2 OUTPUT STATS ▾</summary>
+            <div class="raw-body" id="rawBody"></div>
+          </details>
+        </div>
+      </div>
     </div>
   </div><!-- /normalMode -->
 
@@ -1039,6 +1041,7 @@
 <footer>
   <div class="footer-inner">
     <div class="footer-credits">
+      <div><div class="footer-credit-label">BUILT BY</div><div class="footer-credit-val">Lucas Gravina</div></div>
       <div><div class="footer-credit-label">BRAIN ENCODING MODEL</div><div class="footer-credit-val">TRIBE v2 · Meta FAIR · d'Ascoli et al. (2026)</div></div>
       <div><div class="footer-credit-label">BRAIN ATLAS</div><div class="footer-credit-val">Schaefer et al. (2018) Cerebral Cortex · doi:10.1093/cercor/bhx179</div></div>
       <div><div class="footer-credit-label">NETWORK PARCELLATION</div><div class="footer-credit-val">Yeo et al. (2011) J Neurophysiol · 7-network atlas</div></div>
@@ -1053,7 +1056,7 @@
   <div class="modal-box">
     <button class="modal-close" onclick="closeMethodModal()">✕ CLOSE</button>
     <div class="modal-title">How TRIBE Decoder Works</div>
-    <div class="modal-sub">A full-stack neuroscience pipeline — from raw text to predicted cortical activation maps — with no LLM in the interpretation layer.</div>
+    <div class="modal-sub">No LLM generates interpretations. Every score cites a published paper. Every activation is predicted by TRIBE v2, trained on 500+ hours of real fMRI data.</div>
 
     <div class="modal-section">
       <div class="modal-section-title">THE PIPELINE — 6 STEPS</div>
@@ -1070,7 +1073,7 @@
       <div class="modal-lim"><strong>LIMBIC ALWAYS NEAR ZERO</strong>The Schaefer 200-parcel atlas has limited limbic coverage compared to dedicated amygdala/hippocampus atlases. Emotional content may show lower limbic scores than expected. This is a known atlas coverage issue, not a model failure.</div>
       <div class="modal-lim"><strong>SHORT TEXT (&lt;8 TRs) = UNRELIABLE SIGNAL</strong>Below 6 seconds of content the activation estimates are based on very few timepoints. Results are directionally informative but should not be interpreted confidently.</div>
       <div class="modal-lim"><strong>POPULATION AVERAGE — NOT INDIVIDUAL</strong>TRIBE v2 predicts the average neural response across the training population. Individual responses can differ substantially based on prior beliefs, expertise, and emotional state.</div>
-      <div class="modal-lim"><strong>ACTIVATION ≠ MANIPULATION INTENT</strong>High emotional activation scores mean the content predicted strong emotional brain circuit activation. This does not imply the creator intended manipulation — emotionally evocative language appears in poetry, literature, and public health communication too.</div>
+      <div class="modal-lim"><strong>ACTIVATION ≠ MANIPULATION INTENT</strong>High emotional activation scores mean the content predicted strong emotional brain circuit activation. This does not imply the creator intended manipulation; emotionally evocative language appears in poetry, literature, and public health communication too.</div>
     </div>
 
     <div class="modal-section">
@@ -1392,14 +1395,14 @@ function generateOverviewSummary(calibProfiles, manip, act, interp) {
     ? 'Analytical reasoning (FPN) is relatively suppressed — the emotional activation pattern is likely to land before critical evaluation kicks in.'
     : '';
 
-  const s1 = top && mechText
-    ? `This content is predicted to primarily <strong>${mechText}</strong> (${topPct}% match)`
+  const s1 = `Emotional activation <strong>${manip.toFixed(1)} / 10</strong> — ${bandDesc}.`;
+
+  const s2 = top && mechText
+    ? `Predicted to primarily <strong>${mechText}</strong> (${topPct}% match)`
       + (sec2Text && secPct > 38
          ? `, with a secondary pull to <strong>${sec2Text}</strong> (${secPct}%)`
          : '') + '.'
     : '';
-
-  const s2 = `At <strong>${manip.toFixed(1)} / 10</strong> emotional activation — ${bandDesc}.`;
 
   return [s1, s2, analyticalNote].filter(Boolean).join(' ');
 }
@@ -1450,7 +1453,9 @@ function renderNormal(data) {
   const overviewEl = $('overviewSummary');
   if (overviewEl) overviewEl.innerHTML = generateOverviewSummary(calibProfiles, manip, data.network_activations||{}, interp);
 
-  $('primaryReaction').textContent = topProfile?.label || interp.primary_target || '—';
+  const reactionEl = $('primaryReaction');
+  reactionEl.textContent = topProfile?.label || interp.primary_target || '—';
+  reactionEl.style.fontSize = manip >= 7.5 ? '26px' : manip >= 5 ? '21px' : manip >= 2.5 ? '17px' : '14px';
   $('primaryOutcome').textContent  = interp.intended_outcome || '';
   const mi = $('manipIndex');
   mi.textContent = manip.toFixed(1);
@@ -1480,10 +1485,10 @@ function renderNormal(data) {
     cautionBadge.innerHTML = `<span style="display:inline-block;padding:4px 10px;border-radius:3px;font-size:9px;letter-spacing:.14em;font-weight:500;border:1px solid ${cautionColor};color:${cautionColor};background:${cautionBg}">${cautionLabel}</span>`;
   }
   renderManipRef(manip);
-  // Recommended action
+  // Recommended action / inoculation
   const actionRow = $('verdictActionRow'), actionText = $('verdictActionText');
   if (actionRow && actionText && topProfile) {
-    actionText.textContent = VERDICT_ACTIONS[topProfile.id] || 'Read critically and verify key claims before acting or sharing.';
+    actionText.textContent = interp.inoculation || VERDICT_ACTIONS[topProfile.id] || 'Read critically and verify key claims before acting or sharing.';
     actionRow.style.display = '';
   }
   // Signal quality + analytical ratio
@@ -1507,9 +1512,7 @@ function renderNormal(data) {
   renderTimeSeries(data.network_timeseries||{}, data.raw_stats?.n_timesteps||0);
   renderSegments(data.segments_breakdown||[]);
   renderProfiles(calibProfiles);
-  $('interpOutcome').textContent     = interp.intended_outcome||'';
-  $('interpBenefits').textContent    = interp.who_benefits||'';
-  $('interpInoculation').textContent = interp.inoculation||'';
+  // interpOutcome / interpBenefits / interpInoculation panels removed — inoculation routed to verdictActionText above
   renderRawStats(data.raw_stats||{});
   // Update results bar label
   const rbl=$('resultsBarLabel'); if(rbl){const nTR=data.raw_stats?.n_timesteps||0;rbl.textContent=`${nTR} TR · ${nTR}s of content · ${new Date().toLocaleTimeString()}`;}
@@ -1542,7 +1545,9 @@ function renderRoiTable(rois) {
     const zStr=roi.z_score>0?`+${roi.z_score.toFixed(2)}`:roi.z_score.toFixed(2);
     const zColor=roi.z_score>1.5?'var(--amber)':roi.z_score>0.5?'var(--text-bright)':'var(--text-dim)';
     const tr=document.createElement('tr');
-    tr.innerHTML=`<td><div class="roi-name">${roi.roi_name||roi.parcel}</div><div class="roi-desc">${roi.description||''}</div></td><td class="roi-net" style="color:${color}">${roi.network||''}</td><td class="roi-score" style="color:${zColor}">${zStr}σ</td>`;
+    const netAbbr = NET_ABBR[roi.network]||roi.network||'';
+    const displayName = `${roi.roi_name||roi.parcel} (${netAbbr})`;
+    tr.innerHTML=`<td><div class="roi-name">${displayName}</div><div class="roi-desc">${roi.description||''}</div></td><td class="roi-net" style="color:${color}">${netAbbr}</td><td class="roi-score" style="color:${zColor}">${zStr}σ</td>`;
     tip(tr,
       `<div class="tt-value">${zStr}σ</div><div class="tt-body"><b>${roi.roi_name||roi.parcel}</b><br><span style="font-size:10px;color:var(--text-dim)">${roi.parcel}</span></div><div class="tt-note">${roi.description||''}</div><div class="tt-note" style="margin-top:6px">σ = standard deviations above mean parcel activation for this content. Values >1.5σ indicate a meaningfully active region.</div>`,
       NET_ABBR[roi.network]||roi.network
@@ -1792,20 +1797,33 @@ function renderSegments(segs) {
 }
 
 // ── Profiles ──────────────────────────────────────────────────────────────────
+let _allProfileRows = [];
+
 function renderProfiles(profiles) {
-  const g=$('profilesGrid'); g.innerHTML='';
+  const g=$('profilesGrid'); g.innerHTML=''; _allProfileRows=[];
   profiles.forEach((p,i)=>{
     const pct=Math.round(p.score*100),inv=p.inverted,isPrim=i===0;
     const barColor=inv?(p.score>0.65?'var(--red)':p.score>0.4?'var(--amber)':'var(--green)'):(p.score>0.7?'var(--amber)':p.score>0.45?'var(--text)':'var(--text-dim)');
     const numColor=inv?(p.score>0.65?'var(--red)':'var(--text-dim)'):(p.score>0.7?'var(--amber)':'var(--text-dim)');
     const nets=(p.networks_driving||[]).map(n=>`<span class="net-chip">${NET_ABBR[n]||n}</span>`).join('');
     const row=document.createElement('div'); row.className='profile-row'+(isPrim?' primary-profile':'');
+    if (i >= 2) { row.style.display='none'; row.dataset.hidden='1'; }
     row.innerHTML=`<div class="profile-header"><span class="profile-label">${p.label}</span><div class="profile-score-wrap"><div class="profile-score-bar"><div class="profile-score-fill" style="width:0%;background:${barColor}"></div></div><span class="profile-score-num" style="color:${numColor}">${pct}%</span></div></div><div class="profile-networks">${nets}${p.key_roi?`<span class="net-chip" style="color:var(--amber);border-color:var(--amber-dim)">ROI: ${p.key_roi}</span>`:''}</div><div class="profile-mechanism">${p.mechanism}</div>${p.literature?`<div class="profile-lit">Lit: ${p.literature}</div>`:''}`;
     const scoreNum = row.querySelector('.profile-score-num');
     tip(scoreNum, `<div class="tt-value">${pct}%</div><div class="tt-body">Score formula: weighted combination of activations from driving networks (${(p.networks_driving||[]).map(n=>NET_ABBR[n]||n).join(', ')})${p.inverted?' — inverted: LOW network = HIGH bypass score':''}.</div><div class="tt-note">${pct>70?'HIGH — prominent pattern for this content':pct>45?'MODERATE — present but not dominant':'LOW — not a primary mechanism here'}</div>`, p.label.toUpperCase());
     g.appendChild(row);
+    _allProfileRows.push(row);
     requestAnimationFrame(()=>requestAnimationFrame(()=>{ row.querySelector('.profile-score-fill').style.width=pct+'%'; }));
   });
+}
+
+function toggleAllProfiles() {
+  const btn = $('seeAllProfilesBtn');
+  const hidden = _allProfileRows.filter(r => r.dataset.hidden === '1');
+  if (hidden.length === 0) return;
+  const allVisible = hidden.every(r => r.style.display !== 'none');
+  hidden.forEach(r => { r.style.display = allVisible ? 'none' : ''; });
+  if (btn) btn.textContent = allVisible ? 'SEE ALL' : 'SHOW LESS';
 }
 
 // ── Raw stats ─────────────────────────────────────────────────────────────────
@@ -1824,6 +1842,16 @@ function renderRawStats(stats) {
 
 let activeSourceCount = 2;
 
+const COMPARE_EXAMPLES = {
+  hormuz: {
+    names: ['Reuters / AP Style', 'Cable News / Opinion'],
+    texts: [
+      `Tensions in the Strait of Hormuz increased Wednesday following reports of Iranian naval vessels approaching commercial shipping lanes in international waters. The U.S. Fifth Fleet, based in Bahrain, confirmed that two cargo ships had been shadowed by Iranian patrol boats for approximately 40 minutes before the vessels departed. Iran's state media described the movements as routine maritime exercises. The strait, a 21-mile-wide chokepoint between the Persian Gulf and the Gulf of Oman, accounts for roughly 20% of global oil transit. Oil prices rose 1.3% on news of the incident.`,
+      `BREAKING: Iran's Revolutionary Guard SEIZES control of the Strait of Hormuz — World War III fears explode as Pentagon scrambles. Islamic Republic commandos have been boarding Western cargo vessels in an unprecedented campaign of aggression that threatens to SHUT DOWN global energy supplies. "This is an act of war and we will treat it as such," demanded a senior senator, as crude prices SURGED on global panic. The Biden White House has called an emergency security meeting. U.S. aircraft carriers are being repositioned. Every moment of inaction emboldens Tehran. America's enemies are watching. Are we going to act — or surrender the world's most critical waterway to Islamic theocrats?`
+    ]
+  }
+};
+
 function buildCompareInputs() {
   const grid = $('compareSourcesGrid');
   if (grid.dataset.built) return;
@@ -1831,23 +1859,25 @@ function buildCompareInputs() {
   grid.innerHTML = '';
   activeSourceCount = 2;
 
-  // Build 2 source cards to start
-  for (let i = 0; i < 2; i++) addSourceCard(i);
+  // Blurb + example loader
+  const blurb = document.createElement('div');
+  blurb.style.cssText = 'margin-bottom:12px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap';
+  blurb.innerHTML = `<span style="font-family:var(--serif);font-size:12px;color:var(--text-dim);line-height:1.5">Paste two different framings of the <em>same story</em> to see how coverage choices alter predicted neural activation patterns.</span><button style="font-family:var(--mono);font-size:9px;letter-spacing:.12em;padding:5px 12px;border:1px solid var(--border-hi);border-radius:2px;background:transparent;color:var(--text-dim);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s" onmouseover="this.style.color='var(--cyan)';this.style.borderColor='var(--cyan-dim)'" onmouseout="this.style.color='var(--text-dim)';this.style.borderColor='var(--border-hi)'" onclick="loadCompareExample('hormuz')">LOAD: STRAIT OF HORMUZ EXAMPLE →</button>`;
+  grid.parentElement.insertBefore(blurb, grid);
 
-  // Add third source button row
-  const addRow = document.createElement('div');
-  addRow.id = 'addSourceRow';
-  addRow.style.cssText = 'display:flex;align-items:center;justify-content:center;border:1px dashed var(--border);border-radius:4px;padding:20px;cursor:pointer;transition:border-color .2s';
-  addRow.innerHTML = `<span style="font-size:10px;letter-spacing:.15em;color:var(--text-dim)">+ ADD THIRD SOURCE</span>`;
-  addRow.addEventListener('click', () => {
-    addSourceCard(2);
-    addRow.style.display = 'none';
-    activeSourceCount = 3;
-    updateCompareBtn();
+  // Build 2 source cards
+  for (let i = 0; i < 2; i++) addSourceCard(i);
+}
+
+function loadCompareExample(key) {
+  const ex = COMPARE_EXAMPLES[key]; if (!ex) return;
+  buildCompareInputs();
+  ex.texts.forEach((text, i) => {
+    const ta = $('srcText'+i);
+    const nameEl = $('srcName'+i);
+    if (ta) { ta.value = text; ta.dispatchEvent(new Event('input')); }
+    if (nameEl && ex.names[i]) nameEl.value = ex.names[i];
   });
-  addRow.addEventListener('mouseenter', () => addRow.style.borderColor = 'var(--cyan-dim)');
-  addRow.addEventListener('mouseleave', () => addRow.style.borderColor = 'var(--border)');
-  grid.appendChild(addRow);
 }
 
 function addSourceCard(i) {
@@ -2690,6 +2720,21 @@ function loadExample(idx) {
   $('textInput').dispatchEvent(new Event('input'));
   $('inputBody').classList.add('expanded');
   $('inputArrow').classList.add('open');
+  showPersonalizeToast();
+}
+
+function showPersonalizeToast() {
+  if (sessionStorage.getItem('toast_dismissed') || getProfile()) return;
+  const t = $('personalizeToast');
+  if (!t) return;
+  t.classList.add('visible');
+  setTimeout(() => t.classList.remove('visible'), 8000);
+}
+
+function closePersonalizeToast() {
+  sessionStorage.setItem('toast_dismissed', '1');
+  const t = $('personalizeToast');
+  if (t) t.classList.remove('visible');
 }
 
 // ── Elapsed timer ─────────────────────────────────────────────────────────────
@@ -3054,6 +3099,14 @@ if (cb && !cb._wired) { cb.addEventListener('click', runComparison); cb._wired =
       <button class="btn btn-primary" onclick="saveSurvey()" style="white-space:nowrap;flex-shrink:0">SAVE PROFILE</button>
     </div>
   </div>
+</div>
+
+<!-- ── Personalize toast ── -->
+<div id="personalizeToast" class="personalize-toast" style="position:relative">
+  <button class="personalize-toast-close" onclick="closePersonalizeToast()">✕</button>
+  <div class="personalize-toast-title">PERSONALIZE SCORES</div>
+  <div class="personalize-toast-body">Your age and expertise change how susceptible you are to each influence type. Calibrate your results.</div>
+  <button class="personalize-toast-btn" onclick="closePersonalizeToast();openSurvey()">SET MY PROFILE →</button>
 </div>
 
 <!-- ── Segment popup ── -->
