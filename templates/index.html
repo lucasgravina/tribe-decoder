@@ -964,7 +964,13 @@
   <!-- ══ COMPARISON MODE ═════════════════════════════════════════════════════ -->
   <div id="compareMode" style="display:none">
 
-    <!-- 3 source input cards -->
+    <!-- Blurb + example loader -->
+    <div id="compareBlurb" style="margin-bottom:12px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <span style="font-family:var(--serif);font-size:12px;color:var(--text-dim);line-height:1.5">Paste two different framings of the <em>same story</em> to see how coverage choices alter predicted neural activation patterns.</span>
+      <button class="btn btn-ghost" style="font-size:9px;letter-spacing:.12em;white-space:nowrap;flex-shrink:0" onclick="loadCompareExample('hormuz')">LOAD: STRAIT OF HORMUZ EXAMPLE →</button>
+    </div>
+
+    <!-- Source input cards -->
     <div class="compare-sources" id="compareSourcesGrid"></div>
 
     <div class="compare-run-bar">
@@ -1268,6 +1274,8 @@ function switchMode(mode) {
   $('modeCompare').classList.toggle('active', mode === 'compare');
   $('normalMode').style.display = mode === 'normal' ? '' : 'none';
   $('compareMode').style.display = mode === 'compare' ? '' : 'none';
+  // Always show analysis page when switching modes
+  if ($('analysisPage').style.display === 'none') showAnalysisPage();
   if (mode === 'compare') buildCompareInputs();
 }
 
@@ -1858,12 +1866,6 @@ function buildCompareInputs() {
   grid.dataset.built = '1';
   grid.innerHTML = '';
   activeSourceCount = 2;
-
-  // Blurb + example loader
-  const blurb = document.createElement('div');
-  blurb.style.cssText = 'margin-bottom:12px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:4px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap';
-  blurb.innerHTML = `<span style="font-family:var(--serif);font-size:12px;color:var(--text-dim);line-height:1.5">Paste two different framings of the <em>same story</em> to see how coverage choices alter predicted neural activation patterns.</span><button style="font-family:var(--mono);font-size:9px;letter-spacing:.12em;padding:5px 12px;border:1px solid var(--border-hi);border-radius:2px;background:transparent;color:var(--text-dim);cursor:pointer;white-space:nowrap;flex-shrink:0;transition:all .15s" onmouseover="this.style.color='var(--cyan)';this.style.borderColor='var(--cyan-dim)'" onmouseout="this.style.color='var(--text-dim)';this.style.borderColor='var(--border-hi)'" onclick="loadCompareExample('hormuz')">LOAD: STRAIT OF HORMUZ EXAMPLE →</button>`;
-  grid.parentElement.insertBefore(blurb, grid);
 
   // Build 2 source cards
   for (let i = 0; i < 2; i++) addSourceCard(i);
@@ -3102,7 +3104,7 @@ if (cb && !cb._wired) { cb.addEventListener('click', runComparison); cb._wired =
 </div>
 
 <!-- ── Personalize toast ── -->
-<div id="personalizeToast" class="personalize-toast" style="position:relative">
+<div id="personalizeToast" class="personalize-toast">
   <button class="personalize-toast-close" onclick="closePersonalizeToast()">✕</button>
   <div class="personalize-toast-title">PERSONALIZE SCORES</div>
   <div class="personalize-toast-body">Your age and expertise change how susceptible you are to each influence type. Calibrate your results.</div>
