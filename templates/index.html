@@ -834,31 +834,34 @@
         </div>
       </div>
       <div class="warning-bar hidden" id="warningBar"></div>
-      <div class="primary-card">
-        <!-- Full-width overview header -->
-        <div class="overview-header">
-          <div class="overview-eyebrow">OVERVIEW OF RESULTS</div>
-          <div class="overview-summary" id="overviewSummary"></div>
-        </div>
-        <!-- Two-column detail row -->
-        <div class="overview-cols">
-          <div class="overview-left">
+      <div class="primary-card" style="flex-direction:row;align-items:stretch;gap:28px">
+        <!-- Left: all text sections stacked -->
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:18px">
+          <!-- Section 1: Overview summary -->
+          <div class="overview-header" style="border-bottom:1px solid var(--border);padding-bottom:14px">
+            <div class="overview-eyebrow">OVERVIEW OF RESULTS</div>
+            <div class="overview-summary" id="overviewSummary"></div>
+          </div>
+          <!-- Section 2: Primary influence -->
+          <div>
             <div class="primary-eyebrow">PRIMARY INFLUENCE STYLE</div>
             <div class="primary-reaction" id="primaryReaction">—</div>
             <div class="primary-outcome" id="primaryOutcome"></div>
             <div id="cautionBadge" style="display:none;margin-top:12px"></div>
-            <div id="verdictActionRow" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
-              <div style="font-size:9px;letter-spacing:.15em;color:var(--cyan-dim);margin-bottom:5px">HOW TO MENTALLY DEFEND AGAINST THIS</div>
-              <div id="verdictActionText" style="font-family:var(--serif);font-size:13px;color:var(--text);line-height:1.65;max-width:440px"></div>
-            </div>
           </div>
-          <div class="primary-right">
-            <div class="manip-eyebrow">EMOTIONAL ACTIVATION SCORE</div>
-            <div class="manip-value" id="manipIndex">—</div>
-            <div class="manip-scale">out of 10</div>
-            <div id="easBand" style="font-size:10px;letter-spacing:.1em;margin-top:6px;font-weight:500"></div>
-            <div style="font-size:9px;color:var(--text-dim);margin-top:8px;max-width:175px;line-height:1.5;font-family:var(--serif)">Reflects predicted neural activation patterns, not evidence of intent.</div>
+          <!-- Section 3: Verdict / inoculation -->
+          <div id="verdictActionRow" style="display:none;padding-top:14px;border-top:1px solid var(--border)">
+            <div style="font-size:9px;letter-spacing:.15em;color:var(--cyan-dim);margin-bottom:5px">HOW TO MENTALLY DEFEND AGAINST THIS</div>
+            <div id="verdictActionText" style="font-family:var(--serif);font-size:13px;color:var(--text);line-height:1.65;max-width:440px"></div>
           </div>
+        </div>
+        <!-- Right: big score spanning full height -->
+        <div class="primary-right" style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;text-align:right;justify-content:center;border-left:1px solid var(--border);padding-left:28px;min-width:160px">
+          <div class="manip-eyebrow">EMOTIONAL ACTIVATION</div>
+          <div class="manip-value" id="manipIndex" style="font-size:88px;letter-spacing:-4px;line-height:1">—</div>
+          <div class="manip-scale">/ 10</div>
+          <div id="easBand" style="font-size:10px;letter-spacing:.1em;margin-top:6px;font-weight:500"></div>
+          <div style="font-size:9px;color:var(--text-dim);margin-top:8px;max-width:150px;line-height:1.5;font-family:var(--serif);text-align:right">Reflects neural activation patterns, not evidence of intent.</div>
         </div>
       </div>
       <!-- Influence Profiles (most interpretable — first) -->
@@ -914,6 +917,7 @@
                 <div class="brain-legend" id="brainLegend"></div>
               </div>
             </div>
+      </div>
       <!-- Network Activation Timeseries (visible, above segment breakdown) -->
       <div class="panel">
         <div class="panel-header"><span class="panel-label">Network Activation Timeseries</span><span style="font-size:10px;color:var(--text-dim)">1 TR = 1 second · hover to explore · click chart to open sentence</span></div>
@@ -970,8 +974,25 @@
       <button class="btn btn-ghost" style="font-size:9px;letter-spacing:.12em;white-space:nowrap;flex-shrink:0" onclick="loadCompareExample('hormuz')">LOAD: STRAIT OF HORMUZ EXAMPLE →</button>
     </div>
 
-    <!-- Source input cards -->
-    <div class="compare-sources" id="compareSourcesGrid"></div>
+    <!-- Source input cards (static HTML so they always render) -->
+    <div class="compare-sources" id="compareSourcesGrid">
+      <div class="compare-source-card" id="srcCard0" style="border-top:2px solid #3a80f0">
+        <div class="compare-source-header">
+          <div class="source-dot" style="background:#3a80f0"></div>
+          <input class="source-name-input" id="srcName0" value="Source A" placeholder="Source name" style="color:#3a80f0"/>
+        </div>
+        <textarea class="compare-textarea" id="srcText0" placeholder="Paste article or headline here..." oninput="$('srcCount0').textContent=this.value.length.toLocaleString()+' / 2,000'+(this.value.length>2000?' — will be trimmed':'');$('srcCount0').style.color=this.value.length>2000?'var(--amber)':'';updateCompareBtn()"></textarea>
+        <div class="compare-char-count" id="srcCount0">0 / 2,000</div>
+      </div>
+      <div class="compare-source-card" id="srcCard1" style="border-top:2px solid #f05a5a">
+        <div class="compare-source-header">
+          <div class="source-dot" style="background:#f05a5a"></div>
+          <input class="source-name-input" id="srcName1" value="Source B" placeholder="Source name" style="color:#f05a5a"/>
+        </div>
+        <textarea class="compare-textarea" id="srcText1" placeholder="Paste article or headline here..." oninput="$('srcCount1').textContent=this.value.length.toLocaleString()+' / 2,000'+(this.value.length>2000?' — will be trimmed':'');$('srcCount1').style.color=this.value.length>2000?'var(--amber)':'';updateCompareBtn()"></textarea>
+        <div class="compare-char-count" id="srcCount1">0 / 2,000</div>
+      </div>
+    </div>
 
     <div class="compare-run-bar">
       <span class="compare-hint">Each source is run through TRIBE v2 independently in parallel</span>
@@ -1861,14 +1882,7 @@ const COMPARE_EXAMPLES = {
 };
 
 function buildCompareInputs() {
-  const grid = $('compareSourcesGrid');
-  if (grid.dataset.built) return;
-  grid.dataset.built = '1';
-  grid.innerHTML = '';
-  activeSourceCount = 2;
-
-  // Build 2 source cards
-  for (let i = 0; i < 2; i++) addSourceCard(i);
+  // Source cards are hardcoded in HTML — nothing to build
 }
 
 function loadCompareExample(key) {
