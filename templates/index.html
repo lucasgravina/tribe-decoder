@@ -3245,42 +3245,7 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('surveyM
 // ── Init ──────────────────────────────────────────────────────────────────────
 checkStatus();
 
-// ── PREVIEW MODE: auto-load mock results ──────────────────────────────────────
-(function previewMock() {
-  const MOCK = {
-    success: true,
-    interpretation: {
-      manipulation_index: 8.6,
-      primary_target: 'Critical Thinking Bypass',
-      intended_outcome: 'Immediate clicking or sharing driven by anxiety, action before critical evaluation — the urgency feels real and time-sensitive',
-      inoculation: 'If you want to share this before finishing it, or before looking anything up, notice that impulse. High-bypass content tends to front-load emotional impact so the felt reaction precedes deliberate evaluation. Finishing it, and waiting a beat before sharing, is usually enough to reactivate critical judgment.'
-    },
-    reaction_profiles: [
-      { id: 'analytical_bypass', label: 'Critical Thinking Bypass', score: 0.88, mechanism: 'Emotional activation arrives before FPN (analytical) circuits engage, reducing deliberate scrutiny.' },
-      { id: 'urgency_action',    label: 'Urgency / Action Pressure', score: 0.74, mechanism: 'SomMot activation creates felt bodily urgency — the sense something must be done now.' },
-      { id: 'fear_threat',       label: 'Fear & Threat Activation',  score: 0.61, mechanism: 'SAL and Limbic circuits flagged for threat-detection patterns.' },
-      { id: 'social_tribal',     label: 'Social / Tribal Framing',   score: 0.48, mechanism: 'TPJ activation suggests in-group/out-group framing.' },
-      { id: 'self_relevance',    label: 'Personal Relevance',        score: 0.38, mechanism: 'DMN engagement — content framed to feel personally relevant.' },
-      { id: 'reward_validation', label: 'Reward / Validation',       score: 0.22, mechanism: 'Low reward-circuit activation.' }
-    ],
-    network_activations: { Default: 0.54, Limbic: 0.18, SalVentAttn: 0.72, DorsAttn: 0.48, Cont: 0.40, SomMot: 0.74, Vis: 0.38 },
-    raw_stats: { n_timesteps: 24, mean_activation: 0.61, peak_activation: 0.88, std_activation: 0.18 },
-    segments: [
-      { text: 'BREAKING: Authorities confirm the threat is real and spreading faster than expected.', dominant_profile: 'fear_threat', dominant_label: 'Fear & Threat', ts_start: 0, ts_end: 5, network_activations: { Default:0.4, Limbic:0.3, SalVentAttn:0.8, DorsAttn:0.5, Cont:0.3, SomMot:0.7, Vis:0.3 } },
-      { text: 'Officials say you need to act immediately — there is no time to wait for more information.', dominant_profile: 'urgency_action', dominant_label: 'Urgency / Action', ts_start: 5, ts_end: 11, network_activations: { Default:0.5, Limbic:0.2, SalVentAttn:0.7, DorsAttn:0.4, Cont:0.35, SomMot:0.85, Vis:0.3 } },
-      { text: 'People who delay are putting themselves and their families at risk.', dominant_profile: 'social_tribal', dominant_label: 'Social / Tribal', ts_start: 11, ts_end: 17, network_activations: { Default:0.65, Limbic:0.25, SalVentAttn:0.65, DorsAttn:0.45, Cont:0.38, SomMot:0.6, Vis:0.28 } },
-      { text: 'Share this now before it is too late.', dominant_profile: 'analytical_bypass', dominant_label: 'Critical Thinking Bypass', ts_start: 17, ts_end: 21, network_activations: { Default:0.5, Limbic:0.2, SalVentAttn:0.75, DorsAttn:0.5, Cont:0.28, SomMot:0.82, Vis:0.25 } }
-    ],
-    timeseries: { Default:[0.4,0.45,0.5,0.55,0.54,0.52,0.5,0.48,0.5,0.52,0.54,0.55,0.53,0.5,0.48,0.5,0.52,0.54,0.5,0.48,0.45], SalVentAttn:[0.5,0.6,0.7,0.78,0.72,0.68,0.65,0.7,0.72,0.7,0.65,0.68,0.7,0.72,0.68,0.65,0.7,0.75,0.72,0.68,0.6], SomMot:[0.4,0.5,0.6,0.68,0.74,0.78,0.82,0.8,0.78,0.75,0.72,0.7,0.68,0.72,0.78,0.82,0.85,0.82,0.78,0.72,0.65], Cont:[0.5,0.48,0.44,0.42,0.40,0.38,0.36,0.35,0.36,0.38,0.40,0.38,0.36,0.35,0.34,0.33,0.32,0.30,0.32,0.35,0.38], DorsAttn:[0.4,0.44,0.48,0.5,0.48,0.46,0.48,0.5,0.48,0.46,0.48,0.5,0.48,0.46,0.48,0.5,0.48,0.46,0.44,0.42,0.4], Limbic:[0.1,0.12,0.15,0.18,0.2,0.18,0.16,0.18,0.2,0.18,0.16,0.15,0.18,0.2,0.18,0.16,0.15,0.14,0.13,0.12,0.1], Vis:[0.3,0.32,0.35,0.38,0.36,0.34,0.32,0.34,0.36,0.34,0.32,0.3,0.32,0.34,0.36,0.34,0.32,0.3,0.28,0.26,0.25] }
-  };
-  setTimeout(() => {
-    showAnalysisPage();
-    $('textInput').value = 'BREAKING: Authorities confirm the threat is real and spreading faster than expected. Officials say you need to act immediately — there is no time to wait for more information. People who delay are putting themselves and their families at risk. Share this now before it is too late.';
-    const es = $('emptyState'); if(es) es.style.display = 'none';
-    $('loadingPanel').style.display = 'none';
-    renderNormal(MOCK);
-  }, 300);
-}());
+
 setInterval(checkStatus, 30000);
 
 // Wire compare button (must happen after DOM ready — it's there)
