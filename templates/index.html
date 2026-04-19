@@ -834,56 +834,35 @@
         </div>
       </div>
       <div class="warning-bar hidden" id="warningBar"></div>
-      <div class="primary-card">
-        <!-- Split header: score left · influence label right -->
-        <div style="display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--border);padding-bottom:16px;gap:16px">
-          <div style="display:flex;align-items:baseline;gap:8px;flex-shrink:0">
-            <div class="manip-value" id="manipIndex" style="font-size:76px;letter-spacing:-4px;line-height:1">—</div>
-            <div style="display:flex;flex-direction:column;gap:3px">
-              <div class="manip-scale">/10</div>
-              <div id="easBand" style="font-size:10px;letter-spacing:.1em;font-weight:500"></div>
-            </div>
+      <div class="primary-card" style="flex-direction:row;align-items:stretch;gap:28px">
+        <!-- Left: all text sections stacked -->
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:18px">
+          <!-- Section 1: Overview summary -->
+          <div class="overview-header" style="border-bottom:1px solid var(--border);padding-bottom:14px">
+            <div class="overview-eyebrow">OVERVIEW OF RESULTS</div>
+            <div class="overview-summary" id="overviewSummary"></div>
           </div>
-          <div style="text-align:right;flex:1;min-width:0">
-            <div style="font-size:9px;letter-spacing:.15em;color:var(--cyan-dim);margin-bottom:5px">PRIMARY INFLUENCE STYLE</div>
-            <div class="primary-reaction" id="primaryReaction" style="font-size:20px;line-height:1.25">—</div>
+          <!-- Section 2: Primary influence -->
+          <div>
+            <div class="primary-eyebrow">PRIMARY INFLUENCE STYLE</div>
+            <div class="primary-reaction" id="primaryReaction">—</div>
+            <div class="primary-outcome" id="primaryOutcome"></div>
+            <div id="cautionBadge" style="display:none;margin-top:12px"></div>
           </div>
-        </div>
-        <!-- 3 metric chips -->
-        <div style="display:flex;gap:8px;margin-top:14px">
-          <div style="flex:1;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:3px;padding:10px 12px;min-width:0">
-            <div style="font-size:22px;font-weight:700;letter-spacing:-0.5px;color:var(--text-bright);font-family:var(--mono)" id="topProfilePct">—</div>
-            <div style="font-size:8px;letter-spacing:.13em;color:var(--text-dim);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="topProfileName">TOP PROFILE</div>
-          </div>
-          <div style="flex:1;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:3px;padding:10px 12px;min-width:0">
-            <div style="font-size:22px;font-weight:700;letter-spacing:-0.5px;color:var(--text-bright);font-family:var(--mono)" id="secProfilePct">—</div>
-            <div style="font-size:8px;letter-spacing:.13em;color:var(--text-dim);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap" id="secProfileName">2ND PROFILE</div>
-          </div>
-          <div style="flex:1;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:3px;padding:10px 12px;min-width:0">
-            <div style="font-size:14px;font-weight:700;letter-spacing:.02em;font-family:var(--mono)" id="fpnStatusChip">—</div>
-            <div style="font-size:8px;letter-spacing:.13em;color:var(--text-dim);margin-top:3px">FPN STATUS</div>
+          <!-- Section 3: Verdict / inoculation -->
+          <div id="verdictActionRow" style="display:none;padding-top:14px;border-top:1px solid var(--border)">
+            <div style="font-size:9px;letter-spacing:.15em;color:var(--cyan-dim);margin-bottom:5px">HOW TO MENTALLY DEFEND AGAINST THIS</div>
+            <div id="verdictActionText" style="font-family:var(--serif);font-size:13px;color:var(--text);line-height:1.65;max-width:440px"></div>
           </div>
         </div>
-        <!-- Emotional / Analytical bars -->
-        <div style="margin-top:14px;display:flex;flex-direction:column;gap:4px">
-          <div style="display:flex;justify-content:space-between;align-items:center;font-size:9px;letter-spacing:.12em;margin-bottom:2px">
-            <span style="color:var(--amber)">EMOTIONAL</span><span id="emotionalPctLabel" style="color:var(--amber)">—</span>
-          </div>
-          <div class="net-bar-bg"><div id="emotionalBarFill" class="net-bar-fill" style="width:0%;background:var(--amber)"></div></div>
-          <div style="display:flex;justify-content:space-between;align-items:center;font-size:9px;letter-spacing:.12em;margin-top:5px;margin-bottom:2px">
-            <span style="color:var(--cyan)">ANALYTICAL (FPN)</span><span id="analyticalPctLabel" style="color:var(--cyan)">—</span>
-          </div>
-          <div class="net-bar-bg"><div id="analyticalBarFill" class="net-bar-fill" style="width:0%;background:var(--cyan)"></div></div>
+        <!-- Right: big score spanning full height -->
+        <div class="primary-right" style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;text-align:right;justify-content:center;border-left:1px solid var(--border);padding-left:28px;min-width:160px">
+          <div class="manip-eyebrow">EMOTIONAL ACTIVATION</div>
+          <div class="manip-value" id="manipIndex" style="font-size:88px;letter-spacing:-4px;line-height:1">—</div>
+          <div class="manip-scale">/ 10</div>
+          <div id="easBand" style="font-size:10px;letter-spacing:.1em;margin-top:6px;font-weight:500"></div>
+          <div style="font-size:9px;color:var(--text-dim);margin-top:8px;max-width:150px;line-height:1.5;font-family:var(--serif);text-align:right">Reflects neural activation patterns, not evidence of intent.</div>
         </div>
-        <!-- Signal quality row (populated by JS) -->
-        <div id="signalQualityRow" class="signal-row" style="margin-top:10px"></div>
-        <!-- Defense tip (2 sentences) -->
-        <div id="verdictActionRow" style="display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border)">
-          <div style="font-size:9px;letter-spacing:.15em;color:var(--cyan-dim);margin-bottom:5px">HOW TO MENTALLY DEFEND AGAINST THIS</div>
-          <div id="verdictActionText" style="font-family:var(--serif);font-size:13px;color:var(--text);line-height:1.65"></div>
-        </div>
-        <!-- Caution badge -->
-        <div id="cautionBadge" style="display:none;margin-top:12px"></div>
       </div>
       <!-- Influence Profiles (most interpretable — first) -->
       <div class="panel">
@@ -1500,8 +1479,14 @@ function renderNormal(data) {
   const wb = $('warningBar');
   if (data.warning) { wb.textContent = '⚠ '+data.warning; wb.classList.remove('hidden'); } else wb.classList.add('hidden');
 
+  // Overview summary
+  const overviewEl = $('overviewSummary');
+  if (overviewEl) overviewEl.innerHTML = generateOverviewSummary(calibProfiles, manip, data.network_activations||{}, interp);
+
   const reactionEl = $('primaryReaction');
   reactionEl.textContent = topProfile?.label || interp.primary_target || '—';
+  reactionEl.style.fontSize = manip >= 7.5 ? '26px' : manip >= 5 ? '21px' : manip >= 2.5 ? '17px' : '14px';
+  $('primaryOutcome').textContent = interp.intended_outcome || '';
   const mi = $('manipIndex');
   mi.textContent = manip.toFixed(1);
   mi.className = 'manip-value'+(manip>=7.5?' danger':manip>=5?' warn':'');
@@ -1530,50 +1515,23 @@ function renderNormal(data) {
     cautionBadge.innerHTML = `<span style="display:inline-block;padding:4px 10px;border-radius:3px;font-size:9px;letter-spacing:.14em;font-weight:500;border:1px solid ${cautionColor};color:${cautionColor};background:${cautionBg}">${cautionLabel}</span>`;
   }
   renderManipRef(manip);
-  // Recommended action / inoculation (trimmed to 2 sentences)
+  // Recommended action / inoculation
   const actionRow = $('verdictActionRow'), actionText = $('verdictActionText');
   if (actionRow && actionText && topProfile) {
-    const rawInocu = interp.inoculation || VERDICT_ACTIONS[topProfile.id] || 'Read critically and verify key claims before acting or sharing.';
-    const m = rawInocu.match(/[^.!?]+[.!?]+(\s+[^.!?]+[.!?]+)?/);
-    actionText.textContent = m ? m[0].trim() : rawInocu;
+    actionText.textContent = interp.inoculation || VERDICT_ACTIONS[topProfile.id] || 'Read critically and verify key claims before acting or sharing.';
     actionRow.style.display = '';
   }
-  // Metric chips
-  const act = data.network_activations||{};
-  const topPct = Math.round((calibProfiles[0]?.score || 0) * 100);
-  const secPct = Math.round((calibProfiles[1]?.score || 0) * 100);
-  const fpnAct = act.Cont || 0;
-  const topPctEl = $('topProfilePct'), topNameEl = $('topProfileName');
-  const secPctEl = $('secProfilePct'), secNameEl = $('secProfileName');
-  const fpnChipEl = $('fpnStatusChip');
-  if (topPctEl) topPctEl.textContent = topPct + '%';
-  if (topNameEl) topNameEl.textContent = (calibProfiles[0]?.label || 'TOP PROFILE').toUpperCase();
-  if (secPctEl) secPctEl.textContent = secPct + '%';
-  if (secNameEl) secNameEl.textContent = (calibProfiles[1]?.label || '—').toUpperCase();
-  if (fpnChipEl) {
-    const [fpnLabel, fpnColor] = fpnAct > 0.55 ? ['ACTIVE','var(--cyan)'] : fpnAct > 0.35 ? ['MODERATE','var(--text)'] : ['SUPPRESSED','var(--amber)'];
-    fpnChipEl.textContent = fpnLabel;
-    fpnChipEl.style.color = fpnColor;
-  }
-  // Emotional / Analytical bars
-  const emotional = ((act.Limbic||0)+(act.SalVentAttn||0)+(act.SomMot||0))/3;
-  const analytical = act.Cont||0;
-  const emoPct = Math.round(emotional*100), analPct = Math.round(analytical*100);
-  const emoPctEl = $('emotionalPctLabel'), analPctEl = $('analyticalPctLabel');
-  const emoBar = $('emotionalBarFill'), analBar = $('analyticalBarFill');
-  if (emoPctEl) emoPctEl.textContent = emoPct + '%';
-  if (analPctEl) analPctEl.textContent = analPct + '%';
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
-    if (emoBar) emoBar.style.width = emoPct + '%';
-    if (analBar) analBar.style.width = analPct + '%';
-  }));
-  // Signal quality
+  // Signal quality + analytical ratio
   const nTR = data.raw_stats?.n_timesteps||0;
   const sq = nTR>=20?4:nTR>=12?3:nTR>=6?2:nTR>=2?1:0;
   const sqLabel = ['VERY LOW','LOW','MODERATE','GOOD','HIGH'][sq];
   const sqColor = sq>=3?'var(--green)':sq>=2?'var(--amber)':'var(--red)';
+  const act = data.network_activations||{};
+  const emotional = ((act.Limbic||0)+(act.SalVentAttn||0)+(act.SomMot||0))/3;
+  const analytical = act.Cont||0;
   const ratioColor = analytical > emotional ? 'var(--cyan)' : emotional > 0.6 ? 'var(--amber)' : 'var(--text-dim)';
-  const sqEl = document.getElementById('signalQualityRow') || (()=>{ const d=document.createElement('div'); d.id='signalQualityRow'; d.className='signal-row'; $('verdictActionRow').parentElement.insertBefore(d,$('verdictActionRow')); return d; })();
+  let sqEl = document.getElementById('signalQualityRow');
+  if (!sqEl) { sqEl = document.createElement('div'); sqEl.id='signalQualityRow'; sqEl.className='signal-row'; $('manipIndex').parentElement.appendChild(sqEl); }
   const dots = Array.from({length:4},(_,i)=>`<div class="sq-dot${i<sq?' filled':''}"></div>`).join('');
   sqEl.innerHTML = `<div class="sq-wrap"><div class="sq-dots">${dots}</div><span class="sq-label" style="color:${sqColor}">${sqLabel} SIGNAL</span></div><span class="analytical-ratio" style="color:${ratioColor}">ANALYTICAL ${Math.round(analytical*100)}% · EMOTIONAL ${Math.round(emotional*100)}%</span>`;
   tip(sqEl, `<div class="tt-body">Signal quality is based on number of TRs (${nTR} TRs = ${nTR}s of content). More TRs = more reliable activation estimates. Below 6 TRs, results are directionally informative but not robust.<br><br>Analytical ratio = FPN activation. Emotional = mean of Limbic + SAL + SomMot. High emotional with low analytical is the key warning pattern.</div>`, 'SIGNAL QUALITY');
