@@ -530,6 +530,197 @@
     .results-wrap.active .primary-card{animation:fadeInUp .3s ease .0s both}
     .results-wrap.active .two-col{animation:fadeInUp .3s ease .08s both}
 
+    /* ══════════════════════════════════════════════════════
+       V2 REDESIGNED PRIMARY CARD
+    ══════════════════════════════════════════════════════ */
+
+    .v2-card {
+      flex-direction: column !important;
+      gap: 0 !important;
+      padding: 0 !important;
+      overflow: hidden;
+      border-top: 2px solid var(--cyan) !important;
+    }
+
+    /* ── Score hero ── */
+    .v2-score-hero {
+      padding: 32px 36px 28px;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(160deg, rgba(58,240,192,.04) 0%, transparent 60%);
+    }
+    .v2-score-inner {
+      display: flex;
+      align-items: flex-end;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+    .v2-score-left { flex-shrink: 0; }
+    .v2-score-eyebrow {
+      font-size: 11px;
+      letter-spacing: .26em;
+      color: var(--text-dim);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+    }
+    .v2-score-number-row {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      line-height: 1;
+    }
+    .v2-score-number-row .manip-value {
+      font-size: 95px !important;
+      letter-spacing: -6px !important;
+      line-height: .88 !important;
+    }
+    .v2-score-denom {
+      font-size: 24px;
+      color: var(--text-dim);
+      letter-spacing: -.5px;
+      padding-bottom: 10px;
+      font-weight: 300;
+    }
+    #easBand {
+      font-size: 11px !important;
+      letter-spacing: .18em !important;
+      margin-top: 12px !important;
+      font-weight: 600 !important;
+    }
+    .v2-score-note {
+      font-family: var(--serif);
+      font-size: 11px;
+      color: var(--text-dim);
+      margin-top: 8px;
+      line-height: 1.55;
+    }
+
+    /* ── Scale bar ── */
+    .v2-scale-wrap {
+      flex: 1;
+      min-width: 200px;
+      max-width: 420px;
+      padding-bottom: 6px;
+    }
+    .v2-scale-track {
+      height: 5px;
+      border-radius: 3px;
+      background: linear-gradient(to right,
+        #1a4a32 0%, #1a5a40 25%,
+        #504010 50%,
+        #702020 75%,
+        #901818 100%
+      );
+      position: relative;
+      margin-bottom: 10px;
+    }
+    .v2-scale-marker {
+      position: absolute;
+      top: -7px;
+      width: 3px;
+      height: 19px;
+      border-radius: 2px;
+      background: var(--text-bright);
+      transform: translateX(-50%);
+      box-shadow: 0 0 10px rgba(232,237,248,.55);
+      transition: left .9s cubic-bezier(.16,1,.3,1), background .4s;
+      left: 0%;
+    }
+    .v2-scale-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 9px;
+      letter-spacing: .05em;
+      color: var(--text-dim);
+      margin-bottom: 5px;
+    }
+    .v2-scale-zones {
+      display: flex;
+      justify-content: space-between;
+      font-size: 8px;
+      letter-spacing: .1em;
+      color: rgb(182, 184, 198);
+    }
+
+    /* ── Body sections ── */
+    .v2-section {
+      padding: 24px 36px;
+      border-bottom: 1px solid var(--border);
+    }
+    .v2-section-label {
+      font-size: 11px;
+      letter-spacing: .24em;
+      color: var(--text-dim);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+
+    /* ── Influence section ── */
+    .v2-influence-section .primary-reaction {
+      font-family: var(--serif) !important;
+      font-size: 28px !important;
+      font-weight: 600 !important;
+      line-height: 1.15 !important;
+      color: var(--text-bright) !important;
+      margin-bottom: 10px !important;
+    }
+    .v2-influence-section .primary-outcome {
+      font-family: var(--serif);
+      font-size: 14px;
+      color: var(--text-dim);
+      font-style: italic;
+      line-height: 1.75;
+      max-width: 680px;
+    }
+
+    /* ── Overview section ── */
+    .v2-overview-section .overview-summary {
+      font-family: var(--serif);
+      font-size: 15px;
+      line-height: 1.9;
+      color: var(--text);
+      max-width: 760px;
+    }
+    .v2-overview-section .overview-summary p {
+      margin-bottom: 16px;
+    }
+    .v2-overview-section .overview-summary p:last-child {
+      margin-bottom: 0;
+    }
+    .v2-overview-section .overview-summary strong {
+      color: var(--text-bright);
+      font-weight: 600;
+      font-style: normal;
+    }
+
+    /* ── Defense section ── */
+    .v2-defense {
+      padding: 22px 36px 24px;
+      background: rgba(58,240,192,.025);
+      border-top: 1px solid rgba(58,240,192,.15);
+    }
+    .v2-defense-label {
+      font-size: 13px;
+      letter-spacing: .24em;
+      color: var(--cyan-dim);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+    }
+    .v2-defense-text {
+      font-family: var(--serif);
+      font-size: 13px;
+      color: var(--text);
+      line-height: 1.85;
+      max-width: 680px;
+    }
+
+    @media(max-width:600px){
+      .v2-score-hero{padding:24px 20px 20px}
+      .v2-score-number-row .manip-value{font-size:80px!important;letter-spacing:-4px!important}
+      .v2-scale-wrap{max-width:100%}
+      .v2-section{padding:20px}
+      .v2-defense{padding:20px}
+    }
+
     /* ── Manip reference bar ── */
     .manip-ref{margin-top:14px;width:175px}
     .manip-ref-track{height:3px;border-radius:2px;background:linear-gradient(to right,#1a5040,#1a5560,#705020,#601c1c);position:relative;margin-bottom:7px}
@@ -834,35 +1025,57 @@
         </div>
       </div>
       <div class="warning-bar hidden" id="warningBar"></div>
-      <div class="primary-card" style="flex-direction:row;align-items:stretch;gap:28px">
-        <!-- Left: all text sections stacked -->
-        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:18px">
-          <!-- Section 1: Overview summary -->
-          <div class="overview-header" style="border-bottom:1px solid var(--border);padding-bottom:14px">
-            <div class="overview-eyebrow">OVERVIEW OF RESULTS</div>
-            <div class="overview-summary" id="overviewSummary"></div>
-          </div>
-          <!-- Section 2: Primary influence -->
-          <div>
-            <div class="primary-eyebrow">PRIMARY INFLUENCE STYLE</div>
-            <div class="primary-reaction" id="primaryReaction">—</div>
-            <div class="primary-outcome" id="primaryOutcome"></div>
-            <div id="cautionBadge" style="display:none;margin-top:12px"></div>
-          </div>
-          <!-- Section 3: Verdict / inoculation -->
-          <div id="verdictActionRow" style="display:none;padding-top:14px;border-top:1px solid var(--border)">
-            <div style="font-size:9px;letter-spacing:.15em;color:var(--cyan-dim);margin-bottom:5px">HOW TO MENTALLY DEFEND AGAINST THIS</div>
-            <div id="verdictActionText" style="font-family:var(--serif);font-size:13px;color:var(--text);line-height:1.65;max-width:440px"></div>
+      <div class="primary-card v2-card">
+
+        <!-- ── 1. SCORE HERO ── -->
+        <div class="v2-score-hero">
+          <div class="v2-score-inner">
+            <div class="v2-score-left">
+              <div class="v2-score-eyebrow">EMOTIONAL ACTIVATION</div>
+              <div class="v2-score-number-row">
+                <div class="manip-value" id="manipIndex" style="font-size:95px">—</div>
+                <div class="v2-score-denom">/ 10</div>
+              </div>
+              <div id="easBand"></div>
+              <div id="signalQualityRow" class="signal-row" style="margin-top:10px"></div>
+              <div class="v2-score-note" style="margin-top:8px">Reflects neural activation patterns,<br>not evidence of intent.</div>
+            </div>
+            <div class="v2-scale-wrap">
+              <div class="v2-scale-track">
+                <div class="v2-scale-marker" id="v2ScaleMarker"></div>
+              </div>
+              <div class="v2-scale-labels">
+                <span>0</span><span>2.5</span><span>5</span><span>7.5</span><span>10</span>
+              </div>
+              <div class="v2-scale-zones">
+                <span>LOW</span><span>MODERATE</span><span>ELEVATED</span><span>HIGH</span>
+              </div>
+            </div>
           </div>
         </div>
-        <!-- Right: big score spanning full height -->
-        <div class="primary-right" style="flex-shrink:0;display:flex;flex-direction:column;align-items:flex-end;text-align:right;justify-content:center;border-left:1px solid var(--border);padding-left:28px;min-width:160px">
-          <div class="manip-eyebrow">EMOTIONAL ACTIVATION</div>
-          <div class="manip-value" id="manipIndex" style="font-size:88px;letter-spacing:-4px;line-height:1">—</div>
-          <div class="manip-scale">/ 10</div>
-          <div id="easBand" style="font-size:10px;letter-spacing:.1em;margin-top:6px;font-weight:500"></div>
-          <div style="font-size:9px;color:var(--text-dim);margin-top:8px;max-width:150px;line-height:1.5;font-family:var(--serif);text-align:right">Reflects neural activation patterns, not evidence of intent.</div>
+
+        <!-- ── 2. PRIMARY INFLUENCE ── -->
+        <div class="v2-section v2-influence-section">
+          <div class="v2-section-label">PRIMARY INFLUENCE STYLE</div>
+          <div class="primary-reaction" id="primaryReaction">—</div>
+          <div class="primary-outcome" id="primaryOutcome"></div>
+          <div id="cautionBadge" style="display:none;margin-top:14px"></div>
         </div>
+
+        <!-- ── 3. OVERVIEW ── -->
+        <div class="v2-section v2-overview-section">
+          <div class="v2-section-label">OVERVIEW OF RESULTS</div>
+          <div class="overview-summary" id="overviewSummary"></div>
+        </div>
+
+        <!-- ── 4. DEFENSE ── -->
+        <div id="verdictActionRow" style="display:none">
+          <div class="v2-defense">
+            <div class="v2-defense-label">HOW TO MENTALLY DEFEND AGAINST THIS</div>
+            <div id="verdictActionText" class="v2-defense-text"></div>
+          </div>
+        </div>
+
       </div>
       <!-- Influence Profiles (most interpretable — first) -->
       <div class="panel">
@@ -1434,7 +1647,7 @@ function generateOverviewSummary(calibProfiles, manip, act, interp) {
          : '') + '.'
     : '';
 
-  return [s1, s2, analyticalNote].filter(Boolean).join(' ');
+  return '<p>' + [s1, s2, analyticalNote].filter(Boolean).join('</p><p>') + '</p>';
 }
 
 // ── Personalize nudge ─────────────────────────────────────────────────────────
@@ -1501,6 +1714,13 @@ function renderNormal(data) {
     easBand.textContent = bandLabel;
     easBand.style.color = bandColor;
   }
+  // V2 scale marker position
+  const marker = $('v2ScaleMarker');
+  if (marker) {
+    const pct = Math.min(100, Math.max(0, (manip / 10) * 100));
+    const markerColor = manip>=7.5 ? 'var(--red)' : manip>=5 ? 'var(--amber)' : manip>=2.5 ? 'var(--text)' : 'var(--text-dim)';
+    requestAnimationFrame(() => { marker.style.left = pct + '%'; marker.style.background = markerColor; marker.style.boxShadow = `0 0 10px ${markerColor}`; });
+  }
   // Caution badge
   const cautionBadge = $('cautionBadge');
   if (cautionBadge) {
@@ -1531,7 +1751,7 @@ function renderNormal(data) {
   const analytical = act.Cont||0;
   const ratioColor = analytical > emotional ? 'var(--cyan)' : emotional > 0.6 ? 'var(--amber)' : 'var(--text-dim)';
   let sqEl = document.getElementById('signalQualityRow');
-  if (!sqEl) { sqEl = document.createElement('div'); sqEl.id='signalQualityRow'; sqEl.className='signal-row'; $('manipIndex').parentElement.appendChild(sqEl); }
+  if (!sqEl) { sqEl = document.createElement('div'); sqEl.id='signalQualityRow'; sqEl.className='signal-row'; $('v2-score-left') && $('v2-score-left').appendChild(sqEl); }
   const dots = Array.from({length:4},(_,i)=>`<div class="sq-dot${i<sq?' filled':''}"></div>`).join('');
   sqEl.innerHTML = `<div class="sq-wrap"><div class="sq-dots">${dots}</div><span class="sq-label" style="color:${sqColor}">${sqLabel} SIGNAL</span></div><span class="analytical-ratio" style="color:${ratioColor}">ANALYTICAL ${Math.round(analytical*100)}% · EMOTIONAL ${Math.round(emotional*100)}%</span>`;
   tip(sqEl, `<div class="tt-body">Signal quality is based on number of TRs (${nTR} TRs = ${nTR}s of content). More TRs = more reliable activation estimates. Below 6 TRs, results are directionally informative but not robust.<br><br>Analytical ratio = FPN activation. Emotional = mean of Limbic + SAL + SomMot. High emotional with low analytical is the key warning pattern.</div>`, 'SIGNAL QUALITY');
@@ -3024,6 +3244,43 @@ document.addEventListener('keydown', e => { if (e.key === 'Escape' && $('surveyM
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 checkStatus();
+
+// ── PREVIEW MODE: auto-load mock results ──────────────────────────────────────
+(function previewMock() {
+  const MOCK = {
+    success: true,
+    interpretation: {
+      manipulation_index: 8.6,
+      primary_target: 'Critical Thinking Bypass',
+      intended_outcome: 'Immediate clicking or sharing driven by anxiety, action before critical evaluation — the urgency feels real and time-sensitive',
+      inoculation: 'If you want to share this before finishing it, or before looking anything up, notice that impulse. High-bypass content tends to front-load emotional impact so the felt reaction precedes deliberate evaluation. Finishing it, and waiting a beat before sharing, is usually enough to reactivate critical judgment.'
+    },
+    reaction_profiles: [
+      { id: 'analytical_bypass', label: 'Critical Thinking Bypass', score: 0.88, mechanism: 'Emotional activation arrives before FPN (analytical) circuits engage, reducing deliberate scrutiny.' },
+      { id: 'urgency_action',    label: 'Urgency / Action Pressure', score: 0.74, mechanism: 'SomMot activation creates felt bodily urgency — the sense something must be done now.' },
+      { id: 'fear_threat',       label: 'Fear & Threat Activation',  score: 0.61, mechanism: 'SAL and Limbic circuits flagged for threat-detection patterns.' },
+      { id: 'social_tribal',     label: 'Social / Tribal Framing',   score: 0.48, mechanism: 'TPJ activation suggests in-group/out-group framing.' },
+      { id: 'self_relevance',    label: 'Personal Relevance',        score: 0.38, mechanism: 'DMN engagement — content framed to feel personally relevant.' },
+      { id: 'reward_validation', label: 'Reward / Validation',       score: 0.22, mechanism: 'Low reward-circuit activation.' }
+    ],
+    network_activations: { Default: 0.54, Limbic: 0.18, SalVentAttn: 0.72, DorsAttn: 0.48, Cont: 0.40, SomMot: 0.74, Vis: 0.38 },
+    raw_stats: { n_timesteps: 24, mean_activation: 0.61, peak_activation: 0.88, std_activation: 0.18 },
+    segments: [
+      { text: 'BREAKING: Authorities confirm the threat is real and spreading faster than expected.', dominant_profile: 'fear_threat', dominant_label: 'Fear & Threat', ts_start: 0, ts_end: 5, network_activations: { Default:0.4, Limbic:0.3, SalVentAttn:0.8, DorsAttn:0.5, Cont:0.3, SomMot:0.7, Vis:0.3 } },
+      { text: 'Officials say you need to act immediately — there is no time to wait for more information.', dominant_profile: 'urgency_action', dominant_label: 'Urgency / Action', ts_start: 5, ts_end: 11, network_activations: { Default:0.5, Limbic:0.2, SalVentAttn:0.7, DorsAttn:0.4, Cont:0.35, SomMot:0.85, Vis:0.3 } },
+      { text: 'People who delay are putting themselves and their families at risk.', dominant_profile: 'social_tribal', dominant_label: 'Social / Tribal', ts_start: 11, ts_end: 17, network_activations: { Default:0.65, Limbic:0.25, SalVentAttn:0.65, DorsAttn:0.45, Cont:0.38, SomMot:0.6, Vis:0.28 } },
+      { text: 'Share this now before it is too late.', dominant_profile: 'analytical_bypass', dominant_label: 'Critical Thinking Bypass', ts_start: 17, ts_end: 21, network_activations: { Default:0.5, Limbic:0.2, SalVentAttn:0.75, DorsAttn:0.5, Cont:0.28, SomMot:0.82, Vis:0.25 } }
+    ],
+    timeseries: { Default:[0.4,0.45,0.5,0.55,0.54,0.52,0.5,0.48,0.5,0.52,0.54,0.55,0.53,0.5,0.48,0.5,0.52,0.54,0.5,0.48,0.45], SalVentAttn:[0.5,0.6,0.7,0.78,0.72,0.68,0.65,0.7,0.72,0.7,0.65,0.68,0.7,0.72,0.68,0.65,0.7,0.75,0.72,0.68,0.6], SomMot:[0.4,0.5,0.6,0.68,0.74,0.78,0.82,0.8,0.78,0.75,0.72,0.7,0.68,0.72,0.78,0.82,0.85,0.82,0.78,0.72,0.65], Cont:[0.5,0.48,0.44,0.42,0.40,0.38,0.36,0.35,0.36,0.38,0.40,0.38,0.36,0.35,0.34,0.33,0.32,0.30,0.32,0.35,0.38], DorsAttn:[0.4,0.44,0.48,0.5,0.48,0.46,0.48,0.5,0.48,0.46,0.48,0.5,0.48,0.46,0.48,0.5,0.48,0.46,0.44,0.42,0.4], Limbic:[0.1,0.12,0.15,0.18,0.2,0.18,0.16,0.18,0.2,0.18,0.16,0.15,0.18,0.2,0.18,0.16,0.15,0.14,0.13,0.12,0.1], Vis:[0.3,0.32,0.35,0.38,0.36,0.34,0.32,0.34,0.36,0.34,0.32,0.3,0.32,0.34,0.36,0.34,0.32,0.3,0.28,0.26,0.25] }
+  };
+  setTimeout(() => {
+    showAnalysisPage();
+    $('textInput').value = 'BREAKING: Authorities confirm the threat is real and spreading faster than expected. Officials say you need to act immediately — there is no time to wait for more information. People who delay are putting themselves and their families at risk. Share this now before it is too late.';
+    const es = $('emptyState'); if(es) es.style.display = 'none';
+    $('loadingPanel').style.display = 'none';
+    renderNormal(MOCK);
+  }, 300);
+}());
 setInterval(checkStatus, 30000);
 
 // Wire compare button (must happen after DOM ready — it's there)
