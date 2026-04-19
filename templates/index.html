@@ -1041,22 +1041,24 @@
       <!-- Layer 1 — Key insights (always visible) -->
       <div id="compareL1"></div>
 
-      <!-- Layer 2 — Detailed analysis (open by default) -->
+      <!-- Cognitive Engagement Profile — always visible -->
+      <div class="panel">
+        <div class="panel-header"><span class="panel-label">Cognitive Engagement Profile</span><span style="font-size:10px;color:var(--text-dim)">Δ = spread across sources per network</span></div>
+        <div class="panel-body"><div id="deltaTableWrap"></div></div>
+      </div>
+
+      <!-- Layer 2 — Detailed analysis (collapsed by default) -->
       <div class="layer-section">
         <div class="layer-toggle" id="compareL2Toggle">
           <div class="layer-toggle-left">
             <div class="layer-toggle-title">DETAILED ANALYSIS</div>
-            <div class="layer-toggle-hint">Network breakdowns · Source comparison · Framing analysis</div>
+            <div class="layer-toggle-hint">Network breakdowns · Source comparison</div>
           </div>
-          <span class="collapse-arrow open">▾</span>
+          <span class="collapse-arrow">▾</span>
         </div>
-        <div class="layer-body open" id="compareL2">
+        <div class="layer-body" id="compareL2">
           <div id="compareSummaryCards" class="compare-summary"></div>
           <div id="compareSourcePanels"></div>
-          <div class="panel">
-            <div class="panel-header"><span class="panel-label">Cognitive Engagement Profile</span><span style="font-size:10px;color:var(--text-dim)">Δ = spread across sources per network</span></div>
-            <div class="panel-body"><div id="deltaTableWrap"></div></div>
-          </div>
         </div>
       </div>
 
