@@ -1804,6 +1804,7 @@ function renderNormal(data) {
   $('normalResults').className = 'results-wrap active';
   updateCalibrationBar();
   $('normalResults').scrollIntoView({behavior:'smooth',block:'start'});
+  setTimeout(showPersonalizeToast, 1200);
 }
 
 // ── Network bars ──────────────────────────────────────────────────────────────
@@ -2995,17 +2996,16 @@ function loadExample(idx) {
 }
 
 function showPersonalizeToast() {
-  if (sessionStorage.getItem('toast_dismissed') || getProfile()) return;
   const t = $('personalizeToast');
   if (!t) return;
   t.classList.add('visible');
-  setTimeout(() => t.classList.remove('visible'), 8000);
+  clearTimeout(t._hideTimer);
+  t._hideTimer = setTimeout(() => t.classList.remove('visible'), 8000);
 }
 
 function closePersonalizeToast() {
-  sessionStorage.setItem('toast_dismissed', '1');
   const t = $('personalizeToast');
-  if (t) t.classList.remove('visible');
+  if (t) { clearTimeout(t._hideTimer); t.classList.remove('visible'); }
 }
 
 // ── Elapsed timer ─────────────────────────────────────────────────────────────
@@ -3207,7 +3207,7 @@ function updateCalibrationBar() {
   }
   if (editBtn) editBtn.style.display = profile ? '' : 'none';
   if (setupBtn) setupBtn.style.display = (!profile && window._lastResult) ? '' : 'none';
-  if (persBtn) { persBtn.disabled = !profile; persBtn.title = profile ? '' : 'Save a calibration profile to enable'; }
+  if (persBtn) { persBtn.disabled = false; persBtn.title = ''; }
 }
 
 // ── Calibration math ──────────────────────────────────────────────────────────
