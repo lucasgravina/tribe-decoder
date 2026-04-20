@@ -542,19 +542,54 @@
       border-top: 2px solid var(--cyan) !important;
     }
 
-    /* ── Score hero ── */
-    .v2-score-hero {
-      padding: 32px 36px 28px;
+    /* ── Top row: score + influence side by side ── */
+    .v2-top-row {
+      display: grid;
+      grid-template-columns: 1fr 450px;
+      gap: 0;
       border-bottom: 1px solid var(--border);
       background: linear-gradient(160deg, rgba(58,240,192,.04) 0%, transparent 60%);
     }
-    .v2-score-inner {
-      display: flex;
-      align-items: flex-end;
-      gap: 48px;
-      flex-wrap: wrap;
+    .v2-score-col {
+      padding: 32px 28px 28px 36px;
+      border-right: 1px solid var(--border);
     }
-    .v2-score-left { flex-shrink: 0; }
+    .v2-influence-col {
+      padding: 28px 28px 28px 24px;
+      display: flex;
+      align-items: stretch;
+      flex-shrink: 0;
+      width: 450px;
+    }
+    .v2-influence-box {
+      flex: 1;
+      background: rgba(58,240,192,.025);
+      border: 1px solid rgba(58,240,192,.15);
+      border-radius: 4px;
+      padding: 20px 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      text-align: right;
+    }
+    .v2-influence-box .v2-section-label {
+      color: var(--cyan-dim);
+    }
+    .v2-influence-box .primary-reaction {
+      font-family: var(--serif) !important;
+      font-size: 32px !important;
+      font-weight: 600 !important;
+      line-height: 1.2 !important;
+      color: var(--text-bright) !important;
+      margin-bottom: 14px !important;
+    }
+    .v2-influence-box .primary-outcome {
+      font-family: var(--serif);
+      font-size: 15px;
+      color: var(--text-dim);
+      font-style: italic;
+      line-height: 1.75;
+    }
     .v2-score-eyebrow {
       font-size: 11px;
       letter-spacing: .26em;
@@ -596,9 +631,8 @@
 
     /* ── Scale bar ── */
     .v2-scale-wrap {
-      flex: 1;
-      min-width: 200px;
-      max-width: 420px;
+      width: 100%;
+      max-width: 100%;
       padding-bottom: 6px;
     }
     .v2-scale-track {
@@ -645,6 +679,7 @@
     .v2-section {
       padding: 24px 36px;
       border-bottom: 1px solid var(--border);
+      width: 100%;
     }
     .v2-section-label {
       font-size: 11px;
@@ -654,31 +689,26 @@
       text-transform: uppercase;
     }
 
-    /* ── Influence section ── */
-    .v2-influence-section .primary-reaction {
-      font-family: var(--serif) !important;
-      font-size: 28px !important;
-      font-weight: 600 !important;
-      line-height: 1.15 !important;
-      color: var(--text-bright) !important;
-      margin-bottom: 10px !important;
-    }
-    .v2-influence-section .primary-outcome {
-      font-family: var(--serif);
-      font-size: 14px;
-      color: var(--text-dim);
-      font-style: italic;
-      line-height: 1.75;
-      max-width: 680px;
-    }
+
 
     /* ── Overview section ── */
+    .v2-overview-section {
+      display: flex;
+      flex-direction: column;
+    }
+    .v2-overview-section .v2-section-label {
+      margin-bottom: 12px;
+    }
     .v2-overview-section .overview-summary {
       font-family: var(--serif);
       font-size: 15px;
       line-height: 1.9;
       color: var(--text);
-      max-width: 760px;
+      width: 100%;
+      max-width: 1000px;
+    }
+    .v2-overview-section .overview-summary p {
+      width: 100%;
     }
     .v2-overview-section .overview-summary p {
       margin-bottom: 16px;
@@ -713,10 +743,11 @@
       max-width: 680px;
     }
 
-    @media(max-width:600px){
-      .v2-score-hero{padding:24px 20px 20px}
+    @media(max-width:760px){
+      .v2-top-row{grid-template-columns:1fr}
+      .v2-score-col{border-right:none;border-bottom:1px solid var(--border);padding:24px 20px 20px}
+      .v2-influence-col{padding:20px}
       .v2-score-number-row .manip-value{font-size:80px!important;letter-spacing:-4px!important}
-      .v2-scale-wrap{max-width:100%}
       .v2-section{padding:20px}
       .v2-defense{padding:20px}
     }
@@ -1027,20 +1058,20 @@
       <div class="warning-bar hidden" id="warningBar"></div>
       <div class="primary-card v2-card">
 
-        <!-- ── 1. SCORE HERO ── -->
-        <div class="v2-score-hero">
-          <div class="v2-score-inner">
-            <div class="v2-score-left">
-              <div class="v2-score-eyebrow">EMOTIONAL ACTIVATION</div>
-              <div class="v2-score-number-row">
-                <div class="manip-value" id="manipIndex" style="font-size:95px">—</div>
-                <div class="v2-score-denom">/ 10</div>
-              </div>
-              <div id="easBand"></div>
-              <div id="signalQualityRow" class="signal-row" style="margin-top:10px"></div>
-              <div class="v2-score-note" style="margin-top:8px">Reflects neural activation patterns,<br>not evidence of intent.</div>
+        <!-- ── TOP ROW: score left + influence right ── -->
+        <div class="v2-top-row">
+
+          <!-- Score column -->
+          <div class="v2-score-col">
+            <div class="v2-score-eyebrow">EMOTIONAL ACTIVATION</div>
+            <div class="v2-score-number-row">
+              <div class="manip-value" id="manipIndex" style="font-size:95px">—</div>
+              <div class="v2-score-denom">/ 10</div>
             </div>
-            <div class="v2-scale-wrap">
+            <div id="easBand"></div>
+            <div id="signalQualityRow" class="signal-row" style="margin-top:10px"></div>
+            <!-- Scale bar sits under the number -->
+            <div class="v2-scale-wrap" style="margin-top:20px">
               <div class="v2-scale-track">
                 <div class="v2-scale-marker" id="v2ScaleMarker"></div>
               </div>
@@ -1051,24 +1082,28 @@
                 <span>LOW</span><span>MODERATE</span><span>ELEVATED</span><span>HIGH</span>
               </div>
             </div>
+            <div class="v2-score-note" style="margin-top:12px">Reflects neural activation patterns, not evidence of intent.</div>
           </div>
+
+          <!-- Primary influence column -->
+          <div class="v2-influence-col">
+            <div class="v2-influence-box">
+              <div class="v2-section-label">PRIMARY INFLUENCE STYLE</div>
+              <div class="primary-reaction" id="primaryReaction">—</div>
+              <div class="primary-outcome" id="primaryOutcome"></div>
+              <div id="cautionBadge" style="display:none;margin-top:14px"></div>
+            </div>
+          </div>
+
         </div>
 
-        <!-- ── 2. PRIMARY INFLUENCE ── -->
-        <div class="v2-section v2-influence-section">
-          <div class="v2-section-label">PRIMARY INFLUENCE STYLE</div>
-          <div class="primary-reaction" id="primaryReaction">—</div>
-          <div class="primary-outcome" id="primaryOutcome"></div>
-          <div id="cautionBadge" style="display:none;margin-top:14px"></div>
-        </div>
-
-        <!-- ── 3. OVERVIEW ── -->
+        <!-- ── OVERVIEW — full width ── -->
         <div class="v2-section v2-overview-section">
           <div class="v2-section-label">OVERVIEW OF RESULTS</div>
           <div class="overview-summary" id="overviewSummary"></div>
         </div>
 
-        <!-- ── 4. DEFENSE ── -->
+        <!-- ── DEFENSE — full width ── -->
         <div id="verdictActionRow" style="display:none">
           <div class="v2-defense">
             <div class="v2-defense-label">HOW TO MENTALLY DEFEND AGAINST THIS</div>
